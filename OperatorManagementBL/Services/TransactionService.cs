@@ -3,6 +3,7 @@ using OperatorManagementBL.Enum;
 using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace OperatorManagementBL.Services
 {
@@ -64,6 +65,12 @@ namespace OperatorManagementBL.Services
                     throw new Exception();
                 }
 
+                //check suffient balance by duration
+                if (walletBallance < requiredBalance)
+                {
+                    return 1;
+                }
+
                 var currentDate = DateTime.Now;
                 var currentDateDuration = DateTime.Now.AddMinutes(duration);
                 TimeSpan currentTime = new TimeSpan(currentDate.Hour, currentDate.Minute, currentDate.Second);
@@ -78,6 +85,11 @@ namespace OperatorManagementBL.Services
                     Fld_TransactionType_Id = type
                 };
                 _context.Tbl_Transaction.Add(p);
+                _context.SaveChanges();
+
+                //update balance
+                fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
+                _context.Entry(fromSim).State = EntityState.Modified;
                 _context.SaveChanges();
 
                 return 0;
