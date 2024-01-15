@@ -1,0 +1,125 @@
+﻿@model IEnumerable<OperatorManagementBL.DTOs.TransactionDTO>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="col-11 mx-auto">
+        <div class="d-flex flex-row flex-nowrap align-items-center gap-2">
+            <div>@Html.ActionLink("Manage People", "Index", "Person", null, new { @class = "btn btn-lg btn-primary" })</div>
+            <div>@Html.ActionLink("Manage Sims", "Index", "Sim", null, new { @class = "btn btn-lg btn-primary" })</div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-11 mx-auto">
+        <div>
+            <h2>Last Transactions</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>Date</td>
+                        <td>From</td>
+                        <td>To</td>
+                        <td>Type</td>
+                        <td>Duration</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Date</td>
+                            <td>@item.FromSimNumber</td>
+                            <td>@item.ToSimNumber</td>
+                            <td>@item.TransactionType</td>
+                            <td>@item.Duration</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-11 mx-auto">
+        <div><h3>Make a Call</h3></div>
+
+
+        <form method="post" id="makeCallForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <lable class="control-label col-md-2">From SIM Number</lable>
+                <div class="col-md-10">
+                    @Html.DropDownList("Sim_Id", null, htmlAttributes: new { @class = "form-select", id = "fromSimId" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <lable class="control-label col-md-2">To SIM Number</lable>
+                <div class="col-md-10">
+                    @Html.DropDownList("Sim_Id", null, htmlAttributes: new { @class = "form-select", id = "toSimId" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <lable class="control-label col-md-2">Duration (in minutes)</lable>
+                <div class="col-md-10">
+                    <input type="number" value="1" class="form-control" id="durationId"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <lable class="control-label col-md-2">Type</lable>
+                <div class="col-md-10">
+                    <select id="typeId" class="form-select">
+                        <option value="1">SMS</option>
+                        <option value="2">CALL</option>
+                    </select>
+                </div>
+            </div>
+
+            <input type="submit" class="btn btn-primary" />
+        </form>
+
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#makeCallForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                cache: false,
+                url: '/Home/Test',
+                type: 'POST',
+                data: {
+                    "fromSimId": $("#fromSimId").val(),
+                    "toSimId": $("#toSimId").val(),
+                    "typeId": $("#typeId").val(), 
+                    "duration": $("#durationId").val()
+                },
+                success: function (result) {
+                    if (result.status == true) {
+                        alert('call submitted successfully');
+                        location.reload();
+                    }
+                    else {
+                        alert(result.msg);
+                    }
+                },
+                error: function (result) {
+                    alert(result.msg);
+                }
+            });
+            
+        });
+    });
+</script>
