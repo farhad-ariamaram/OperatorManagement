@@ -1,7 +1,9 @@
 ﻿using OperatorManagementBL.DTOs;
+using OperatorManagementBL.Enum;
 using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OperatorManagementBL.Services
 {
@@ -33,15 +35,34 @@ namespace OperatorManagementBL.Services
             return ret;
         }
 
+        //ok = 0
+        //insuffient balance = 1
         public int MakeCall(int from, int to, int type, int duration)
         {
             try
             {
+                var fromSim = _context.Tbl_Sim.Find(from);
+
                 //check balance
-                var walletBallance = _context.Tbl_Sim.Find(from).Tbl_Wallet.Fld_Wallet_Balance;
+                var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
                 if(walletBallance <= 0)
                 {
                     return 1;
+                }
+
+                //تعرفه برای تماس هر دقیقه 5 تومان و برای هر اس ام اس 5 تومان در نظر گرفته شد
+                var requiredBalance = 0;
+                if(type == (int)TransactionTypeEnum.call)
+                {
+                    requiredBalance = duration * 5;
+                }
+                else if (type == (int)TransactionTypeEnum.sms)
+                {
+                    requiredBalance = 5;
+                }
+                else
+                {
+                    throw new Exception();
                 }
 
                 var currentDate = DateTime.Now;

@@ -228,10 +228,6 @@
       <Project>{6f94cd9b-eb2f-4edf-b908-58ae4eed47f9}</Project>
       <Name>OperatorManagementBL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OperatorManagementDL\OperatorManagementDL.csproj">
-      <Project>{85df8038-caed-40f2-b8e1-4a0e4064630b}</Project>
-      <Name>OperatorManagementDL</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
