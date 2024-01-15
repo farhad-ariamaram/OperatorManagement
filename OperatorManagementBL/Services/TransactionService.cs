@@ -3,7 +3,6 @@ using OperatorManagementBL.Enum;
 using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OperatorManagementBL.Services
 {
