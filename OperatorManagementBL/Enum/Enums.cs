@@ -19,4 +19,11 @@
         inactiveFromSimcard = 2,
         inactiveToSimcard = 3
     }
+
+    public enum SortTypeEnum
+    {
+        Newest = 0,
+        Oldest = 1,
+        Longest = 2
+    }
 }

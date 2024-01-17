@@ -5,13 +5,117 @@
 
 <h2>لیست تماس‌ها و پیامک‌ها</h2>
 
-<p>
-    Filter Section 
-</p>
-<p>
-    Sort Section
-</p>
-<div class="table-responsive">
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex flex-row flex-nowrap justify-content-between align-items-center w-100">
+                    <div class="fs-5 fw-bold"><span>فیلترها</span></div>
+                    <div><a data-bs-dismiss="modal"><i class="fa fa-times"></i></a></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <form method="get" class="d-flex flex-column gap-2" id="filterFormId">
+                        <input type="hidden" name="sortType" id="sortType" />
+                        <div>
+                            <label>بعد از</label>
+                            <input type="date" name="fromDate" id="fromDate" class="form-control" />
+                        </div>
+
+                        <div>
+                            <label>قبل از</label>
+                            <input type="date" name="toDate" id="toDate" class="form-control" />
+                        </div>
+
+                        <div>
+                            <label>از شماره</label>
+                            @Html.DropDownList("fromSimId", (SelectList)ViewBag.Sim_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "fromSimId", id = "fromSimId" })
+                        </div>
+
+                        <div>
+                            <label>به شماره</label>
+                            @Html.DropDownList("toSimId", (SelectList)ViewBag.Sim_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "toSimId", id = "toSimId" })
+                        </div>
+
+                        <div>
+
+                            <label>از شخص</label>
+                            @Html.DropDownList("fromPersonId", (SelectList)ViewBag.Person_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "fromPersonId" })
+                        </div>
+
+                        <div>
+                            <label>به شخص</label>
+                            @Html.DropDownList("toPersonId", (SelectList)ViewBag.Person_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "toPersonId" })
+                        </div>
+
+                        <div>
+                            <label>کمتر از (دقیقه)</label>
+                            <input type="number" name="durationLessThan" class="form-control text-start" value="@(!string.IsNullOrEmpty(Request["durationLessThan"])?int.Parse(Request["durationLessThan"]):0)" />
+                        </div>
+
+                        <div>
+                            <label>بیشتر از (دقیقه)</label>
+                            <input type="number" name="durationMoreThan" class="form-control text-start" value="@(!string.IsNullOrEmpty(Request["durationMoreThan"])?int.Parse(Request["durationMoreThan"]):0)" />
+                        </div>
+
+                        <div>
+                            <label>نوع</label>
+                            <select class="form-select" name="typeId" id="typeId">
+                                <option value>انتخاب کنید</option>
+                                <option value="@((int)OperatorManagementBL.Enum.TransactionTypeEnum.call)">تماس</option>
+                                <option value="@((int)OperatorManagementBL.Enum.TransactionTypeEnum.sms)">پیامک</option>
+                            </select>
+
+                        </div>
+
+                        <input type="submit" value="جستجو" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-row flex-nowrap align-items-center gap-3 mt-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+        فیلترها
+    </button>
+    <div><span style="color:#ccc">|</span></div>
+    <div class="fw-bold">
+        <i class="fas fa-sort-amount-down-alt mx-1"></i>
+        <span>مرتب سازی:</span>
+    </div>
+    <style>
+        .m-sort-items-container > a{
+            color:#797979 !important;
+        }
+
+        .m-sort-items-container > a:hover {
+            color: #0d6efd !important;
+            cursor: pointer !important;
+        }
+
+        .m-sort-items-container > a.active {
+            color: #0d6efd!important;
+        }
+    </style>
+    <div class="d-flex flex-row flex-nowrap align-items-center gap-3 m-sort-items-container">
+        @{
+            int selectedSortItem = 0;
+            if (!string.IsNullOrEmpty(Request["sortType"]))
+            {
+                selectedSortItem = int.Parse(Request["sortType"]);
+            }
+        }
+        <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Newest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Newest ? "active" : "")">جدیدترین</a>
+        <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Oldest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Oldest ? "active" : "")">قدیمی‌ترین</a>
+        <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Longest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Longest ? "active" : "")">طولانی‌ترین</a>
+    </div>
+</div>
+
+<div class="table-responsive mt-3">
     <table class="table table-striped">
         <tr>
             <th>
@@ -35,38 +139,59 @@
             <th>
                 @Html.DisplayNameFor(model => model.TransactionType)
             </th>
-            <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Duration)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FromPerson)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FromSimNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ToPerson)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ToSimNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TransactionType)
-        </td>
-        <td>
-            nothing
-        </td>
-    </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Duration)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FromPerson)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FromSimNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToPerson)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToSimNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionType)
+                </td>
+            </tr>
         }
 
     </table>
 </div>
+
+<script>
+
+    function submitFilterForm(sort) {
+        $("#sortType").val(sort);
+        $("#filterFormId").submit();
+    }
+
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    $('#fromSimId').val(getParameterByName('fromSimId'));
+    $('#toSimId').val(getParameterByName('toSimId'));
+    $('#fromPersonId').val(getParameterByName('fromPersonId'));
+    $('#toPersonId').val(getParameterByName('toPersonId'));
+    $('#typeId').val(getParameterByName('typeId'));
+    $('#fromDate').val(getParameterByName('fromDate'));
+    $('#toDate').val(getParameterByName('toDate'));
+</script>

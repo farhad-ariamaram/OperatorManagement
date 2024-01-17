@@ -16,7 +16,7 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public List<TransactionDTO> GetTransactions(DateTime? fromDate, DateTime? toDate, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0)
+        public List<TransactionDTO> GetTransactions(DateTime? fromDate, DateTime? toDate, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0)
         {
             IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
 
@@ -65,6 +65,21 @@ namespace OperatorManagementBL.Services
             if (typeId != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_TransactionType_Id == typeId);
+            }
+
+            switch (sortType)
+            {
+                case (int)SortTypeEnum.Newest:
+                    q_transactions = q_transactions.OrderByDescending(a=>a.Fld_Transaction_Date);
+                    break;
+                case (int)SortTypeEnum.Oldest:
+                    q_transactions = q_transactions.OrderBy(a => a.Fld_Transaction_Date);
+                    break;
+                case (int)SortTypeEnum.Longest:
+                    q_transactions = q_transactions.OrderByDescending(a => a.Fld_Transaction_Duration);
+                    break;
+                default:
+                    break;
             }
 
             List<TransactionDTO> ret = new List<TransactionDTO>();
