@@ -1930,6 +1930,7 @@
     <Content Include="Views\Sim\DeletedSims.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Sim\Wallet.cshtml" />
+    <Content Include="Views\Home\Transactions.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

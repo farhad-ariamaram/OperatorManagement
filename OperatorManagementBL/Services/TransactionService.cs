@@ -4,6 +4,7 @@ using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 
 namespace OperatorManagementBL.Services
 {
@@ -15,11 +16,59 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public List<TransactionDTO> GetTransactions()
+        public List<TransactionDTO> GetTransactions(DateTime? fromDate, DateTime? toDate, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0)
         {
-            var p = _context.Tbl_Transaction;
+            IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
+
+            if (fromDate.HasValue)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date >= fromDate.Value);
+            }
+
+            if (toDate.HasValue)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date <= toDate.Value);
+            }
+
+            if (fromSimId != 0)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_Sim_FromSimId == fromSimId);
+            }
+
+            if (toSimId != 0)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_Sim_ToSimId == toSimId);
+            }
+
+            if (fromPersonId != 0)
+            {
+                var listPersonSims = _context.Tbl_Sim.Where(a => a.Fld_Person_Id == fromPersonId).Select(a => a.Fld_Sim_Id);
+                q_transactions = q_transactions.Where(a => listPersonSims.Contains(a.Fld_Sim_FromSimId));
+            }
+
+            if (toPersonId != 0)
+            {
+                var listPersonSims = _context.Tbl_Sim.Where(a => a.Fld_Person_Id == toPersonId).Select(a => a.Fld_Sim_Id);
+                q_transactions = q_transactions.Where(a => listPersonSims.Contains(a.Fld_Sim_ToSimId));
+            }
+
+            if (durationLessThan != 0)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration <= new TimeSpan(0, durationLessThan,0));
+            }
+
+            if (durationMoreThan != 0)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration >= new TimeSpan(0, durationMoreThan,0));
+            }
+
+            if (typeId != 0)
+            {
+                q_transactions = q_transactions.Where(a => a.Fld_TransactionType_Id == typeId);
+            }
+
             List<TransactionDTO> ret = new List<TransactionDTO>();
-            foreach (var item in p)
+            foreach (var item in q_transactions)
             {
                 ret.Add(new TransactionDTO
                 {
@@ -28,7 +77,9 @@ namespace OperatorManagementBL.Services
                     FromSimNumber = item.Tbl_Sim.Fld_Sim_Number,
                     ToSimNumber = item.Tbl_Sim1.Fld_Sim_Number,
                     TransactionType = item.Tbl_TransactionType.Fld_TransactionType_Type,
-                    //Duration = (item.Fld_Transaction_End.HasValue ? item.Fld_Transaction_End.Value : new System.TimeSpan(0)).Subtract(item.Fld_Transaction_Start)
+                    Duration = item.Fld_Transaction_Duration,
+                    FromPerson = item.Tbl_Sim.Tbl_Person.Fld_Person_Fname + item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
+                    ToPerson = item.Tbl_Sim1.Tbl_Person.Fld_Person_Fname + item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
                 });
             }
 

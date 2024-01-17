@@ -21,11 +21,17 @@ namespace OperatorManagementUI.Controllers
 
         public ActionResult Index()
         {
-            var model = _transactionService.GetTransactions();
             ViewBag.Sim_Id = new SelectList(_simService.GetSims(), "Id", "Number");
-            return View(model);
+            return View();
         }
 
+        public ActionResult Transactions(DateTime? fromDate, DateTime? toDate, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0)
+        {
+            var vm = _transactionService.GetTransactions(fromDate ?? null, toDate ?? null, fromSimId, toSimId, fromPersonId, toPersonId, durationLessThan, durationMoreThan, typeId);
+            return View(vm);
+        }
+
+        #region AJAX_METHODS
         [HttpPost]
         public JsonResult MakeCall(int fromSimId, int toSimId, int typeId, int duration)
         {
@@ -46,7 +52,7 @@ namespace OperatorManagementUI.Controllers
             var res = _simService.GetSimsForDropdown(fromSimId);
             return Json(res, JsonRequestBehavior.AllowGet);
         }
-
+        #endregion
 
     }
 }

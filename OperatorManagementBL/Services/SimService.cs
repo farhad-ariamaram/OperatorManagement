@@ -16,7 +16,7 @@ namespace OperatorManagementBL.Services
 
         public List<SimDTO> GetSims()
         {
-            var p = _context.Tbl_Sim.Where(a=>!a.Fld_Sim_IsDeleted);
+            var p = _context.Tbl_Sim.Where(a=>!a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
             List<SimDTO> ret = new List<SimDTO>();
             foreach (var item in p)
             {
@@ -34,7 +34,7 @@ namespace OperatorManagementBL.Services
 
         public List<SimForListDTO> GetSimsForDropdown(int? exclude)
         {
-            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && a.Fld_Sim_Id!=exclude.Value);
+            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted && a.Fld_Sim_Id!=exclude.Value);
             List<SimForListDTO> ret = new List<SimForListDTO>();
             foreach (var item in p)
             {
@@ -50,7 +50,7 @@ namespace OperatorManagementBL.Services
 
         public List<SimDetailDTO> GetDetailSims()
         {
-            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted);
+            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
             List<SimDetailDTO> ret = new List<SimDetailDTO>();
             foreach (var item in p)
             {
@@ -58,7 +58,7 @@ namespace OperatorManagementBL.Services
                 {
                     Id = item.Fld_Sim_Id,
                     Number = item.Fld_Sim_Number,
-                    Person = item.Tbl_Person.Fld_Person_Fname + item.Tbl_Person.Fld_Person_Lname,
+                    Person = item.Tbl_Person.Fld_Person_Fname +" "+ item.Tbl_Person.Fld_Person_Lname,
                     IsActive = item.Fld_Sim_IsActive?"فعال":"غیرفعال",
                     SimType = item.Tbl_SimType.Fld_SimType_Value,
                     SimTypeId = item.Fld_SimType_Id
@@ -98,7 +98,7 @@ namespace OperatorManagementBL.Services
                 {
                     Id = p.Fld_Sim_Id,
                     Number = p.Fld_Sim_Number,
-                    Person = p.Tbl_Person.Fld_Person_Fname + p.Tbl_Person.Fld_Person_Lname,
+                    Person = p.Tbl_Person.Fld_Person_Fname +" "+ p.Tbl_Person.Fld_Person_Lname,
                     IsActive = p.Fld_Sim_IsActive?"فعال":"غیرفعال",
                     SimType = p.Tbl_SimType.Fld_SimType_Value,
                     SimTypeId = p.Fld_SimType_Id
@@ -221,7 +221,7 @@ namespace OperatorManagementBL.Services
                 Id = simId,
                 Balance = p.Tbl_Wallet.Fld_Wallet_Balance,
                 Number = p.Fld_Sim_Number,
-                Person = p.Tbl_Person.Fld_Person_Fname + p.Tbl_Person.Fld_Person_Lname,
+                Person = p.Tbl_Person.Fld_Person_Fname + " " + p.Tbl_Person.Fld_Person_Lname,
                 SimTypeId = p.Fld_SimType_Id
             };
 

@@ -1,0 +1,72 @@
+﻿@model IEnumerable<OperatorManagementBL.DTOs.TransactionDTO>
+@{
+    ViewBag.Title = "Transactions";
+}
+
+<h2>لیست تماس‌ها و پیامک‌ها</h2>
+
+<p>
+    Filter Section 
+</p>
+<p>
+    Sort Section
+</p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Duration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FromPerson)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FromSimNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ToPerson)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ToSimNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionType)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Duration)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromPerson)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromSimNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToPerson)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToSimNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TransactionType)
+        </td>
+        <td>
+            nothing
+        </td>
+    </tr>
+        }
+
+    </table>
+</div>
