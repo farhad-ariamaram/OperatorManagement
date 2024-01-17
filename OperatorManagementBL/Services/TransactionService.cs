@@ -94,8 +94,8 @@ namespace OperatorManagementBL.Services
                     ToSimNumber = item.Tbl_Sim1.Fld_Sim_Number,
                     TransactionType = item.Tbl_TransactionType.Fld_TransactionType_Type,
                     Duration = item.Fld_Transaction_Duration,
-                    FromPerson = item.Tbl_Sim.Tbl_Person.Fld_Person_Fname + item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
-                    ToPerson = item.Tbl_Sim1.Tbl_Person.Fld_Person_Fname + item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
+                    FromPerson = item.Tbl_Sim.Tbl_Person.Fld_Person_Fname +" "+ item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
+                    ToPerson = item.Tbl_Sim1.Tbl_Person.Fld_Person_Fname +" "+ item.Tbl_Sim1.Tbl_Person.Fld_Person_Lname,
                 });
             }
 
