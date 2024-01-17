@@ -160,6 +160,29 @@
         </div>
     </div>
 
+
+
+
+    <div id="InvalidFromToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            شماره مبدا معتبر نمی‌باشد
+        </div>
+    </div>
+
+    <div id="InvalidToToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            شماره مقصد معتبر نمی‌باشد
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -198,6 +221,14 @@
 
     function showMakeCallFailedUnhandledToast() {
         var toastElList = [].slice.call(document.querySelectorAll('#callFailedUnhandledToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showInvalidDurationToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#invalidDurationToast'))
         var toastList = toastElList.map(function (toastEl) {
             return new bootstrap.Toast(toastEl);
         });
@@ -247,13 +278,29 @@
         toastList.forEach(toast => toast.show());
     }
 
-    function showInvalidDurationToast() {
-        var toastElList = [].slice.call(document.querySelectorAll('#invalidDurationToast'))
+
+
+
+
+    function showInvalidFromToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#InvalidFromToast'))
         var toastList = toastElList.map(function (toastEl) {
             return new bootstrap.Toast(toastEl);
         });
         toastList.forEach(toast => toast.show());
     }
+
+    function showInvalidToToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#InvalidToToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+
+
+
 
     function fillToId() {
         $("#toSimId").removeAttr("disabled");
@@ -267,7 +314,7 @@
                 },
             success: function (data) {
                     $("#toSimId").append(
-                        '<option value="0" selected>انتخاب کنید</option>'
+                        '<option value="0">انتخاب کنید</option>'
                     );
                     $.each(data,
                         function () {
@@ -292,7 +339,7 @@
             },
             success: function (data) {
                 $("#sms_toSimId").append(
-                    '<option value="0" selected>انتخاب کنید</option>'
+                    '<option value="0">انتخاب کنید</option>'
                 );
                 $.each(data,
                     function () {
@@ -312,6 +359,17 @@
                 showInvalidDurationToast();
                 return;
             }
+
+            if ($('#fromSimId').val() == '' || $('#fromSimId').val() == '0') {
+                showInvalidFromToast();
+                return;
+            }
+
+            if ($('#toSimId').val() == '' || $('#toSimId').val() == '0') {
+                showInvalidToToast();
+                return;
+            }
+
             $.ajax({
                 cache: false,
                 url: '/Home/MakeCall',
@@ -346,6 +404,17 @@
 
         $('#sendSMSForm').on('submit', function (e) {
             e.preventDefault();
+
+            if ($('#sms_fromSimId').val() == '' || $('#sms_fromSimId').val() == '0') {
+                showInvalidFromToast();
+                return;
+            }
+
+            if ($('#sms_toSimId').val() == '' || $('#sms_toSimId').val() == '0') {
+                showInvalidToToast();
+                return;
+            }
+
             $.ajax({
                 cache: false,
                 url: '/Home/SendSMS',
