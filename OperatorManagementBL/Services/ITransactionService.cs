@@ -9,5 +9,6 @@ namespace OperatorManagementBL.Services
         List<TransactionDTO> GetTransactions();
 
         int MakeCall(int from, int to, int type, int duration);
+        int SendSMS(int from, int to, int type);
     }
 }

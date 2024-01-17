@@ -7,12 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using OperatorManagementDL.Models;
-using System.ComponentModel.DataAnnotations;
-
 namespace OperatorManagementDL
 {
-    [MetadataType(typeof(WalletMD))]
+    using System;
+    using System.Collections.Generic;
+    
     public partial class Tbl_Wallet
     {
         public int Fld_Wallet_Id { get; set; }

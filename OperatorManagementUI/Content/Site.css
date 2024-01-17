@@ -1,1 +1,33 @@
-﻿
+﻿@font-face {
+    font-family: Yekan;
+    src: url('../fonts/yekan/Yekan.eot');
+    src: url('../fonts/yekan/Yekan.eot?#iefix') format('FontName-opentype'), url('../fonts/yekan/Yekan.woff') format('woff'), url('../fonts/yekan/Yekan.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: Yekan,sans-serif
+}
+
+a, a:hover, a:visited, a:active, a:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.nav-link, .nav-link:visited, .nav-link:active, .nav-link:focus {
+    color: #000;
+}
+
+    .nav-link:hover {
+        color: #999;
+        cursor: pointer;
+    }
+
+.m-min-width-250 {
+    min-width: 250px;
+}
+
+.m-height-fit-content {
+    height: fit-content;
+}

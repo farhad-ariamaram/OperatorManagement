@@ -68,16 +68,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\PersonMD.cs" />
-    <Compile Include="Models\SimMD.cs" />
-    <Compile Include="Models\TransactionMD.cs" />
-    <Compile Include="Models\TransactionTypeMD.cs" />
-    <Compile Include="Models\WalletMD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tbl_Person.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Tbl_Sim.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Tbl_SimType.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Tbl_Transaction.cs">

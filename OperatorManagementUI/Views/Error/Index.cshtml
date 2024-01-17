@@ -1,0 +1,46 @@
+﻿@model OperatorManagementBL.DTOs.ErrorDTO
+@{
+    Layout = null;
+    ViewBag.Title = "NotFound";
+}
+<!DOCTYPE html>
+<html lang="fa">
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bootstrap 5 404 Error Page</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+
+
+<body>
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        @if (!string.IsNullOrEmpty(Model.Msg))
+        {
+            <div class="text-center">
+                <h1 class="display-1 fw-bold">500</h1>
+                <p class="fs-3"> <span class="text-danger">!</span> خطا</p>
+                <p class="lead">
+                    @Model.Msg
+                </p>
+                <a href="@Url.Action("Index","Home")" class="btn btn-primary text-white">بازگشت به صفحه اصلی</a>
+            </div>
+        }
+        else
+        {
+            <div class="text-center">
+                <h1 class="display-1 fw-bold">404</h1>
+                <p class="fs-3"> <span class="text-danger">!</span> صفحه پیدا نشد</p>
+                <a href="@Url.Action("Index","Home")" class="btn btn-primary">بازگشت به صفحه اصلی</a>
+            </div>
+        }
+    </div>
+</body>
+
+
+</html>

@@ -1,0 +1,140 @@
+﻿@model OperatorManagementBL.DTOs.WalletChargeDTO
+@{
+    ViewBag.Title = "Wallet";
+    var wallet = (OperatorManagementBL.DTOs.WalletDTO)ViewBag.wallet;
+}
+
+@if (Model.SimTypeId == (int)OperatorManagementBL.Enum.SimTypeEnum.credit)
+{
+    <h2>شارژ سیم‌کارت</h2>
+
+    <dl class="row mt-4">
+        <dt class="col-sm-3">شماره سیم‌کارت</dt>
+        <dd class="col-sm-9">@wallet.Number</dd>
+
+        <dt class="col-sm-3">مالک</dt>
+        <dd class="col-sm-9">@wallet.Person</dd>
+
+        <dt class="col-sm-3">اعتبار فعلی</dt>
+        <dd class="col-sm-9">@wallet.Balance تومان</dd>
+    </dl>
+
+    <hr />
+
+    <form method="post" action="@Url.Action("Wallet")" id="addBalanceForm">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(a => a.SimId)
+        @Html.HiddenFor(a => a.SimTypeId)
+        <div>
+
+            <div class="my-3">
+                <label class="form-label" for="addBalance">مبلغ شارژ (تومان)</label>
+                @Html.EditorFor(a => a.AddBalance, new { htmlAttributes = new { @class = "form-control text-start", data_val_number = "مبلغ شارژ معتبر نمی‌باشد" } })
+                @Html.ValidationMessageFor(model => model.AddBalance, "", new { @class = "form-text text-danger" })
+            </div>
+
+            <button type="submit" class="btn btn-primary">شارژ</button>
+            @Html.ActionLink("بازگشت", "Index", null, new { @class = "btn btn-info text-white mx-2" })
+        </div>
+    </form>
+    <div id="failedChargeToast" class="toast hide align-items-center bg-danger " role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body flex-grow-1 me-1 text-white">
+                <span class="fs-7 text-white">مبلغ شارژ معتبر نمی‌باشد</span>
+            </div>
+            <button type="button" class="btn-close ms-2 m-auto btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    <div id="successChargeToast" class="toast hide align-items-center bg-success " role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body flex-grow-1 me-1 text-white">
+                <span class="fs-7 text-white">شارژ با موفقیت انجام شد</span>
+            </div>
+            <button type="button" class="btn-close ms-2 m-auto btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    if (!ViewData.ModelState.IsValid)
+    {
+
+
+        <script>
+            $(function () {
+                var toastElList = [].slice.call(document.querySelectorAll('#failedChargeToast'))
+                var toastList = toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl)
+                })
+                toastList.forEach(toast => toast.show());
+            });
+        </script>
+    }
+
+    if (ViewBag.ChargeSuccess == true)
+    {
+        <script>
+            $(function () {
+                var toastElList = [].slice.call(document.querySelectorAll('#successChargeToast'))
+                var toastList = toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl)
+                })
+                toastList.forEach(toast => toast.show());
+            });
+        </script>
+    }
+
+}
+else
+{
+    <h2>پرداخت قبض</h2>
+
+    <dl class="row mt-4">
+        <dt class="col-sm-3">شماره سیم‌کارت</dt>
+        <dd class="col-sm-9">@wallet.Number</dd>
+
+        <dt class="col-sm-3">مالک</dt>
+        <dd class="col-sm-9">@wallet.Person</dd>
+
+        <dt class="col-sm-3">صورت حساب فعلی</dt>
+        <dd class="col-sm-9">@Math.Abs(wallet.Balance) تومان</dd>
+    </dl>
+
+    <hr />
+
+    <form method="post" action="@Url.Action("Wallet")">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(a => a.SimId)
+        @Html.HiddenFor(a => a.SimTypeId)
+        @Html.HiddenFor(a => a.AddBalance)
+        <div>
+            <div class="my-3">
+                <label class="form-label">مبلغ صورت حساب</label>
+                <div class="form-control">@Math.Abs(wallet.Balance) تومان</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">پرداخت</button>
+            @Html.ActionLink("بازگشت", "Index", null, new { @class = "btn btn-info text-white mx-2" })
+        </div>
+    </form>
+    <div id="successPayBillToast" class="toast hide align-items-center bg-success " role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body flex-grow-1 me-1 text-white">
+                <span class="fs-7 text-white">پرداخت قبض با موفقیت انجام شد</span>
+            </div>
+            <button type="button" class="btn-close ms-2 m-auto btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    if (ViewBag.PayBillSuccess == true)
+    {
+        <script>
+            $(function () {
+                var toastElList = [].slice.call(document.querySelectorAll('#successPayBillToast'))
+                var toastList = toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl)
+                })
+                toastList.forEach(toast => toast.show());
+            });
+        </script>
+    }
+
+}

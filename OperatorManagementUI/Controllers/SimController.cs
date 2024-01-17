@@ -18,7 +18,7 @@ namespace OperatorManagementUI.Controllers
 
         public ActionResult Index()
         {
-            return View(_simService.GetSims());
+            return View(_simService.GetDetailSims());
         }
 
         public ActionResult Details(int? id)
@@ -29,7 +29,7 @@ namespace OperatorManagementUI.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                SimDTO sim = _simService.GetSimById(id.Value);
+                SimDetailDTO sim = _simService.GetSimDetailById(id.Value);
                 if (sim == null)
                 {
                     return HttpNotFound();
@@ -44,13 +44,14 @@ namespace OperatorManagementUI.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.Person_Id = new SelectList(_personService.GetPeople(), "Id", "FirstName");
+            ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
+            ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Number,Person_Id")] SimDTO sim)
+        public ActionResult Create([Bind] SimDTO sim)
         {
             try
             {
@@ -60,7 +61,8 @@ namespace OperatorManagementUI.Controllers
                     return RedirectToAction("Index");
                 }
 
-                ViewBag.Person_Id = new SelectList(_personService.GetPeople(), "Id", "FirstName", sim.Person_Id);
+                ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
+                ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type");
                 return View(sim);
             }
             catch
@@ -82,7 +84,8 @@ namespace OperatorManagementUI.Controllers
                 {
                     return HttpNotFound();
                 }
-                ViewBag.Person_Id = new SelectList(_personService.GetPeople(), "Id", "FirstName", sim.Person_Id);
+                ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", sim.Person_Id);
+                ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
                 return View(sim);
             }
             catch
@@ -93,7 +96,7 @@ namespace OperatorManagementUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Number,Person_Id")] SimDTO sim)
+        public ActionResult Edit([Bind] SimDTO sim)
         {
             try
             {
@@ -102,7 +105,8 @@ namespace OperatorManagementUI.Controllers
                     _simService.UpdateSim(sim);
                     return RedirectToAction("Index");
                 }
-                ViewBag.Person_Id = new SelectList(_personService.GetPeople(), "Id", "FirstName", sim.Person_Id);
+                ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", sim.Person_Id);
+                ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
                 return View(sim);
             }
             catch
@@ -140,6 +144,94 @@ namespace OperatorManagementUI.Controllers
             {
                 _simService.DeleteSimById(id);
                 return RedirectToAction("Index");
+            }
+            catch
+            {
+                return HttpNotFound();
+            }
+        }
+
+        public ActionResult DeletedSims()
+        {
+            return View(_simService.GetDeletedSims());
+        }
+
+        public ActionResult UnDelete(int id)
+        {
+            try
+            {
+                _simService.UnDeleteSimById(id);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return HttpNotFound();
+            }
+        }
+
+        public ActionResult Wallet(int? id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return HttpNotFound();
+                }
+
+                var currentsim = _simService.GetWallet(id.Value);
+                ViewBag.wallet = currentsim;
+                var vm = new WalletChargeDTO
+                {
+                    SimId = id.Value,
+                    AddBalance = 0,
+                    SimTypeId = currentsim.SimTypeId
+                };
+                return View(vm);
+            }
+            catch
+            {
+                return HttpNotFound();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Wallet([Bind] WalletChargeDTO walletChargeDTO)
+        {
+
+            try
+            {
+                switch (walletChargeDTO.SimTypeId)
+                {
+                    case (int)OperatorManagementBL.Enum.SimTypeEnum.credit:
+                        {
+
+                            if (walletChargeDTO.AddBalance <= 0)
+                            {
+                                ModelState.AddModelError("InvalidBalance", "مبلغ شارژ معتبر نیست");
+                                ViewBag.wallet = _simService.GetWallet(walletChargeDTO.SimId);
+                                return View(walletChargeDTO);
+                            }
+
+                            _simService.ChargeSim(walletChargeDTO.SimId, walletChargeDTO.AddBalance);
+                            ViewBag.ChargeSuccess = true;
+
+                            break;
+                        }
+                    case (int)OperatorManagementBL.Enum.SimTypeEnum.permanent:
+                        {
+                            _simService.PayBillSim(walletChargeDTO.SimId);
+                            ViewBag.PayBillSuccess = true;
+
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+                ViewBag.wallet = _simService.GetWallet(walletChargeDTO.SimId);
+                
+                return View(walletChargeDTO);
             }
             catch
             {

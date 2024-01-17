@@ -4,31 +4,22 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>مشاهده اطلاعات شخص</h2>
 
-<div>
-    <h4>Tbl_Person</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
+<dl class="row mt-4">
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FirstName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.FirstName)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LastName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.LastName)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NationCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.NationCode)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
+    <p class="mt-3">
+        @Html.ActionLink("بازگشت", "Index", null, new { @class = "btn btn-info text-white" })
+        @Html.ActionLink("ویرایش", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning text-white mx-2" })
+    </p>
+</dl>
 
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+

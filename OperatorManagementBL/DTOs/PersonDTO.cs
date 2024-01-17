@@ -6,14 +6,19 @@ namespace OperatorManagementBL.DTOs
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "First Name cannot be empty")]
-        [Display(Name = "First Name")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "First Name must be between 3 to 20 characters")]
+        [Required(ErrorMessage = "نام نمیتواند خالی باشد")]
+        [Display(Name = "نام")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "نام باید بین 3 تا 20 کاراکتر باشد")]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "Last Name cannot be empty")]
-        [Display(Name = "Last Name")]
-        [StringLength(30, MinimumLength = 3, ErrorMessage = "Last Name must be between 3 to 30 characters")]
+        [Required(ErrorMessage = "نام خانوادگی نمیتواند خالی باشد")]
+        [Display(Name = "نام خانوادگی")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "نام خانوادگی باید بین 3 تا 30 کاراکتر باشد")]
         public string LastName { get; set; }
+
+        [Required(ErrorMessage = "کد ملی نمیتواند خالی باشد")]
+        [Display(Name = "کد ملی")]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "کد ملی باید 10 رقم باشد")]
+        public string NationCode { get; set; }
     }
 }

@@ -4,122 +4,379 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="row">
-    <div class="col-11 mx-auto">
-        <div class="d-flex flex-row flex-nowrap align-items-center gap-2">
-            <div>@Html.ActionLink("Manage People", "Index", "Person", null, new { @class = "btn btn-lg btn-primary" })</div>
-            <div>@Html.ActionLink("Manage Sims", "Index", "Sim", null, new { @class = "btn btn-lg btn-primary" })</div>
-        </div>
-    </div>
-</div>
-<hr />
-<div class="row">
-    <div class="col-11 mx-auto">
-        <div>
-            <h2>Last Transactions</h2>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <td>Date</td>
-                        <td>From</td>
-                        <td>To</td>
-                        <td>Type</td>
-                        <td>Duration</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Date</td>
-                            <td>@item.FromSimNumber</td>
-                            <td>@item.ToSimNumber</td>
-                            <td>@item.TransactionType</td>
-                            <td>@item.Duration</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<hr />
-<div class="row">
-    <div class="col-11 mx-auto">
-        <div><h3>Make a Call</h3></div>
-
-
-        <form method="post" id="makeCallForm">
-            @Html.AntiForgeryToken()
-
-            <div class="form-group">
-                <lable class="control-label col-md-2">From SIM Number</lable>
-                <div class="col-md-10">
-                    @Html.DropDownList("Sim_Id", null, htmlAttributes: new { @class = "form-select", id = "fromSimId" })
+<div class="d-flex flex-row flex-nowrap justify-content-evenly">
+    <div class="shadow-sm p-3 m-min-width-250">
+        <form id="makeCallForm">
+            <fieldset>
+                <legend class="badge bg-success">برقراری تماس</legend>
+                <div class="mb-3">
+                    <label for="fromSimId" class="form-label">مبدا</label>
+                    @Html.DropDownList("Sim_Id", null, "انتخاب کنید", htmlAttributes: new { @class = "form-select", id = "fromSimId", onchange = "fillToId()" })
                 </div>
-            </div>
+                <div class="mb-3">
+                    <label for="toSimId" class="form-label">مقصد</label>
+                    @Html.DropDownList("Sim_Id", null, "انتخاب کنید", htmlAttributes: new { @class = "form-select", id = "toSimId" , disabled = "true" })
 
-            <div class="form-group">
-                <lable class="control-label col-md-2">To SIM Number</lable>
-                <div class="col-md-10">
-                    @Html.DropDownList("Sim_Id", null, htmlAttributes: new { @class = "form-select", id = "toSimId" })
                 </div>
-            </div>
-
-            <div class="form-group">
-                <lable class="control-label col-md-2">Duration (in minutes)</lable>
-                <div class="col-md-10">
-                    <input type="number" value="1" class="form-control" id="durationId"/>
+                <div class="mb-3">
+                    <label for="durationId" class="form-label">مدت تماس (به دقیقه)</label>
+                    <input type="number" id="durationId" value="0" class="form-control text-end">
                 </div>
-            </div>
-
-            <div class="form-group">
-                <lable class="control-label col-md-2">Type</lable>
-                <div class="col-md-10">
-                    <select id="typeId" class="form-select">
-                        <option value="1">SMS</option>
-                        <option value="2">CALL</option>
-                    </select>
-                </div>
-            </div>
-
-            <input type="submit" class="btn btn-primary" />
+                <button type="submit" class="btn btn-success"><i class="fa fa-phone mx-2 text-white"></i>تماس</button>
+            </fieldset>
         </form>
-
-
     </div>
+    <div class="shadow-sm p-3 m-min-width-250 m-height-fit-content">
+        <form id="sendSMSForm">
+            <fieldset>
+                <legend class="badge bg-primary">ارسال پیامک</legend>
+                <div class="mb-3">
+                    <label for="sms_fromSimId" class="form-label">مبدا</label>
+                    @Html.DropDownList("Sim_Id", null, "انتخاب کنید", htmlAttributes: new { @class = "form-select", id = "sms_fromSimId", onchange = "smsFillToId()" })
+                </div>
+                <div class="mb-3">
+                    <label for="sms_toSimId" class="form-label">مقصد</label>
+                    @Html.DropDownList("Sim_Id", null, "انتخاب کنید", htmlAttributes: new { @class = "form-select", id = "sms_toSimId", disabled = "true" })
+
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane mx-2 text-white"></i>ارسال</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<div class="toast-container">
+
+    <div id="invalidDurationToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">تماس ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            مدت زمان تماس معتبر نیست
+        </div>
+    </div>
+
+    <div id="callSuccessToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">تماس موفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            تماس با موفقیت انجام شد
+        </div>
+    </div>
+
+    <div id="callFailedInsuffienceBalanceToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">تماس ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            تماس به دلیل کمبود موجودی انجام نشد
+        </div>
+    </div>
+
+    <div id="callFailedInactiveFromSimcardToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">تماس ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            تماس به دلیل غیرفعال بودن سیم‌کارت مبدا انجام نشد
+        </div>
+    </div>
+
+    <div id="callFailedInactiveToSimcardToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">تماس ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            تماس به دلیل غیرفعال بودن سیم‌کارت مقصد انجام نشد
+        </div>
+    </div>
+
+    <div id="callFailedUnhandledToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">تماس ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            تماس به دلیل نامعلوم انجام نشد
+        </div>
+    </div>
+
+
+
+
+    <div id="smsSuccessToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام موفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            پیام با موفقیت ارسال شد
+        </div>
+    </div>
+
+    <div id="smsFailedInsuffienceBalanceToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            پیام به دلیل کمبود موجودی ارسال نشد
+        </div>
+    </div>
+
+    <div id="smsFailedInactiveFromSimcardToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            پیام به دلیل غیرفعال بودن سیم‌کارت مبدا ارسال نشد
+        </div>
+    </div>
+
+    <div id="smsFailedInactiveToSimcardToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            پیام به دلیل غیرفعال بودن سیم‌کارت مقصد ارسال نشد
+        </div>
+    </div>
+
+    <div id="smsFailedUnhandledToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">پیام ناموفق</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            پیام به دلیل نامعلوم ارسال نشد
+        </div>
+    </div>
+
 </div>
 
 <script>
+
+    function showMakeCallSuccessToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#callSuccessToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showMakeCallFailedInssufienceBalanceToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#callFailedInsuffienceBalanceToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showMakeCallFailedInactiveFromSimcardToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#callFailedInactiveFromSimcardToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showMakeCallFailedInactiveToSimcardToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#callFailedInactiveToSimcardToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showMakeCallFailedUnhandledToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#callFailedUnhandledToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+
+
+
+    function showSendSmsSuccessToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#smsSuccessToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showSendSmsFailedInssufienceBalanceToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#smsFailedInsuffienceBalanceToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showSendSmsFailedInactiveFromSimcardToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#smsFailedInactiveFromSimcardToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showSendSmsFailedInactiveToSimcardToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#smsFailedInactiveToSimcardToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showSendSmsFailedUnhandledToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#smsFailedUnhandledToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function showInvalidDurationToast() {
+        var toastElList = [].slice.call(document.querySelectorAll('#invalidDurationToast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    }
+
+    function fillToId() {
+        $("#toSimId").removeAttr("disabled");
+        $("#toSimId").empty();
+        $.ajax({
+                cache: false,
+            url: '/Home/GetSimsForDropdown',
+                type: 'POST',
+                data: {
+                    "fromSimId": $('#fromSimId').find(":selected").val()
+                },
+            success: function (data) {
+                    $("#toSimId").append(
+                        '<option value="0" selected>انتخاب کنید</option>'
+                    );
+                    $.each(data,
+                        function () {
+                            $("#toSimId").append(
+                                '<option value="' + this.Id + '">' + this.Number + '</option>'
+                            );
+                        });
+                }
+            });
+
+    } 
+
+    function smsFillToId() {
+        $("#sms_toSimId").removeAttr("disabled");
+        $("#sms_toSimId").empty();
+        $.ajax({
+            cache: false,
+            url: '/Home/GetSimsForDropdown',
+            type: 'POST',
+            data: {
+                "fromSimId": $('#sms_fromSimId').find(":selected").val()
+            },
+            success: function (data) {
+                $("#sms_toSimId").append(
+                    '<option value="0" selected>انتخاب کنید</option>'
+                );
+                $.each(data,
+                    function () {
+                        $("#sms_toSimId").append(
+                            '<option value="' + this.Id + '">' + this.Number + '</option>'
+                        );
+                    });
+            }
+        });
+
+    }
+
     $(document).ready(function () {
         $('#makeCallForm').on('submit', function (e) {
             e.preventDefault();
+            if ($("#durationId").val() <= 0) {
+                showInvalidDurationToast();
+                return;
+            }
             $.ajax({
                 cache: false,
-                url: '/Home/Test',
+                url: '/Home/MakeCall',
                 type: 'POST',
                 data: {
                     "fromSimId": $("#fromSimId").val(),
                     "toSimId": $("#toSimId").val(),
-                    "typeId": $("#typeId").val(), 
+                    "typeId": @((int)OperatorManagementBL.Enum.TransactionTypeEnum.call),
                     "duration": $("#durationId").val()
                 },
                 success: function (result) {
-                    if (result.status == true) {
-                        alert('call submitted successfully');
-                        location.reload();
+                    if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.ok)) {
+                        showMakeCallSuccessToast();
                     }
-                    else {
-                        alert(result.msg);
+                    else if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.insuffienceBalance)) {
+                        showMakeCallFailedInssufienceBalanceToast();
+                    }else if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.inactiveFromSimcard)) {
+                        showMakeCallFailedInactiveFromSimcardToast();
+                    }
+                    else if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.inactiveToSimcard)) {
+                        showMakeCallFailedInactiveToSimcardToast();
+                    } else {
+                        showMakeCallFailedUnhandledToast();
                     }
                 },
                 error: function (result) {
-                    alert(result.msg);
+                    showMakeCallFailedUnhandledToast();
                 }
             });
-            
+
+        });
+
+        $('#sendSMSForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                cache: false,
+                url: '/Home/SendSMS',
+                type: 'POST',
+                data: {
+                    "fromSimId": $("#sms_fromSimId").val(),
+                    "toSimId": $("#sms_toSimId").val(),
+                    "typeId": @((int)OperatorManagementBL.Enum.TransactionTypeEnum.sms)
+                },
+                success: function (result) {
+                    if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.ok)) {
+                        showSendSmsSuccessToast();
+                    }
+                    else if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.insuffienceBalance)) {
+                        showSendSmsFailedInssufienceBalanceToast();
+                    }
+                    else if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.inactiveFromSimcard)) {
+                        showSendSmsFailedInactiveFromSimcardToast();
+                    }
+                    else if (result.statusCode == @((int)OperatorManagementBL.Enum.CallFailedEnum.inactiveToSimcard)) {
+                        showSendSmsFailedInactiveToSimcardToast();
+                    }
+                    else {
+                        showSendSmsFailedUnhandledToast();
+                    }
+                },
+                error: function (result) {
+                    showSendSmsFailedUnhandledToast();
+                }
+            });
+
         });
     });
 </script>

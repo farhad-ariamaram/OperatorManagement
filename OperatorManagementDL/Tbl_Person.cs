@@ -9,11 +9,9 @@
 
 namespace OperatorManagementDL
 {
-    using OperatorManagementDL.Models;
-    using System.ComponentModel.DataAnnotations;
+    using System;
     using System.Collections.Generic;
-
-    [MetadataType(typeof(PersonMD))]
+    
     public partial class Tbl_Person
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -25,6 +23,8 @@ namespace OperatorManagementDL
         public int Fld_Person_Id { get; set; }
         public string Fld_Person_Fname { get; set; }
         public string Fld_Person_Lname { get; set; }
+        public string Fld_Person_NationCode { get; set; }
+        public bool Fld_Person_IsDeleted { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Sim> Tbl_Sim { get; set; }

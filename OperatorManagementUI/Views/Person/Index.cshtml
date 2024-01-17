@@ -4,10 +4,11 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>مدیریت اشخاص</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <a href="@Url.Action("Create")" class="btn btn-success text-white mx-2"><i class="fa fa-plus mx-1"></i>افزودن</a>
+    <a href="@Url.Action("DeletedPeople")" class="btn btn-primary text-white"><i class="fa fa-trash mx-1"></i>مدیریت اشخاص حذف شده</a>
 </p>
 <table class="table">
     <tr>
@@ -17,23 +18,29 @@
         <th>
             @Html.DisplayNameFor(model => model.LastName)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NationCode)
+        </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.FirstName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.LastName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.NationCode)
+    </td>
+    <td>
+        @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning text-white" })
+        @Html.ActionLink("مشاهده", "Details", new { id = item.Id }, new { @class = "btn btn-info text-white" })
+        @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })
+    </td>
+</tr>
 }
 
 </table>

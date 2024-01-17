@@ -28,60 +28,55 @@ namespace OperatorManagementBL.Services
                     FromSimNumber = item.Tbl_Sim.Fld_Sim_Number,
                     ToSimNumber = item.Tbl_Sim1.Fld_Sim_Number,
                     TransactionType = item.Tbl_TransactionType.Fld_TransactionType_Type,
-                    Duration = (item.Fld_Transaction_End.HasValue ? item.Fld_Transaction_End.Value : new System.TimeSpan(0)).Subtract(item.Fld_Transaction_Start)
+                    //Duration = (item.Fld_Transaction_End.HasValue ? item.Fld_Transaction_End.Value : new System.TimeSpan(0)).Subtract(item.Fld_Transaction_Start)
                 });
             }
 
             return ret;
         }
 
-        //ok = 0
-        //insuffient balance = 1
         public int MakeCall(int from, int to, int type, int duration)
         {
             try
             {
                 var fromSim = _context.Tbl_Sim.Find(from);
+                var toSim = _context.Tbl_Sim.Find(to);
 
-                //check balance
+                //اگر سیمکارت مبدا غیرفعال بود
+                if (!fromSim.Fld_Sim_IsActive)
+                {
+                    return (int)CallFailedEnum.inactiveFromSimcard;
+                }
+
+                //اگر سیمکارت مقصد غیرفعال بود
+                if (!toSim.Fld_Sim_IsActive)
+                {
+                    return (int)CallFailedEnum.inactiveToSimcard;
+                }
+
                 var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
-                if(walletBallance <= 0)
+
+                //اگر اعتباری باشد و کلا شارژ نداشته باشد
+                if(fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
                 {
-                    return 1;
+                    return (int)CallFailedEnum.insuffienceBalance;
                 }
 
-                //تعرفه برای تماس هر دقیقه 5 تومان و برای هر اس ام اس 5 تومان در نظر گرفته شد
-                var requiredBalance = 0;
-                if(type == (int)TransactionTypeEnum.call)
+                //تعرفه برای تماس هر دقیقه 5 تومان 
+                var requiredBalance = duration * 5;
+
+                //اگر اعتباری بود و شارژ کافی نداشت
+                if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance < requiredBalance)
                 {
-                    requiredBalance = duration * 5;
-                }
-                else if (type == (int)TransactionTypeEnum.sms)
-                {
-                    requiredBalance = 5;
-                }
-                else
-                {
-                    throw new Exception();
+                    return (int)CallFailedEnum.insuffienceBalance;
                 }
 
-                //check suffient balance by duration
-                if (walletBallance < requiredBalance)
-                {
-                    return 1;
-                }
-
-                var currentDate = DateTime.Now;
-                var currentDateDuration = DateTime.Now.AddMinutes(duration);
-                TimeSpan currentTime = new TimeSpan(currentDate.Hour, currentDate.Minute, currentDate.Second);
-                TimeSpan currentDurationTime = new TimeSpan(currentDateDuration.Hour, currentDateDuration.Minute, currentDateDuration.Second);
                 Tbl_Transaction p = new Tbl_Transaction
                 {
                     Fld_Sim_FromSimId = from,
                     Fld_Sim_ToSimId = to,
-                    Fld_Transaction_Date = currentDate,
-                    Fld_Transaction_Start = currentTime,
-                    Fld_Transaction_End = currentDurationTime,
+                    Fld_Transaction_Date = DateTime.Now,
+                    Fld_Transaction_Duration = new TimeSpan(0,duration,0),
                     Fld_TransactionType_Id = type
                 };
                 _context.Tbl_Transaction.Add(p);
@@ -97,6 +92,66 @@ namespace OperatorManagementBL.Services
             catch
             {
                 throw new Exception("makingCallProblem");
+            }
+        }
+
+        public int SendSMS(int from, int to, int type)
+        {
+            try
+            {
+                var fromSim = _context.Tbl_Sim.Find(from);
+                var toSim = _context.Tbl_Sim.Find(to);
+
+                //اگر سیمکارت مبدا غیرفعال بود
+                if (!fromSim.Fld_Sim_IsActive)
+                {
+                    return (int)CallFailedEnum.inactiveFromSimcard;
+                }
+
+                //اگر سیمکارت مقصد غیرفعال بود
+                if (!toSim.Fld_Sim_IsActive)
+                {
+                    return (int)CallFailedEnum.inactiveToSimcard;
+                }
+
+                var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
+
+                //اگر اعتباری باشد و کلا شارژ نداشته باشد
+                if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
+                {
+                    return (int)CallFailedEnum.insuffienceBalance;
+                }
+
+                //تعرفه برای ارسال هر پیامک 5 تومان 
+                var requiredBalance = 5;
+
+                //اگر اعتباری بود و شارژ کافی نداشت
+                if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance < requiredBalance)
+                {
+                    return (int)CallFailedEnum.insuffienceBalance;
+                }
+
+                Tbl_Transaction p = new Tbl_Transaction
+                {
+                    Fld_Sim_FromSimId = from,
+                    Fld_Sim_ToSimId = to,
+                    Fld_Transaction_Date = DateTime.Now,
+                    Fld_Transaction_Duration = new TimeSpan(0, 0, 0),
+                    Fld_TransactionType_Id = type
+                };
+                _context.Tbl_Transaction.Add(p);
+                _context.SaveChanges();
+
+                //update balance
+                fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
+                _context.Entry(fromSim).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                return 0;
+            }
+            catch
+            {
+                throw new Exception("sendSMSProblem");
             }
         }
     }

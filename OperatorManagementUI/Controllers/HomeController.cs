@@ -18,6 +18,7 @@ namespace OperatorManagementUI.Controllers
             _simService = new SimService();
         }
 
+
         public ActionResult Index()
         {
             var model = _transactionService.GetTransactions();
@@ -26,25 +27,26 @@ namespace OperatorManagementUI.Controllers
         }
 
         [HttpPost]
-        public JsonResult Test(int fromSimId, int toSimId, int typeId, int duration)
+        public JsonResult MakeCall(int fromSimId, int toSimId, int typeId, int duration)
         {
-            try
-            {
-                var res = _transactionService.MakeCall(fromSimId, toSimId, typeId, duration);
-                
-                if (res == 1)
-                {
-                    return Json(new { status = false, msg = "Your balance is not Sufficient" });
-                }
-
-                return Json(new { status = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { status = false, msg = "problem on making call" });
-            }
-
+            var res = _transactionService.MakeCall(fromSimId, toSimId, typeId, duration);
+            return Json(new { statusCode = res });
         }
+
+        [HttpPost]
+        public JsonResult SendSMS(int fromSimId, int toSimId, int typeId)
+        {
+            var res = _transactionService.SendSMS(fromSimId, toSimId, typeId);
+            return Json(new { statusCode = res });
+        }
+
+        [HttpPost]
+        public JsonResult GetSimsForDropdown(int fromSimId)
+        {
+            var res = _simService.GetSimsForDropdown(fromSimId);
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
+
 
     }
 }

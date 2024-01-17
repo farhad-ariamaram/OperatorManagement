@@ -9,11 +9,9 @@
 
 namespace OperatorManagementDL
 {
-    using OperatorManagementDL.Models;
-    using System.ComponentModel.DataAnnotations;
+    using System;
     using System.Collections.Generic;
-
-    [MetadataType(typeof(TransactionTypeMD))]
+    
     public partial class Tbl_TransactionType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

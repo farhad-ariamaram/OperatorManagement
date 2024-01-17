@@ -1,8 +1,8 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
-using System.Data.Entity;
 using System.Net;
 using System.Web.Mvc;
+using OperatorManagementBL.Exceptions;
 
 namespace OperatorManagementUI.Controllers
 {
@@ -51,7 +51,7 @@ namespace OperatorManagementUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName")] PersonDTO tbl_Person)
+        public ActionResult Create([Bind] PersonDTO tbl_Person)
         {
             try
             {
@@ -62,6 +62,10 @@ namespace OperatorManagementUI.Controllers
                 }
 
                 return View(tbl_Person);
+            }
+            catch(DuplicateNationCodeException ex)
+            {
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
             catch
             {
@@ -92,7 +96,7 @@ namespace OperatorManagementUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName")] PersonDTO person)
+        public ActionResult Edit([Bind] PersonDTO person)
         {
             try
             {
@@ -137,6 +141,24 @@ namespace OperatorManagementUI.Controllers
             try
             {
                 _personService.DeletePersonById(id);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return HttpNotFound();
+            }
+        }
+
+        public ActionResult DeletedPeople()
+        {
+            return View(_personService.GetDeletedPeople());
+        }
+
+        public ActionResult UnDelete(int id)
+        {
+            try
+            {
+                _personService.UnDeletePersonById(id);
                 return RedirectToAction("Index");
             }
             catch

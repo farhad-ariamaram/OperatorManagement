@@ -12,6 +12,8 @@
           <Property Name="Fld_Person_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Fld_Person_Fname" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Fld_Person_Lname" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Fld_Person_NationCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Fld_Person_IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Tbl_Sim">
           <Key>
@@ -20,6 +22,16 @@
           <Property Name="Fld_Sim_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Fld_Sim_Number" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Fld_Person_Id" Type="int" Nullable="false" />
+          <Property Name="Fld_Sim_IsActive" Type="bit" Nullable="false" />
+          <Property Name="Fld_SimType_Id" Type="int" Nullable="false" />
+          <Property Name="Fld_Sim_IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tbl_SimType">
+          <Key>
+            <PropertyRef Name="Fld_SimType_Id" />
+          </Key>
+          <Property Name="Fld_SimType_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fld_SimType_Value" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="Tbl_Transaction">
           <Key>
@@ -30,8 +42,7 @@
           <Property Name="Fld_Sim_FromSimId" Type="int" Nullable="false" />
           <Property Name="Fld_Sim_ToSimId" Type="int" Nullable="false" />
           <Property Name="Fld_TransactionType_Id" Type="int" Nullable="false" />
-          <Property Name="Fld_Transaction_Start" Type="time" Precision="2" Nullable="false" />
-          <Property Name="Fld_Transaction_End" Type="time" Precision="2" />
+          <Property Name="Fld_Transaction_Duration" Type="time" Precision="2" Nullable="false" />
         </EntityType>
         <EntityType Name="Tbl_TransactionType">
           <Key>
@@ -56,6 +67,18 @@
             </Principal>
             <Dependent Role="Tbl_Sim">
               <PropertyRef Name="Fld_Person_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tbl_SimTbl_SimType">
+          <End Role="Tbl_SimType" Type="Self.Tbl_SimType" Multiplicity="1" />
+          <End Role="Tbl_Sim" Type="Self.Tbl_Sim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_SimType">
+              <PropertyRef Name="Fld_SimType_Id" />
+            </Principal>
+            <Dependent Role="Tbl_Sim">
+              <PropertyRef Name="Fld_SimType_Id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -110,11 +133,16 @@
         <EntityContainer Name="OperatorManagementDBModelStoreContainer">
           <EntitySet Name="Tbl_Person" EntityType="Self.Tbl_Person" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Sim" EntityType="Self.Tbl_Sim" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_SimType" EntityType="Self.Tbl_SimType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Transaction" EntityType="Self.Tbl_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_TransactionType" EntityType="Self.Tbl_TransactionType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Wallet" EntityType="Self.Tbl_Wallet" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Tbl_Sim_Tbl_Person" Association="Self.FK_Tbl_Sim_Tbl_Person">
             <End Role="Tbl_Person" EntitySet="Tbl_Person" />
+            <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_SimTbl_SimType" Association="Self.FK_Tbl_SimTbl_SimType">
+            <End Role="Tbl_SimType" EntitySet="Tbl_SimType" />
             <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
           </AssociationSet>
           <AssociationSet Name="FK_Tbl_Transaction_Tbl_Sim" Association="Self.FK_Tbl_Transaction_Tbl_Sim">
@@ -146,6 +174,8 @@
           <Property Name="Fld_Person_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Fld_Person_Fname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Fld_Person_Lname" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_Person_NationCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_Person_IsDeleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_Sim_Tbl_Person" FromRole="Tbl_Person" ToRole="Tbl_Sim" />
         </EntityType>
         <EntityType Name="Tbl_Sim">
@@ -155,10 +185,22 @@
           <Property Name="Fld_Sim_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Fld_Sim_Number" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Fld_Person_Id" Type="Int32" Nullable="false" />
+          <Property Name="Fld_Sim_IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="Fld_SimType_Id" Type="Int32" Nullable="false" />
+          <Property Name="Fld_Sim_IsDeleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Tbl_Person" Relationship="Self.FK_Tbl_Sim_Tbl_Person" FromRole="Tbl_Sim" ToRole="Tbl_Person" />
+          <NavigationProperty Name="Tbl_SimType" Relationship="Self.FK_Tbl_SimTbl_SimType" FromRole="Tbl_Sim" ToRole="Tbl_SimType" />
           <NavigationProperty Name="Tbl_Transaction" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim" FromRole="Tbl_Sim" ToRole="Tbl_Transaction" />
           <NavigationProperty Name="Tbl_Transaction1" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim1" FromRole="Tbl_Sim" ToRole="Tbl_Transaction" />
           <NavigationProperty Name="Tbl_Wallet" Relationship="Self.FK_Tbl_Wallet_Tbl_Sim" FromRole="Tbl_Sim" ToRole="Tbl_Wallet" />
+        </EntityType>
+        <EntityType Name="Tbl_SimType">
+          <Key>
+            <PropertyRef Name="Fld_SimType_Id" />
+          </Key>
+          <Property Name="Fld_SimType_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fld_SimType_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_SimTbl_SimType" FromRole="Tbl_SimType" ToRole="Tbl_Sim" />
         </EntityType>
         <EntityType Name="Tbl_Transaction">
           <Key>
@@ -169,8 +211,7 @@
           <Property Name="Fld_Sim_FromSimId" Type="Int32" Nullable="false" />
           <Property Name="Fld_Sim_ToSimId" Type="Int32" Nullable="false" />
           <Property Name="Fld_TransactionType_Id" Type="Int32" Nullable="false" />
-          <Property Name="Fld_Transaction_Start" Type="Time" Nullable="false" Precision="2" />
-          <Property Name="Fld_Transaction_End" Type="Time" Precision="2" />
+          <Property Name="Fld_Transaction_Duration" Type="Time" Nullable="false" Precision="2" />
           <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim" FromRole="Tbl_Transaction" ToRole="Tbl_Sim" />
           <NavigationProperty Name="Tbl_Sim1" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim1" FromRole="Tbl_Transaction" ToRole="Tbl_Sim" />
           <NavigationProperty Name="Tbl_TransactionType" Relationship="Self.FK_Tbl_Transaction_Tbl_TransactionType" FromRole="Tbl_Transaction" ToRole="Tbl_TransactionType" />
@@ -200,6 +241,18 @@
             </Principal>
             <Dependent Role="Tbl_Sim">
               <PropertyRef Name="Fld_Person_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tbl_SimTbl_SimType">
+          <End Role="Tbl_SimType" Type="Self.Tbl_SimType" Multiplicity="1" />
+          <End Role="Tbl_Sim" Type="Self.Tbl_Sim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_SimType">
+              <PropertyRef Name="Fld_SimType_Id" />
+            </Principal>
+            <Dependent Role="Tbl_Sim">
+              <PropertyRef Name="Fld_SimType_Id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -254,11 +307,16 @@
         <EntityContainer Name="OperatorManagementDBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Tbl_Person" EntityType="Self.Tbl_Person" />
           <EntitySet Name="Tbl_Sim" EntityType="Self.Tbl_Sim" />
+          <EntitySet Name="Tbl_SimType" EntityType="Self.Tbl_SimType" />
           <EntitySet Name="Tbl_Transaction" EntityType="Self.Tbl_Transaction" />
           <EntitySet Name="Tbl_TransactionType" EntityType="Self.Tbl_TransactionType" />
           <EntitySet Name="Tbl_Wallet" EntityType="Self.Tbl_Wallet" />
           <AssociationSet Name="FK_Tbl_Sim_Tbl_Person" Association="Self.FK_Tbl_Sim_Tbl_Person">
             <End Role="Tbl_Person" EntitySet="Tbl_Person" />
+            <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_SimTbl_SimType" Association="Self.FK_Tbl_SimTbl_SimType">
+            <End Role="Tbl_SimType" EntitySet="Tbl_SimType" />
             <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
           </AssociationSet>
           <AssociationSet Name="FK_Tbl_Transaction_Tbl_Sim" Association="Self.FK_Tbl_Transaction_Tbl_Sim">
@@ -290,6 +348,8 @@
                 <ScalarProperty Name="Fld_Person_Id" ColumnName="Fld_Person_Id" />
                 <ScalarProperty Name="Fld_Person_Fname" ColumnName="Fld_Person_Fname" />
                 <ScalarProperty Name="Fld_Person_Lname" ColumnName="Fld_Person_Lname" />
+                <ScalarProperty Name="Fld_Person_NationCode" ColumnName="Fld_Person_NationCode" />
+                <ScalarProperty Name="Fld_Person_IsDeleted" ColumnName="Fld_Person_IsDeleted" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -299,6 +359,17 @@
                 <ScalarProperty Name="Fld_Sim_Id" ColumnName="Fld_Sim_Id" />
                 <ScalarProperty Name="Fld_Sim_Number" ColumnName="Fld_Sim_Number" />
                 <ScalarProperty Name="Fld_Person_Id" ColumnName="Fld_Person_Id" />
+                <ScalarProperty Name="Fld_Sim_IsActive" ColumnName="Fld_Sim_IsActive" />
+                <ScalarProperty Name="Fld_SimType_Id" ColumnName="Fld_SimType_Id" />
+                <ScalarProperty Name="Fld_Sim_IsDeleted" ColumnName="Fld_Sim_IsDeleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tbl_SimType">
+            <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_SimType">
+              <MappingFragment StoreEntitySet="Tbl_SimType">
+                <ScalarProperty Name="Fld_SimType_Id" ColumnName="Fld_SimType_Id" />
+                <ScalarProperty Name="Fld_SimType_Value" ColumnName="Fld_SimType_Value" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -310,8 +381,7 @@
                 <ScalarProperty Name="Fld_Sim_FromSimId" ColumnName="Fld_Sim_FromSimId" />
                 <ScalarProperty Name="Fld_Sim_ToSimId" ColumnName="Fld_Sim_ToSimId" />
                 <ScalarProperty Name="Fld_TransactionType_Id" ColumnName="Fld_TransactionType_Id" />
-                <ScalarProperty Name="Fld_Transaction_Start" ColumnName="Fld_Transaction_Start" />
-                <ScalarProperty Name="Fld_Transaction_End" ColumnName="Fld_Transaction_End" />
+                <ScalarProperty Name="Fld_Transaction_Duration" ColumnName="Fld_Transaction_Duration" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
