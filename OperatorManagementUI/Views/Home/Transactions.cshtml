@@ -87,20 +87,6 @@
         <i class="fas fa-sort-amount-down-alt mx-1"></i>
         <span>مرتب سازی:</span>
     </div>
-    <style>
-        .m-sort-items-container > a{
-            color:#797979 !important;
-        }
-
-        .m-sort-items-container > a:hover {
-            color: #0d6efd !important;
-            cursor: pointer !important;
-        }
-
-        .m-sort-items-container > a.active {
-            color: #0d6efd!important;
-        }
-    </style>
     <div class="d-flex flex-row flex-nowrap align-items-center gap-3 m-sort-items-container">
         @{
             int selectedSortItem = 0;
@@ -171,27 +157,17 @@
     </table>
 </div>
 
-<script>
 
-    function submitFilterForm(sort) {
-        $("#sortType").val(sort);
-        $("#filterFormId").submit();
-    }
-
-    function getParameterByName(name, url = window.location.href) {
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
-
-    $('#fromSimId').val(getParameterByName('fromSimId'));
-    $('#toSimId').val(getParameterByName('toSimId'));
-    $('#fromPersonId').val(getParameterByName('fromPersonId'));
-    $('#toPersonId').val(getParameterByName('toPersonId'));
-    $('#typeId').val(getParameterByName('typeId'));
-    $('#fromDate').val(getParameterByName('fromDate'));
-    $('#toDate').val(getParameterByName('toDate'));
-</script>
+@section scripts{
+    <script>
+        $(function () {
+            $('#fromSimId').val(getParameterByName('fromSimId'));
+            $('#toSimId').val(getParameterByName('toSimId'));
+            $('#fromPersonId').val(getParameterByName('fromPersonId'));
+            $('#toPersonId').val(getParameterByName('toPersonId'));
+            $('#typeId').val(getParameterByName('typeId'));
+            $('#fromDate').val(getParameterByName('fromDate'));
+            $('#toDate').val(getParameterByName('toDate'));
+        });
+    </script>
+}

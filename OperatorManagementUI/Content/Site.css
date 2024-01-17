@@ -31,3 +31,16 @@ a, a:hover, a:visited, a:active, a:focus {
 .m-height-fit-content {
     height: fit-content;
 }
+
+.m-sort-items-container > a {
+    color: #797979 !important;
+}
+
+    .m-sort-items-container > a:hover {
+        color: #0d6efd !important;
+        cursor: pointer !important;
+    }
+
+    .m-sort-items-container > a.active {
+        color: #0d6efd !important;
+    }

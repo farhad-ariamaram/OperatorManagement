@@ -79,6 +79,7 @@ namespace OperatorManagementBL.Services
                     q_transactions = q_transactions.OrderByDescending(a => a.Fld_Transaction_Duration);
                     break;
                 default:
+                    q_transactions = q_transactions.OrderByDescending(a => a.Fld_Transaction_Date);
                     break;
             }
 
