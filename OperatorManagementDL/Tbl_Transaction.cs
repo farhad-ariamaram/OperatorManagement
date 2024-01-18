@@ -19,7 +19,7 @@ namespace OperatorManagementDL
         public int Fld_Sim_FromSimId { get; set; }
         public int Fld_Sim_ToSimId { get; set; }
         public int Fld_TransactionType_Id { get; set; }
-        public System.TimeSpan Fld_Transaction_Duration { get; set; }
+        public Nullable<System.TimeSpan> Fld_Transaction_Duration { get; set; }
     
         public virtual Tbl_Sim Tbl_Sim { get; set; }
         public virtual Tbl_Sim Tbl_Sim1 { get; set; }

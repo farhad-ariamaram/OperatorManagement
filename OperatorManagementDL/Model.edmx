@@ -42,7 +42,7 @@
           <Property Name="Fld_Sim_FromSimId" Type="int" Nullable="false" />
           <Property Name="Fld_Sim_ToSimId" Type="int" Nullable="false" />
           <Property Name="Fld_TransactionType_Id" Type="int" Nullable="false" />
-          <Property Name="Fld_Transaction_Duration" Type="time" Precision="2" Nullable="false" />
+          <Property Name="Fld_Transaction_Duration" Type="time" Precision="2" />
         </EntityType>
         <EntityType Name="Tbl_TransactionType">
           <Key>
@@ -211,7 +211,7 @@
           <Property Name="Fld_Sim_FromSimId" Type="Int32" Nullable="false" />
           <Property Name="Fld_Sim_ToSimId" Type="Int32" Nullable="false" />
           <Property Name="Fld_TransactionType_Id" Type="Int32" Nullable="false" />
-          <Property Name="Fld_Transaction_Duration" Type="Time" Nullable="false" Precision="2" />
+          <Property Name="Fld_Transaction_Duration" Type="Time" Precision="2" />
           <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim" FromRole="Tbl_Transaction" ToRole="Tbl_Sim" />
           <NavigationProperty Name="Tbl_Sim1" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim1" FromRole="Tbl_Transaction" ToRole="Tbl_Sim" />
           <NavigationProperty Name="Tbl_TransactionType" Relationship="Self.FK_Tbl_Transaction_Tbl_TransactionType" FromRole="Tbl_Transaction" ToRole="Tbl_TransactionType" />

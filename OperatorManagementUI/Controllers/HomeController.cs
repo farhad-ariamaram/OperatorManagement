@@ -25,14 +25,12 @@ namespace OperatorManagementUI.Controllers
             return View();
         }
 
-        public ActionResult Transactions(DateTime? fromDate, DateTime? toDate, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType=0)
+        public ActionResult Transactions(long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0)
         {
             ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
             ViewBag.Sim_Id = new SelectList(_simService.GetSimsForDropdown(0), "Id", "Number");
 
-            
-
-            var vm = _transactionService.GetTransactions(fromDate ?? null, toDate ?? null, fromSimId, toSimId, fromPersonId, toPersonId, durationLessThan, durationMoreThan, typeId, sortType);
+            var vm = _transactionService.GetTransactions(fromDate, toDate, fromSimId, toSimId, fromPersonId, toPersonId, durationLessThan, durationMoreThan, typeId, sortType);
             return View(vm);
         }
 

@@ -1,5 +1,6 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Enum;
+using OperatorManagementBL.Extensions;
 using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
@@ -16,18 +17,20 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public List<TransactionDTO> GetTransactions(DateTime? fromDate, DateTime? toDate, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0)
+        public List<TransactionDTO> GetTransactions(long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0)
         {
             IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
 
-            if (fromDate.HasValue)
+            if (fromDate != 0)
             {
-                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date >= fromDate.Value);
+                DateTime fromDateTime = fromDate.ToGeorgianDateTimeFromUnixTimeStamp();
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date >= fromDateTime);
             }
 
-            if (toDate.HasValue)
+            if (toDate != 0)
             {
-                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date <= toDate.Value);
+                DateTime toDateTime = toDate.ToGeorgianDateTimeFromUnixTimeStamp();
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date <= toDateTime);
             }
 
             if (fromSimId != 0)
@@ -54,12 +57,12 @@ namespace OperatorManagementBL.Services
 
             if (durationLessThan != 0)
             {
-                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration <= new TimeSpan(0, durationLessThan,0));
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration <= new TimeSpan(0, durationLessThan, 0));
             }
 
             if (durationMoreThan != 0)
             {
-                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration >= new TimeSpan(0, durationMoreThan,0));
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration >= new TimeSpan(0, durationMoreThan, 0));
             }
 
             if (typeId != 0)
@@ -70,7 +73,7 @@ namespace OperatorManagementBL.Services
             switch (sortType)
             {
                 case (int)SortTypeEnum.Newest:
-                    q_transactions = q_transactions.OrderByDescending(a=>a.Fld_Transaction_Date);
+                    q_transactions = q_transactions.OrderByDescending(a => a.Fld_Transaction_Date);
                     break;
                 case (int)SortTypeEnum.Oldest:
                     q_transactions = q_transactions.OrderBy(a => a.Fld_Transaction_Date);
@@ -94,8 +97,8 @@ namespace OperatorManagementBL.Services
                     ToSimNumber = item.Tbl_Sim1.Fld_Sim_Number,
                     TransactionType = item.Tbl_TransactionType.Fld_TransactionType_Type,
                     Duration = item.Fld_Transaction_Duration,
-                    FromPerson = item.Tbl_Sim.Tbl_Person.Fld_Person_Fname +" "+ item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
-                    ToPerson = item.Tbl_Sim1.Tbl_Person.Fld_Person_Fname +" "+ item.Tbl_Sim1.Tbl_Person.Fld_Person_Lname,
+                    FromPerson = item.Tbl_Sim.Tbl_Person.Fld_Person_Fname + " " + item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
+                    ToPerson = item.Tbl_Sim1.Tbl_Person.Fld_Person_Fname + " " + item.Tbl_Sim1.Tbl_Person.Fld_Person_Lname,
                 });
             }
 
@@ -124,7 +127,7 @@ namespace OperatorManagementBL.Services
                 var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
 
                 //اگر اعتباری باشد و کلا شارژ نداشته باشد
-                if(fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
+                if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
                 {
                     return (int)CallFailedEnum.insuffienceBalance;
                 }
@@ -143,7 +146,7 @@ namespace OperatorManagementBL.Services
                     Fld_Sim_FromSimId = from,
                     Fld_Sim_ToSimId = to,
                     Fld_Transaction_Date = DateTime.Now,
-                    Fld_Transaction_Duration = new TimeSpan(0,duration,0),
+                    Fld_Transaction_Duration = new TimeSpan(0, duration, 0),
                     Fld_TransactionType_Id = type
                 };
                 _context.Tbl_Transaction.Add(p);
@@ -203,7 +206,7 @@ namespace OperatorManagementBL.Services
                     Fld_Sim_FromSimId = from,
                     Fld_Sim_ToSimId = to,
                     Fld_Transaction_Date = DateTime.Now,
-                    Fld_Transaction_Duration = new TimeSpan(0, 0, 0),
+                    Fld_Transaction_Duration = null,
                     Fld_TransactionType_Id = type
                 };
                 _context.Tbl_Transaction.Add(p);

@@ -7,7 +7,7 @@ namespace OperatorManagementBL.DTOs
     {
         public int Id { get; set; }
 
-        [Display(Name ="تاریخ")]
+        [Display(Name ="تاریخ و ساعت")]
         public DateTime Date { get; set; }
 
         [Display(Name = "شماره مبدا")]
@@ -26,6 +26,6 @@ namespace OperatorManagementBL.DTOs
         public string TransactionType { get; set; }
 
         [Display(Name = "مدت تماس")]
-        public TimeSpan Duration { get; set; }
+        public Nullable<TimeSpan> Duration { get; set; }
     }
 }

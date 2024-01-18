@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - OperatorManagement</title>
     <link href="~/Content/bootstrap.rtl.min.css" rel="stylesheet" />
     <link href="~/Content/fontawesome/css/all.css" rel="stylesheet" />
+    @RenderSection("styles", required: false)
     <link href="~/Content/Site.css" rel="stylesheet" />
+
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
 </head>
 <body dir="rtl">
@@ -58,7 +60,7 @@
     <script src="~/Content/fontawesome/js/all.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/Scripts/scripts.js"></script>
     @RenderSection("scripts", required: false)
+    <script src="~/Scripts/scripts.js"></script>
 </body>
 </html>

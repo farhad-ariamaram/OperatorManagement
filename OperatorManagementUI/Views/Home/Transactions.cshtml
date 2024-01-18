@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<OperatorManagementBL.DTOs.TransactionDTO>
+@using OperatorManagementBL.Extensions
+
 @{
     ViewBag.Title = "Transactions";
 }
@@ -19,14 +21,30 @@
                 <div>
                     <form method="get" class="d-flex flex-column gap-2" id="filterFormId">
                         <input type="hidden" name="sortType" id="sortType" />
+                        <input type="hidden" class="observer-fromDate-alt" name="fromDate" id="fromDate" />
+                        <input type="hidden" class="observer-toDate-alt" name="toDate" id="toDate" />
+                        @{
+                            string toDate = "";
+                            if (!string.IsNullOrEmpty(Request["toDate"]))
+                            {
+                                toDate = long.Parse(Request["toDate"]).ToGeorgianDateTimeFromUnixTimeStamp().ToString("yyyy-MM-dd HH:mm:ss");
+                            }
+
+                            string fromDate = "";
+                            if (!string.IsNullOrEmpty(Request["fromDate"]))
+                            {
+                                fromDate = long.Parse(Request["fromDate"]).ToGeorgianDateTimeFromUnixTimeStamp().ToString("yyyy-MM-dd HH:mm:ss");
+                            }
+                        }
                         <div>
                             <label>بعد از</label>
-                            <input type="date" name="fromDate" id="fromDate" class="form-control" />
+                            <input type="text" class="pd-fromDate form-control" value="@fromDate" />
                         </div>
 
                         <div>
+
                             <label>قبل از</label>
-                            <input type="date" name="toDate" id="toDate" class="form-control" />
+                            <input type="text" class="pd-toDate form-control" value="@toDate" />
                         </div>
 
                         <div>
@@ -108,6 +126,9 @@
                 @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.TransactionType)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Duration)
             </th>
             <th>
@@ -122,19 +143,27 @@
             <th>
                 @Html.DisplayNameFor(model => model.ToSimNumber)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TransactionType)
-            </th>
+
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Date)
+                    @item.Date.ToJalaliDateTime()
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Duration)
+                    @Html.DisplayFor(modelItem => item.TransactionType)
+                </td>
+                <td>
+                    @if (item.Duration != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.Duration)
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FromPerson)
@@ -148,9 +177,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.ToSimNumber)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TransactionType)
-                </td>
+
             </tr>
         }
 
@@ -158,7 +185,13 @@
 </div>
 
 
+@section styles{
+    <link href="~/Content/persianDatePicker/persian-datepicker.min.css" rel="stylesheet" />
+}
+
 @section scripts{
+    <script src="~/Content/persianDatePicker/persian-date.min.js"></script>
+    <script src="~/Content/persianDatePicker/persian-datepicker.min.js"></script>
     <script>
         $(function () {
             $('#fromSimId').val(getParameterByName('fromSimId'));
@@ -168,6 +201,20 @@
             $('#typeId').val(getParameterByName('typeId'));
             $('#fromDate').val(getParameterByName('fromDate'));
             $('#toDate').val(getParameterByName('toDate'));
+
+            $(".pd-toDate").persianDatepicker({
+                observer: true,
+                format: 'HH:mm:ss - YYYY/MM/DD',
+                altField: '.observer-toDate-alt',
+                timePicker: { enabled: true },
+            });
+
+            $(".pd-fromDate").persianDatepicker({
+                observer: true,
+                format: 'HH:mm:ss - YYYY/MM/DD',
+                altField: '.observer-fromDate-alt',
+                timePicker: { enabled: true }
+            });
         });
     </script>
 }
