@@ -17,9 +17,10 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public List<TransactionDTO> GetTransactions(long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0, string search = "")
+        public TransactionPageDTO GetTransactions(int pageId = 1, long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0, string search = "")
         {
             IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
+            TransactionPageDTO ret = new TransactionPageDTO();
 
             if (fromDate != 0)
             {
@@ -97,12 +98,27 @@ namespace OperatorManagementBL.Services
                     break;
             }
 
-            List<TransactionDTO> ret = new List<TransactionDTO>();
+
+
+            //pagination
+            int take = 10;
+            int skip = (pageId - 1) * take;
+            ret.ResultCount = q_transactions.Count();
+            ret.CurrentPage = pageId;
+            ret.PageCount = ret.ResultCount / take;
+            if (ret.PageCount * take < q_transactions.Count())
+                ret.PageCount++;
+
+            q_transactions = q_transactions.Skip(skip).Take(take);
+
+            int i = 1;
+            List<TransactionDTO> transactionsList = new List<TransactionDTO>();
             foreach (var item in q_transactions)
             {
-                ret.Add(new TransactionDTO
+                transactionsList.Add(new TransactionDTO
                 {
                     Id = item.Fld_Transaction_Id,
+                    RowNumber = i + ((ret.CurrentPage - 1) * take),
                     Date = item.Fld_Transaction_Date,
                     FromSimNumber = item.Tbl_Sim.Fld_Sim_Number,
                     ToSimNumber = item.Tbl_Sim1.Fld_Sim_Number,
@@ -111,7 +127,10 @@ namespace OperatorManagementBL.Services
                     FromPerson = item.Tbl_Sim.Tbl_Person.Fld_Person_Fname + " " + item.Tbl_Sim.Tbl_Person.Fld_Person_Lname,
                     ToPerson = item.Tbl_Sim1.Tbl_Person.Fld_Person_Fname + " " + item.Tbl_Sim1.Tbl_Person.Fld_Person_Lname,
                 });
+                i++;
             }
+
+            ret.TransactionsList = transactionsList;
 
             return ret;
         }

@@ -24,6 +24,10 @@ a, a:hover, a:visited, a:active, a:focus {
         cursor: pointer;
     }
 
+.fs-7 {
+    font-size: 0.9rem;
+}
+
 .m-min-width-250 {
     min-width: 250px;
 }
@@ -44,3 +48,4 @@ a, a:hover, a:visited, a:active, a:focus {
     .m-sort-items-container > a.active {
         color: #0d6efd !important;
     }
+

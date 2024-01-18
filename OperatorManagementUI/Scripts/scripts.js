@@ -7,6 +7,10 @@
     $("#filterFormId").submit();
 }
 
+function submitFilterFormPagination(pageId) {
+    $("#pageId").val(pageId);
+    $("#filterFormId").submit();
+}
 
 /*imported (not mine)*/
 function getParameterByName(name, url = window.location.href) {

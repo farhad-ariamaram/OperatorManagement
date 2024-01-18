@@ -7,6 +7,9 @@ namespace OperatorManagementBL.DTOs
     {
         public int Id { get; set; }
 
+        [Display(Name = "ردیف")]
+        public int RowNumber { get; set; }
+
         [Display(Name ="تاریخ و ساعت")]
         public DateTime Date { get; set; }
 

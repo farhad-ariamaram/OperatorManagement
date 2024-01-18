@@ -1,5 +1,6 @@
-﻿@model IEnumerable<OperatorManagementBL.DTOs.TransactionDTO>
-@using OperatorManagementBL.Extensions
+﻿@using OperatorManagementBL.Extensions
+@model OperatorManagementBL.DTOs.TransactionPageDTO
+
 
 @{
     ViewBag.Title = "Transactions";
@@ -13,7 +14,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex flex-row flex-nowrap justify-content-between align-items-center w-100">
-                    <div class="fs-5 fw-bold"><span>فیلترها</span></div>
+                    <div class="fs-5 fw-bold"><span>فیلترها</span> <a class="mx-3 fs-7 text-primary" href="@Url.Action("Transactions")">(حذف همه)</a></div>
                     <div><a data-bs-dismiss="modal"><i class="fa fa-times"></i></a></div>
                 </div>
             </div>
@@ -22,6 +23,7 @@
                     <form method="get" class="d-flex flex-column gap-2" id="filterFormId">
                         <input type="hidden" name="sortType" id="sortType" />
                         <input type="hidden" name="search" id="search" />
+                        <input type="hidden" name="pageId" id="pageId" />
                         <input type="hidden" class="observer-fromDate-alt" name="fromDate" id="fromDate" />
                         <input type="hidden" class="observer-toDate-alt" name="toDate" id="toDate" />
                         @{
@@ -104,64 +106,71 @@
     </div>
 </div>
 
-<div class="d-flex flex-row flex-nowrap align-items-center gap-3 mt-3">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
-        فیلترها
-    </button>
-    <div><span style="color:#ccc">|</span></div>
-    <div class="fw-bold">
-        <i class="fas fa-sort-amount-down-alt mx-1"></i>
-        <span>مرتب سازی:</span>
-    </div>
-    <div class="d-flex flex-row flex-nowrap align-items-center gap-3 m-sort-items-container">
-        @{
-            int selectedSortItem = 0;
-            if (!string.IsNullOrEmpty(Request["sortType"]))
-            {
-                selectedSortItem = int.Parse(Request["sortType"]);
+<div class="d-flex flex-row flex-nowrap justify-content-between align-items-center gap-3 mt-3">
+    <div class="d-flex flex-row flex-nowrap align-items-center gap-3 mt-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+            فیلترها
+        </button>
+        <div><span style="color:#ccc">|</span></div>
+        <div class="fw-bold">
+            <i class="fas fa-sort-amount-down-alt mx-1"></i>
+            <span>مرتب سازی:</span>
+        </div>
+        <div class="d-flex flex-row flex-nowrap align-items-center gap-3 m-sort-items-container">
+            @{
+                int selectedSortItem = 0;
+                if (!string.IsNullOrEmpty(Request["sortType"]))
+                {
+                    selectedSortItem = int.Parse(Request["sortType"]);
+                }
             }
-        }
-        <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Newest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Newest ? "active" : "")">جدیدترین</a>
-        <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Oldest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Oldest ? "active" : "")">قدیمی‌ترین</a>
-        <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Longest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Longest ? "active" : "")">طولانی‌ترین</a>
+            <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Newest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Newest ? "active" : "")">جدیدترین</a>
+            <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Oldest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Oldest ? "active" : "")">قدیمی‌ترین</a>
+            <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Longest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Longest ? "active" : "")">طولانی‌ترین</a>
+        </div>
     </div>
+    <div><span>نتایج @Model.ResultCount عدد</span></div>
 </div>
 
-<div class="d-flex flex-row flex-nowrap align-items-center gap-3">
+<div class="d-flex flex-row flex-nowrap align-items-center gap-3 mt-2">
     <input id="searchAlt" type="search" class="form-control" placeholder="جستجو..." />
     <a onclick="submitFilterForm(null)" class="btn btn-primary"><i class="fa fa-search"></i></a>
 </div>
 
 <div class="table-responsive mt-3">
-    <table class="table table-striped">
+    <table class="table table-striped shadow">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Date)
+                ردیف
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TransactionType)
+                تاریخ و ساعت
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Duration)
+                نوع
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FromPerson)
+                مدت (مکالمه)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FromSimNumber)
+                شخص مبدا
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ToPerson)
+                شماره مبدا
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ToSimNumber)
+                شخص مقصد
+            </th>
+            <th>
+                شماره مقصد
             </th>
 
         </tr>
 
-        @foreach (var item in Model)
+        @foreach (var item in Model.TransactionsList)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.RowNumber)</td>
                 <td>
                     @item.Date.ToJalaliDateTime()
                 </td>
@@ -197,6 +206,25 @@
     </table>
 </div>
 
+@if (Model.PageCount > 1)
+{
+    <ul class="pagination justify-content-center flex-wrap mt-4 fs-8">
+        <li class="page-item @(Model.CurrentPage==1?"d-none":"")">
+            <a class="page-link" onclick="submitFilterFormPagination(@(Model.CurrentPage-1))" href="#">قبلی</a>
+        </li>
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <li class="page-item @(Model.CurrentPage==i?"active":"")">
+                <a onclick="submitFilterFormPagination(@i)" href="#" class="page-link">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(Model.PageCount==Model.CurrentPage?"d-none":"")">
+            <a onclick="submitFilterFormPagination(@(Model.CurrentPage+1))" href="#" class="page-link">بعدی</a>
+        </li>
+    </ul>
+}
 
 @section styles{
     <link href="~/Content/persianDatePicker/persian-datepicker.min.css" rel="stylesheet" />

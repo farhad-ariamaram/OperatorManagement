@@ -59,6 +59,7 @@
     <Compile Include="DTOs\SimForListDTO.cs" />
     <Compile Include="DTOs\SimTypeDTO.cs" />
     <Compile Include="DTOs\TransactionDTO.cs" />
+    <Compile Include="DTOs\TransactionPageDTO.cs" />
     <Compile Include="DTOs\WalletChargeDTO.cs" />
     <Compile Include="DTOs\WalletDTO.cs" />
     <Compile Include="Enum\Enums.cs" />
