@@ -37,56 +37,63 @@
                                 fromDate = long.Parse(Request["fromDate"]).ToGeorgianDateTimeFromUnixTimeStamp();
                             }
                         }
-                        <div>
-                            <label>بعد از</label>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">بعد از</label>
                             <input type="text" class="pd-fromDate form-control" value="@(fromDate.HasValue?fromDate.Value.ToJalaliDateTime():"")" />
+                            <span onclick="$('#fromDate').val('');$('.pd-fromDate').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-
-                            <label>قبل از</label>
-                            <input type="text" class="pd-toDate form-control" value="@(toDate.HasValue?toDate.Value.ToJalaliDateTime():"")"/>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">قبل از</label>
+                            <input type="text" class="pd-toDate form-control" value="@(toDate.HasValue?toDate.Value.ToJalaliDateTime():"")" />
+                            <span onclick="$('#toDate').val('');$('.pd-toDate').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-                            <label>از شماره</label>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">از شماره</label>
                             @Html.DropDownList("fromSimId", (SelectList)ViewBag.Sim_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "fromSimId", id = "fromSimId" })
+                            <span onclick="$('#fromSimId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-                            <label>به شماره</label>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">به شماره</label>
                             @Html.DropDownList("toSimId", (SelectList)ViewBag.Sim_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "toSimId", id = "toSimId" })
+                            <span onclick="$('#toSimId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
 
-                            <label>از شخص</label>
+                            <label class="text-nowrap">از شخص</label>
                             @Html.DropDownList("fromPersonId", (SelectList)ViewBag.Person_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "fromPersonId" })
+                            <span onclick="$('#fromPersonId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-                            <label>به شخص</label>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">به شخص</label>
                             @Html.DropDownList("toPersonId", (SelectList)ViewBag.Person_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "toPersonId" })
+                            <span onclick="$('#toPersonId').val(0)"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-                            <label>کمتر از (دقیقه)</label>
-                            <input type="number" name="durationLessThan" class="form-control text-start" value="@(!string.IsNullOrEmpty(Request["durationLessThan"])?int.Parse(Request["durationLessThan"]):0)" />
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">کمتر از (دقیقه)</label>
+                            <input type="number" id="durationLessThan" name="durationLessThan" class="form-control text-start" value="0" min="0" />
+                            <span onclick="$('#durationLessThan').val('0')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-                            <label>بیشتر از (دقیقه)</label>
-                            <input type="number" name="durationMoreThan" class="form-control text-start" value="@(!string.IsNullOrEmpty(Request["durationMoreThan"])?int.Parse(Request["durationMoreThan"]):0)" />
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">بیشتر از (دقیقه)</label>
+                            <input type="number" id="durationMoreThan" name="durationMoreThan" class="form-control text-start" value="0" min="0" />
+                            <span onclick="$('#durationMoreThan').val('0')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
-                        <div>
-                            <label>نوع</label>
+                        <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
+                            <label class="text-nowrap">نوع</label>
                             <select class="form-select" name="typeId" id="typeId">
                                 <option value>انتخاب کنید</option>
                                 <option value="@((int)OperatorManagementBL.Enum.TransactionTypeEnum.call)">تماس</option>
                                 <option value="@((int)OperatorManagementBL.Enum.TransactionTypeEnum.sms)">پیامک</option>
                             </select>
-
+                            <span onclick="$('#typeId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
                         </div>
 
                         <input type="submit" value="جستجو" class="btn btn-primary" />
@@ -200,18 +207,6 @@
     <script src="~/Content/persianDatePicker/persian-datepicker.min.js"></script>
 
     <script>
-
-        function submitFilterForm(sort) {
-            debugger;
-            if (sort != null) {
-                $("#sortType").val(sort);
-            } else {
-                $("#search").val($("#searchAlt").val());
-            }
-            $("#filterFormId").submit();
-        }
-
-
         $(function () {
             $('#fromSimId').val(getParameterByName('fromSimId'));
             $('#toSimId').val(getParameterByName('toSimId'));
@@ -222,6 +217,8 @@
             $('#toDate').val(getParameterByName('toDate'));
             $('#search').val(getParameterByName('search'));
             $('#searchAlt').val(getParameterByName('search'));
+            $('#durationLessThan').val(getParameterByName('durationLessThan'));
+            $('#durationMoreThan').val(getParameterByName('durationMoreThan'));
 
             $(".pd-toDate").persianDatepicker({
                 observer: true,

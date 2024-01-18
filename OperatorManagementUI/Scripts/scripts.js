@@ -1,4 +1,11 @@
-﻿
+﻿function submitFilterForm(sort) {
+    if (sort != null) {
+        $("#sortType").val(sort);
+    } else {
+        $("#search").val($("#searchAlt").val());
+    }
+    $("#filterFormId").submit();
+}
 
 
 /*imported (not mine)*/
