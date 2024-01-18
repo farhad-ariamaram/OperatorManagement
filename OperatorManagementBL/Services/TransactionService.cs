@@ -17,7 +17,7 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public List<TransactionDTO> GetTransactions(long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0)
+        public List<TransactionDTO> GetTransactions(long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0, string search = "")
         {
             IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
 
@@ -68,6 +68,17 @@ namespace OperatorManagementBL.Services
             if (typeId != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_TransactionType_Id == typeId);
+            }
+
+            var t = _context.Tbl_Transaction.Where(a => a.Tbl_Sim.Tbl_Person.Fld_Person_Fname.Contains("فرهاد"));
+
+            if (!string.IsNullOrEmpty(search) && !string.IsNullOrWhiteSpace(search))
+            {
+                q_transactions = q_transactions
+                    .Where(a => a.Tbl_Sim.Tbl_Person.Fld_Person_Fname.Contains(search) ||
+                                a.Tbl_Sim.Tbl_Person.Fld_Person_Lname.Contains(search) ||
+                                a.Tbl_Sim1.Tbl_Person.Fld_Person_Fname.Contains(search) ||
+                                a.Tbl_Sim1.Tbl_Person.Fld_Person_Lname.Contains(search));
             }
 
             switch (sortType)

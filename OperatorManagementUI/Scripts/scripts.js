@@ -1,7 +1,4 @@
-﻿function submitFilterForm(sort) {
-    $("#sortType").val(sort);
-    $("#filterFormId").submit();
-}
+﻿
 
 
 /*imported (not mine)*/

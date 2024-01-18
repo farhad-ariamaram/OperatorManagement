@@ -21,30 +21,31 @@
                 <div>
                     <form method="get" class="d-flex flex-column gap-2" id="filterFormId">
                         <input type="hidden" name="sortType" id="sortType" />
+                        <input type="hidden" name="search" id="search" />
                         <input type="hidden" class="observer-fromDate-alt" name="fromDate" id="fromDate" />
                         <input type="hidden" class="observer-toDate-alt" name="toDate" id="toDate" />
                         @{
-                            string toDate = "";
+                            DateTime? toDate = null;
                             if (!string.IsNullOrEmpty(Request["toDate"]))
                             {
-                                toDate = long.Parse(Request["toDate"]).ToGeorgianDateTimeFromUnixTimeStamp().ToString("yyyy-MM-dd HH:mm:ss");
+                                toDate = long.Parse(Request["toDate"]).ToGeorgianDateTimeFromUnixTimeStamp();
                             }
 
-                            string fromDate = "";
+                            DateTime? fromDate = null;
                             if (!string.IsNullOrEmpty(Request["fromDate"]))
                             {
-                                fromDate = long.Parse(Request["fromDate"]).ToGeorgianDateTimeFromUnixTimeStamp().ToString("yyyy-MM-dd HH:mm:ss");
+                                fromDate = long.Parse(Request["fromDate"]).ToGeorgianDateTimeFromUnixTimeStamp();
                             }
                         }
                         <div>
                             <label>بعد از</label>
-                            <input type="text" class="pd-fromDate form-control" value="@fromDate" />
+                            <input type="text" class="pd-fromDate form-control" value="@(fromDate.HasValue?fromDate.Value.ToJalaliDateTime():"")" />
                         </div>
 
                         <div>
 
                             <label>قبل از</label>
-                            <input type="text" class="pd-toDate form-control" value="@toDate" />
+                            <input type="text" class="pd-toDate form-control" value="@(toDate.HasValue?toDate.Value.ToJalaliDateTime():"")"/>
                         </div>
 
                         <div>
@@ -117,6 +118,11 @@
         <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Oldest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Oldest ? "active" : "")">قدیمی‌ترین</a>
         <a onclick="submitFilterForm(@((int)OperatorManagementBL.Enum.SortTypeEnum.Longest))" class="@(selectedSortItem == (int)OperatorManagementBL.Enum.SortTypeEnum.Longest ? "active" : "")">طولانی‌ترین</a>
     </div>
+</div>
+
+<div class="d-flex flex-row flex-nowrap align-items-center gap-3">
+    <input id="searchAlt" type="search" class="form-control" placeholder="جستجو..." />
+    <a onclick="submitFilterForm(null)" class="btn btn-primary"><i class="fa fa-search"></i></a>
 </div>
 
 <div class="table-responsive mt-3">
@@ -192,7 +198,20 @@
 @section scripts{
     <script src="~/Content/persianDatePicker/persian-date.min.js"></script>
     <script src="~/Content/persianDatePicker/persian-datepicker.min.js"></script>
+
     <script>
+
+        function submitFilterForm(sort) {
+            debugger;
+            if (sort != null) {
+                $("#sortType").val(sort);
+            } else {
+                $("#search").val($("#searchAlt").val());
+            }
+            $("#filterFormId").submit();
+        }
+
+
         $(function () {
             $('#fromSimId').val(getParameterByName('fromSimId'));
             $('#toSimId').val(getParameterByName('toSimId'));
@@ -201,19 +220,23 @@
             $('#typeId').val(getParameterByName('typeId'));
             $('#fromDate').val(getParameterByName('fromDate'));
             $('#toDate').val(getParameterByName('toDate'));
+            $('#search').val(getParameterByName('search'));
+            $('#searchAlt').val(getParameterByName('search'));
 
             $(".pd-toDate").persianDatepicker({
                 observer: true,
                 format: 'HH:mm:ss - YYYY/MM/DD',
                 altField: '.observer-toDate-alt',
                 timePicker: { enabled: true },
+                initialValue: false
             });
 
             $(".pd-fromDate").persianDatepicker({
                 observer: true,
                 format: 'HH:mm:ss - YYYY/MM/DD',
                 altField: '.observer-fromDate-alt',
-                timePicker: { enabled: true }
+                timePicker: { enabled: true },
+                initialValue: false
             });
         });
     </script>
