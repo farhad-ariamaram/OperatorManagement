@@ -126,6 +126,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CostController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
@@ -1934,6 +1935,8 @@
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Sim\Wallet.cshtml" />
     <Content Include="Views\Home\Transactions.cshtml" />
+    <Content Include="Views\Cost\Index.cshtml" />
+    <Content Include="Views\Cost\Set.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

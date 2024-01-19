@@ -1,0 +1,29 @@
+﻿@model OperatorManagementBL.DTOs.CostDTO
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>ویرایش تعرفه</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TransactionType)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.TransactionType)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(model => model.Description)</dd>
+
+    <div class="my-3">
+        @Html.LabelFor(model => model.Value, htmlAttributes: new { @class = "form-label" })
+        @Html.EditorFor(model => model.Value, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+        @Html.ValidationMessageFor(model => model.Value, "", new { @class = "form-text text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">ثبت</button>
+    @Html.ActionLink("بازگشت", "Index", null, new { @class = "btn btn-info text-white mx-2" })
+}

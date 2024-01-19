@@ -1,0 +1,42 @@
+﻿@model IEnumerable<OperatorManagementBL.DTOs.CostDTO>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>تعرفه ها</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TransactionType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Value)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Value) تومان
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("ویرایش", "Set", new { id = item.Id }, new { @class = "btn btn-warning text-white" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
