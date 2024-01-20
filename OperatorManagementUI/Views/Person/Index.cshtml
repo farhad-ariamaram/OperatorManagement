@@ -10,37 +10,58 @@
     <a href="@Url.Action("Create")" class="btn btn-success text-white mx-2"><i class="fa fa-plus mx-1"></i>افزودن</a>
     <a href="@Url.Action("DeletedPeople")" class="btn btn-primary text-white"><i class="fa fa-trash mx-1"></i>مدیریت اشخاص حذف شده</a>
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.NationCode)
-        </th>
-        <th></th>
-    </tr>
+<table class="table" id="mtable">
+    <thead>
+        <tr>
+            <th>ردیف</th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NationCode)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ 
+            int i = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@i</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NationCode)
+                </td>
+                <td>
+                    @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning text-white" })
+                    @Html.ActionLink("مشاهده", "Details", new { id = item.Id }, new { @class = "btn btn-info text-white" })
+                    @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
 
-@foreach (var item in Model) {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.FirstName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.LastName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.NationCode)
-    </td>
-    <td>
-        @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning text-white" })
-        @Html.ActionLink("مشاهده", "Details", new { id = item.Id }, new { @class = "btn btn-info text-white" })
-        @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })
-    </td>
-</tr>
-}
 
 </table>
+
+
+@section scripts{
+    <script>
+        $("#mtable").DataTable({
+            "language": { "emptyTable": "موردی یافت نشد", "search": "جستجو:", "paginate": { "first": "اول", "last": "آخر", "next": "بعدی", "previous": "قبلی" }, "info": "نمایش _START_ از _END_ از _TOTAL_ نتیجه", "lengthMenu": "نمایش _MENU_ نتیجه" },
+            "width": "100%"
+        });
+    </script>
+}
