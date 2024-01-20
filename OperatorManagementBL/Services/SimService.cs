@@ -17,13 +17,14 @@ namespace OperatorManagementBL.Services
 
         public List<SimDTO> GetSims()
         {
-            var p = _context.Tbl_Sim.Where(a=>!a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
+            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
             List<SimDTO> ret = new List<SimDTO>();
             foreach (var item in p)
             {
-                ret.Add(new SimDTO { 
-                    Id = item.Fld_Sim_Id, 
-                    Number = item.Fld_Sim_Number, 
+                ret.Add(new SimDTO
+                {
+                    Id = item.Fld_Sim_Id,
+                    Number = item.Fld_Sim_Number,
                     Person_Id = item.Fld_Person_Id,
                     IsActive = item.Fld_Sim_IsActive,
                     SimType_Id = item.Fld_SimType_Id
@@ -35,7 +36,7 @@ namespace OperatorManagementBL.Services
 
         public List<SimForListDTO> GetSimsForDropdown(int? exclude)
         {
-            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted && a.Fld_Sim_Id!=exclude.Value);
+            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted && a.Fld_Sim_Id != exclude.Value);
             List<SimForListDTO> ret = new List<SimForListDTO>();
             foreach (var item in p)
             {
@@ -59,8 +60,8 @@ namespace OperatorManagementBL.Services
                 {
                     Id = item.Fld_Sim_Id,
                     Number = item.Fld_Sim_Number,
-                    Person = item.Tbl_Person.Fld_Person_Fname +" "+ item.Tbl_Person.Fld_Person_Lname,
-                    IsActive = item.Fld_Sim_IsActive?"فعال":"غیرفعال",
+                    Person = item.Tbl_Person.Fld_Person_Fname + " " + item.Tbl_Person.Fld_Person_Lname,
+                    IsActive = item.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
                     SimType = item.Tbl_SimType.Fld_SimType_Value,
                     SimTypeId = item.Fld_SimType_Id
                 });
@@ -99,8 +100,8 @@ namespace OperatorManagementBL.Services
                 {
                     Id = p.Fld_Sim_Id,
                     Number = p.Fld_Sim_Number,
-                    Person = p.Tbl_Person.Fld_Person_Fname +" "+ p.Tbl_Person.Fld_Person_Lname,
-                    IsActive = p.Fld_Sim_IsActive?"فعال":"غیرفعال",
+                    Person = p.Tbl_Person.Fld_Person_Fname + " " + p.Tbl_Person.Fld_Person_Lname,
+                    IsActive = p.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
                     SimType = p.Tbl_SimType.Fld_SimType_Value,
                     SimTypeId = p.Fld_SimType_Id
                 };
@@ -155,7 +156,7 @@ namespace OperatorManagementBL.Services
 
         public SimDTO UpdateSim(SimDTO sim)
         {
-            var t = _context.Tbl_Sim.Where(a => a.Fld_Sim_Id!=sim.Id && a.Fld_Sim_Number == sim.Number);
+            var t = _context.Tbl_Sim.Where(a => a.Fld_Sim_Id != sim.Id && a.Fld_Sim_Number == sim.Number);
             if (t.Any())
             {
                 throw new DuplicateSimNumberException();
@@ -219,16 +220,29 @@ namespace OperatorManagementBL.Services
 
         public void UnDeleteSimById(int simId)
         {
+
+            Tbl_Sim p = _context.Tbl_Sim.Find(simId);
+
+            if (p == null)
+            {
+                throw new System.Exception("سیم‌کارت یافت نشد");
+            }
+
+            if (p.Tbl_Person.Fld_Person_IsDeleted)
+            {
+                throw new System.Exception("مالک سیم‌کارت در وضعیت حذف شده قرار دارد");
+            }
+
+            p.Fld_Sim_IsDeleted = false;
+
             try
             {
-                Tbl_Sim p = _context.Tbl_Sim.Find(simId);
-                p.Fld_Sim_IsDeleted = false;
                 _context.Entry(p).State = EntityState.Modified;
                 _context.SaveChanges();
             }
             catch (System.Exception)
             {
-                throw new System.Exception("خطا در بازگردانی سیمکارت");
+                throw new System.Exception("خطا در بازگردانی سیم‌کارت");
             }
         }
 

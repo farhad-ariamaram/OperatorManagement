@@ -133,6 +133,12 @@ namespace OperatorManagementBL.Services
             {
                 Tbl_Person p = _context.Tbl_Person.Find(personId);
                 p.Fld_Person_IsDeleted = true;
+
+                foreach (var item in p.Tbl_Sim)
+                {
+                    item.Fld_Sim_IsDeleted = true;
+                }
+
                 _context.Entry(p).State = EntityState.Modified;
                 _context.SaveChanges();
             }
