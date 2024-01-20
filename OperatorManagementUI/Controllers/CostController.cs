@@ -62,7 +62,7 @@ namespace OperatorManagementUI.Controllers
             }
             catch (System.Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
     }
