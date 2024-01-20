@@ -7,4 +7,10 @@ namespace OperatorManagementBL.Exceptions
     {
         public DuplicateNationCodeException(): base(String.Format("کد ملی تکراری است")){}
     }
+
+    [Serializable]
+    public class DuplicateSimNumberException : Exception
+    {
+        public DuplicateSimNumberException() : base(String.Format("شماره سیم‌کارت تکراری است")) { }
+    }
 }

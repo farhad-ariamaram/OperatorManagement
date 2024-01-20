@@ -1,4 +1,5 @@
 ﻿using OperatorManagementBL.DTOs;
+using OperatorManagementBL.Exceptions;
 using OperatorManagementDL;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -85,7 +86,7 @@ namespace OperatorManagementBL.Services
             }
             catch
             {
-                throw new System.Exception("Sim Not Found");
+                throw new System.Exception("سیم‌کارت با این مشخصات یافت نشد");
             }
         }
 
@@ -107,12 +108,18 @@ namespace OperatorManagementBL.Services
             }
             catch
             {
-                throw new System.Exception("Sim Not Found");
+                throw new System.Exception("سیم‌کارت با این مشخصات یافت نشد");
             }
         }
 
         public void AddSim(SimDTO sim)
         {
+            var t = _context.Tbl_Sim.Where(a => a.Fld_Sim_Number == sim.Number);
+            if (t.Any())
+            {
+                throw new DuplicateSimNumberException();
+            }
+
             Tbl_Sim p = new Tbl_Sim
             {
                 Fld_Sim_Number = sim.Number,
@@ -120,19 +127,40 @@ namespace OperatorManagementBL.Services
                 Fld_Sim_IsActive = sim.IsActive,
                 Fld_SimType_Id = sim.SimType_Id,
             };
-            _context.Tbl_Sim.Add(p);
-            _context.SaveChanges();
 
-            _context.Tbl_Wallet.Add(new Tbl_Wallet
+            try
             {
-                Fld_Wallet_Id = p.Fld_Sim_Id,
-                Fld_Wallet_Balance = 0
-            });
-            _context.SaveChanges();
+                _context.Tbl_Sim.Add(p);
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("خطا در اضافه کردن سیم‌کارت");
+            }
+
+            try
+            {
+                _context.Tbl_Wallet.Add(new Tbl_Wallet
+                {
+                    Fld_Wallet_Id = p.Fld_Sim_Id,
+                    Fld_Wallet_Balance = 0
+                });
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("خطا در اضافه کردن کیف پول سیم‌کارت");
+            }
         }
 
         public SimDTO UpdateSim(SimDTO sim)
         {
+            var t = _context.Tbl_Sim.Where(a => a.Fld_Sim_Id!=sim.Id && a.Fld_Sim_Number == sim.Number);
+            if (t.Any())
+            {
+                throw new DuplicateSimNumberException();
+            }
+
             Tbl_Sim p = new Tbl_Sim
             {
                 Fld_Sim_Id = sim.Id,
@@ -141,8 +169,16 @@ namespace OperatorManagementBL.Services
                 Fld_Sim_IsActive = sim.IsActive,
                 Fld_SimType_Id = sim.SimType_Id
             };
-            _context.Entry(p).State = EntityState.Modified;
-            _context.SaveChanges();
+
+            try
+            {
+                _context.Entry(p).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("خطا در بروزرسانی اطلاعات سیم‌کارت");
+            }
 
             return sim;
         }
@@ -158,7 +194,7 @@ namespace OperatorManagementBL.Services
             }
             catch (System.Exception)
             {
-                throw new System.Exception("Sim cannot be deleted");
+                throw new System.Exception("خطا در حذف سیم‌کارت");
             }
         }
 
@@ -192,7 +228,7 @@ namespace OperatorManagementBL.Services
             }
             catch (System.Exception)
             {
-                throw new System.Exception("Sim cannot be undelete");
+                throw new System.Exception("خطا در بازگردانی سیمکارت");
             }
         }
 
@@ -213,7 +249,7 @@ namespace OperatorManagementBL.Services
             var p = _context.Tbl_Sim.Find(simId);
             if (p == null)
             {
-                throw new System.Exception();
+                throw new System.Exception("سیم‌کارت یافت نشد");
             }
 
             var ret = new WalletDTO
@@ -235,7 +271,7 @@ namespace OperatorManagementBL.Services
                 var p = _context.Tbl_Sim.Find(simId);
                 if (p == null)
                 {
-                    throw new System.Exception();
+                    throw new System.Exception("سیم‌کارت یافت نشد");
                 }
 
                 p.Tbl_Wallet.Fld_Wallet_Balance += addBalance;
@@ -244,7 +280,7 @@ namespace OperatorManagementBL.Services
             }
             catch
             {
-                throw new System.Exception();
+                throw new System.Exception("خطا در شارژ سیم‌کارت");
             }
 
         }
@@ -256,7 +292,7 @@ namespace OperatorManagementBL.Services
                 var p = _context.Tbl_Sim.Find(simId);
                 if (p == null)
                 {
-                    throw new System.Exception();
+                    throw new System.Exception("سیم‌کارت یافت نشد");
                 }
 
                 p.Tbl_Wallet.Fld_Wallet_Balance = 0.00M;
@@ -265,7 +301,7 @@ namespace OperatorManagementBL.Services
             }
             catch
             {
-                throw new System.Exception();
+                throw new System.Exception("خطا در پرداخت قبض");
             }
         }
     }

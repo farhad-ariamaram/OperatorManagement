@@ -1,5 +1,6 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
+using System;
 using System.Net;
 using System.Web.Mvc;
 
@@ -36,9 +37,9 @@ namespace OperatorManagementUI.Controllers
                 }
                 return View(sim);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -65,9 +66,9 @@ namespace OperatorManagementUI.Controllers
                 ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type");
                 return View(sim);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -88,9 +89,9 @@ namespace OperatorManagementUI.Controllers
                 ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
                 return View(sim);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -109,9 +110,9 @@ namespace OperatorManagementUI.Controllers
                 ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
                 return View(sim);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -130,9 +131,9 @@ namespace OperatorManagementUI.Controllers
                 }
                 return View(sim);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -145,9 +146,9 @@ namespace OperatorManagementUI.Controllers
                 _simService.DeleteSimById(id);
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -163,9 +164,9 @@ namespace OperatorManagementUI.Controllers
                 _simService.UnDeleteSimById(id);
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -188,9 +189,9 @@ namespace OperatorManagementUI.Controllers
                 };
                 return View(vm);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -233,9 +234,9 @@ namespace OperatorManagementUI.Controllers
                 
                 return View(walletChargeDTO);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
     }

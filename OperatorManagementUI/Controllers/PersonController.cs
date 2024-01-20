@@ -3,6 +3,7 @@ using OperatorManagementBL.Services;
 using System.Net;
 using System.Web.Mvc;
 using OperatorManagementBL.Exceptions;
+using System;
 
 namespace OperatorManagementUI.Controllers
 {
@@ -37,9 +38,9 @@ namespace OperatorManagementUI.Controllers
                 }
                 return View(person);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -63,13 +64,9 @@ namespace OperatorManagementUI.Controllers
 
                 return View(tbl_Person);
             }
-            catch(DuplicateNationCodeException ex)
+            catch(Exception ex)
             {
                 return RedirectToAction("Index", "Error", new { Msg = ex.Message });
-            }
-            catch
-            {
-                return HttpNotFound();
             }
         }
 
@@ -88,9 +85,9 @@ namespace OperatorManagementUI.Controllers
                 }
                 return View(person);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -107,9 +104,9 @@ namespace OperatorManagementUI.Controllers
                 }
                 return View(person);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -128,9 +125,9 @@ namespace OperatorManagementUI.Controllers
                 }
                 return View(person);
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -143,9 +140,9 @@ namespace OperatorManagementUI.Controllers
                 _personService.DeletePersonById(id);
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
 
@@ -161,9 +158,9 @@ namespace OperatorManagementUI.Controllers
                 _personService.UnDeletePersonById(id);
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
             }
         }
     }

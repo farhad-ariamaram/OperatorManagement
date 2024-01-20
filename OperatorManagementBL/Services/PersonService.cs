@@ -67,14 +67,15 @@ namespace OperatorManagementBL.Services
             }
             catch (System.Exception)
             {
-                throw new System.Exception("Person Not Found");
+                throw new System.Exception("کاربر با این مشخصات یافت نشد");
             }
         }
+
         public void AddPerson(PersonDTO person)
         {
             //check duplicate NationCode
-            var pe = _context.Tbl_Person.Where(a => a.Fld_Person_NationCode == person.NationCode).SingleOrDefault();
-            if (pe != null)
+            var pe = _context.Tbl_Person.Where(a => a.Fld_Person_NationCode == person.NationCode);
+            if(pe.Any())
             {
                 throw new DuplicateNationCodeException();
             }
@@ -85,16 +86,24 @@ namespace OperatorManagementBL.Services
                 Fld_Person_Lname = person.LastName,
                 Fld_Person_NationCode = person.NationCode
             };
-            _context.Tbl_Person.Add(p);
-            _context.SaveChanges();
+            try
+            {
+                _context.Tbl_Person.Add(p);
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("امکان اضافه کردن کاربر وجود ندارد");
+            }
         }
+
         public PersonDTO UpdatePerson(PersonDTO person) 
         {
             //check duplicate NationCode
-            var pe = _context.Tbl_Person.Where(a => a.Fld_Person_NationCode == person.NationCode).SingleOrDefault();
-            if (pe != null)
+            var pe = _context.Tbl_Person.Where(a => a.Fld_Person_Id != person.Id && a.Fld_Person_NationCode == person.NationCode);
+            if (pe.Any())
             {
-                throw new System.Exception("کدملی تکراری است");
+                throw new DuplicateNationCodeException();
             }
 
             Tbl_Person p = new Tbl_Person
@@ -104,8 +113,16 @@ namespace OperatorManagementBL.Services
                 Fld_Person_Lname = person.LastName,
                 Fld_Person_NationCode = person.NationCode
             };
-            _context.Entry(p).State = EntityState.Modified;
-            _context.SaveChanges();
+
+            try
+            {
+                _context.Entry(p).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("امکان بروزرسانی اطلاعات کاربر وجود ندارد");
+            }
 
             return person;
         }
@@ -121,7 +138,7 @@ namespace OperatorManagementBL.Services
             }
             catch (System.Exception)
             {
-                throw new System.Exception("Person cannot be deleted");
+                throw new System.Exception("امکان حذف کاربر وجود ندارد");
             }
         }
 
@@ -136,7 +153,7 @@ namespace OperatorManagementBL.Services
             }
             catch (System.Exception)
             {
-                throw new System.Exception("Person cannot be undelete");
+                throw new System.Exception("امکان بازگرداندن کاربر وجود ندارد");
             }
         }
     }
