@@ -22,7 +22,8 @@
         ok = 0,
         insuffienceBalance = 1,
         inactiveFromSimcard = 2,
-        inactiveToSimcard = 3
+        inactiveToSimcard = 3,
+        unknown = 4
     }
 
     //Enum انواع وضعیت مرتب سازی جدول تراکنش ها

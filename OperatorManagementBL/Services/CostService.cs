@@ -1,4 +1,5 @@
 ﻿using OperatorManagementBL.DTOs;
+using OperatorManagementBL.Exceptions;
 using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
@@ -13,38 +14,55 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public CostDTO GetCostById(int Id)
+        #region Priv8
+        private IEnumerable<Tbl_Cost> _Get()
+        {
+            return _context.Tbl_Cost;
+        }
+        private Tbl_Cost _Get(int costId)
+        {
+            var cost = _context.Tbl_Cost.Find(costId);
+            if (cost == null) { throw new Exception("تعرفه پیدا نشد"); }
+            return cost;
+        }
+        private void _Update(Tbl_Cost cost)
         {
             try
             {
-                var p = _context.Tbl_Cost.Find(Id);
-                if (p==null)
-                {
-                    throw new System.Exception("تعرفه پیدا نشد");
-                }
-
-                return new CostDTO
-                {
-                    Id = p.Fld_Cost_Id,
-                    Description = p.Fld_Cost_Description,
-                    TransactionType = p.Tbl_TransactionType.Fld_TransactionType_Type,
-                    Value = p.Fld_Cost_Value
-                };
-
+                _context.Entry(cost).State = System.Data.Entity.EntityState.Modified;
+                _context.SaveChanges();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new System.Exception(ex.Message);
+                throw new Exception("خطا نامشخص در _Update");
             }
+        }
+        #endregion
+
+        #region Public
+        public CostDTO GetCostById(int costId)
+        {
+            var cost = _Get(costId);
+
+            //مپ کردن تعرفه برای نمایش
+            return new CostDTO
+            {
+                Id = cost.Fld_Cost_Id,
+                Description = cost.Fld_Cost_Description,
+                TransactionType = cost.Tbl_TransactionType.Fld_TransactionType_Type,
+                Value = cost.Fld_Cost_Value
+            };
         }
 
         public List<CostDTO> GetCosts()
         {
-            var p = _context.Tbl_Cost;
-            List<CostDTO> ret = new List<CostDTO>();
-            foreach (var c in p) 
+            var costs = _Get();
+
+            //مپ کردن لیست تعرفه ها
+            List<CostDTO> mappedCosts = new List<CostDTO>();
+            foreach (var c in costs)
             {
-                ret.Add(new CostDTO
+                mappedCosts.Add(new CostDTO
                 {
                     Id = c.Fld_Cost_Id,
                     TransactionType = c.Tbl_TransactionType.Fld_TransactionType_Type,
@@ -53,28 +71,18 @@ namespace OperatorManagementBL.Services
                 });
             }
 
-            return ret;
+            return mappedCosts;
         }
 
-        public void UpdateCost(CostDTO cost)
+        public void UpdateCost(CostDTO costDto)
         {
-            try
-            {
-                var p = _context.Tbl_Cost.Find(cost.Id);
-                if (p == null) 
-                { 
-                    throw new Exception("تعرفه یافت نشد");
-                }
+            //آپدیت تعرفه
+            var cost = _Get(costDto.Id);
+            cost.Fld_Cost_Value = costDto.Value;
 
-                p.Fld_Cost_Value = cost.Value;
-                _context.Entry(p).State = System.Data.Entity.EntityState.Modified;
-                _context.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _Update(cost);
         }
+        #endregion
+
     }
 }

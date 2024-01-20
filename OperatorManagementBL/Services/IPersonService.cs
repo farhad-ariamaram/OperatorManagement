@@ -41,14 +41,14 @@ namespace OperatorManagementBL.Services
         /// افزودن شخص جدید
         /// </summary>
         /// <param name="person">شخص</param>
-        void AddPerson(PersonDTO person);
+        void AddPerson(PersonDTO personDto);
 
         /// <summary>
         /// ویرایش اطلاعات شخص
         /// </summary>
         /// <param name="person">شخص</param>
         /// <returns>PersonDTO</returns>
-        PersonDTO UpdatePerson(PersonDTO person);
+        void UpdatePerson(PersonDTO personDto);
 
         /// <summary>
         /// حذف شخص با آی دی

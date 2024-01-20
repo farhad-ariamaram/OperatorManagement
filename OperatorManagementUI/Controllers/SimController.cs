@@ -21,36 +21,28 @@ namespace OperatorManagementUI.Controllers
             return View(_simService.GetDetailSims());
         }
 
-        /// <summary>
-        /// صفحه جزئیات سیمکارت
-        /// </summary>
-        /// <returns></returns>
+        // صفحه جزئیات سیمکارت
         public ActionResult Details(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
                 }
+
                 SimDetailDTO sim = _simService.GetSimDetailById(id.Value);
-                if (sim == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
-                }
+
                 return View(sim);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه ساخت سیمکارت جدید
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه ساخت سیمکارت جدید
+        // GET
         public ActionResult Create()
         {
             ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
@@ -58,12 +50,8 @@ namespace OperatorManagementUI.Controllers
             return View();
         }
 
-
-        /// <summary>
-        /// صفحه ساخت سیمکارت جدید
-        /// POST
-        /// </summary>
-        /// <returns></returns>
+        // صفحه ساخت سیمکارت جدید
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind] SimDTO sim)
@@ -82,44 +70,36 @@ namespace OperatorManagementUI.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه ویرایش سیمکارت
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه ویرایش سیمکارت
+        // GET
         public ActionResult Edit(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
                 }
+
                 SimDTO sim = _simService.GetSimById(id.Value);
-                if (sim == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
-                }
+
                 ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", sim.Person_Id);
                 ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
                 return View(sim);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
 
-        /// <summary>
-        /// صفحه ویرایش سیمکارت
-        /// POST
-        /// </summary>
-        /// <returns></returns>
+        // صفحه ویرایش سیمکارت
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind] SimDTO sim)
@@ -131,34 +111,31 @@ namespace OperatorManagementUI.Controllers
                     _simService.UpdateSim(sim);
                     return RedirectToAction("Index");
                 }
+
                 ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", sim.Person_Id);
                 ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
+
                 return View(sim);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه حذف سیمکارت
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه حذف سیمکارت
+        // GET
         public ActionResult Delete(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
                 }
+
                 SimDTO sim = _simService.GetSimById(id.Value);
-                if (sim == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
-                }
+
                 return View(sim);
             }
             catch (Exception ex)
@@ -167,14 +144,11 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
-        /// <summary>
-        /// صفحه حذف سیمکارت
-        /// POST
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost, ActionName("Delete")]
+        // صفحه حذف سیمکارت
+        // POST
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
             try
             {
@@ -183,23 +157,17 @@ namespace OperatorManagementUI.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه نمایش سیمکارت های حذف شده
-        /// </summary>
-        /// <returns></returns>
+        // صفحه نمایش سیمکارت های حذف شده
         public ActionResult DeletedSims()
         {
             return View(_simService.GetDeletedSims());
         }
 
-        /// <summary>
-        /// صفحه بازگردانی سیمکارت حذف شده
-        /// </summary>
-        /// <returns></returns>
+        // صفحه بازگردانی سیمکارت حذف شده
         public ActionResult UnDelete(int id)
         {
             try
@@ -209,64 +177,54 @@ namespace OperatorManagementUI.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-
-        /// <summary>
-        /// صفحه شارژ/پرداخت قبض سیمکارت
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه شارژ/پرداخت قبض سیمکارت
+        // GET
         public ActionResult Wallet(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 500 });
                 }
 
                 var currentsim = _simService.GetWallet(id.Value);
 
-                if (currentsim == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
-                }
-
                 ViewBag.wallet = currentsim;
-                var vm = new WalletChargeDTO
+
+                var walletChargeDTO = new WalletChargeDTO
                 {
                     SimId = id.Value,
                     AddBalance = 0,
                     SimTypeId = currentsim.SimTypeId
                 };
-                return View(vm);
+
+                return View(walletChargeDTO);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه شارژ/پرداخت قبض سیمکارت
-        /// POST
-        /// </summary>
-        /// <returns></returns>
+        // صفحه شارژ/پرداخت قبض سیمکارت
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Wallet([Bind] WalletChargeDTO walletChargeDTO)
         {
-
             try
             {
                 switch (walletChargeDTO.SimTypeId)
                 {
+                    //شارژ سیمکارت اعتباری
                     case (int)OperatorManagementBL.Enum.SimTypeEnum.credit:
                         {
-
+                            // اگر مبلغ شارژ معتبر نبود خطا
                             if (walletChargeDTO.AddBalance <= 0)
                             {
                                 ModelState.AddModelError("InvalidBalance", "مبلغ شارژ معتبر نیست");
@@ -274,14 +232,21 @@ namespace OperatorManagementUI.Controllers
                                 return View(walletChargeDTO);
                             }
 
+                            //انجام شارژ
                             _simService.ChargeSim(walletChargeDTO.SimId, walletChargeDTO.AddBalance);
+
+                            //فلگ موفق بودن شارژ
                             ViewBag.ChargeSuccess = true;
 
                             break;
                         }
+                    //پرداخت قبض سیمکارت دائمی
                     case (int)OperatorManagementBL.Enum.SimTypeEnum.permanent:
                         {
+                            //انجام پرداخت قبض
                             _simService.PayBillSim(walletChargeDTO.SimId);
+
+                            //فلگ موفق بودن پرداخت قبض
                             ViewBag.PayBillSuccess = true;
 
                             break;
@@ -291,12 +256,12 @@ namespace OperatorManagementUI.Controllers
                 }
 
                 ViewBag.wallet = _simService.GetWallet(walletChargeDTO.SimId);
-                
+
                 return View(walletChargeDTO);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
     }

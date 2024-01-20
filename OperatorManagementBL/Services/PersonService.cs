@@ -15,184 +15,214 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
-        public List<PersonDTO> GetPeople()
-        {
-            var p = _context.Tbl_Person.Where(a=>!a.Fld_Person_IsDeleted);
-            List<PersonDTO> ret = new List<PersonDTO>();
-            foreach (var item in p)
-            {
-                ret.Add(new PersonDTO { Id = item.Fld_Person_Id, FirstName = item.Fld_Person_Fname, LastName = item.Fld_Person_Lname, NationCode = item.Fld_Person_NationCode });
-            }
+        #region Priv8
+        //----------------Priv8 Methods----------------//
 
-            return ret;
+        //لیست اشخاص حذف نشده از دیتابیس
+        private IQueryable<Tbl_Person> _Get()
+        {
+            return _context.Tbl_Person.Where(a => !a.Fld_Person_IsDeleted);
         }
 
-        public List<PersonDropdownDTO> GetPeopleForDropdown()
+        //شخص از دیتابیس با آی دی
+        private Tbl_Person _Get(int personId)
         {
-            var p = _context.Tbl_Person.Where(a => !a.Fld_Person_IsDeleted);
-            List<PersonDropdownDTO> ret = new List<PersonDropdownDTO>();
-            foreach (var item in p)
-            {
-                ret.Add(new PersonDropdownDTO { Id = item.Fld_Person_Id, NameAndNationCode = $"{item.Fld_Person_Fname} {item.Fld_Person_Lname} ({item.Fld_Person_NationCode})" });
-            }
+            //گرفتن شخص از دیتابیس با آی دی
+            var person = _context.Tbl_Person.Find(personId);
 
-            return ret;
+            //خطای شخص یافت نشد در صورت پیدا نکردن شخص
+            if (person == null) { throw new PersonNotFoundException(); }
+
+            return person;
         }
 
-        public List<PersonDTO> GetDeletedPeople()
-        {
-            var p = _context.Tbl_Person.Where(a => a.Fld_Person_IsDeleted);
-            List<PersonDTO> ret = new List<PersonDTO>();
-            foreach (var item in p)
-            {
-                ret.Add(new PersonDTO { Id = item.Fld_Person_Id, FirstName = item.Fld_Person_Fname, LastName = item.Fld_Person_Lname, NationCode = item.Fld_Person_NationCode });
-            }
-
-            return ret;
-        }
-
-        public PersonDTO GetPersonById(int personId)
+        //آپدیت شخص
+        private void _Update(Tbl_Person person)
         {
             try
             {
-                var p = _context.Tbl_Person.Find(personId);
-                PersonDTO ret = new PersonDTO
-                {
-                    Id = p.Fld_Person_Id,
-                    FirstName = p.Fld_Person_Fname,
-                    LastName = p.Fld_Person_Lname,
-                    NationCode = p.Fld_Person_NationCode
-                };
-                return ret;
+                _context.Entry(person).State = EntityState.Modified;
+                _context.SaveChanges();
             }
-            catch (System.Exception)
+            catch
             {
-                throw new System.Exception("کاربر با این مشخصات یافت نشد");
+                throw new System.Exception("خطای نامشخص در UpdatePerson");
             }
+        }
+
+        //افزودن شخص
+        private void _Add(Tbl_Person person)
+        {
+            try
+            {
+                _context.Tbl_Person.Add(person);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                throw new System.Exception("خطای نامشخص در AddPerson");
+            }
+        }
+
+        //----------------Priv8 Methods----------------//
+        #endregion
+
+        #region Public
+        public List<PersonDTO> GetPeople()
+        {
+            var people = _Get();
+
+            //مپ کردن لیست اشخاص برای نمایش
+            List<PersonDTO> mappedPeople = new List<PersonDTO>();
+            foreach (var p in people)
+            {
+                mappedPeople.Add(new PersonDTO { Id = p.Fld_Person_Id, FirstName = p.Fld_Person_Fname, LastName = p.Fld_Person_Lname, NationCode = p.Fld_Person_NationCode });
+            }
+
+            return mappedPeople;
         }
 
         public PersonDetailDTO GetPersonByIdForDetail(int personId)
         {
-            try
-            {
-                var p = _context.Tbl_Person.Find(personId);
 
-                var sims = new List<SimForPersonDTO>();
-                foreach (var item in p.Tbl_Sim)
+            var person = _Get(personId);
+
+            //مپ کردن سیمکارت های شخص
+            var mappedPersonSimcards = new List<SimForPersonDetailDTO>();
+            if (mappedPersonSimcards.Any())
+            {
+                foreach (var item in person.Tbl_Sim)
                 {
-                    sims.Add(new SimForPersonDTO
+                    mappedPersonSimcards.Add(new SimForPersonDetailDTO
                     {
                         Id = item.Fld_Sim_Id,
                         Number = item.Fld_Sim_Number
                     });
                 }
+            }
 
-                PersonDetailDTO ret = new PersonDetailDTO
-                {
-                    Id = p.Fld_Person_Id,
-                    FirstName = p.Fld_Person_Fname,
-                    LastName = p.Fld_Person_Lname,
-                    NationCode = p.Fld_Person_NationCode,
-                    SimCards = sims
-                };
-                return ret;
-            }
-            catch (System.Exception)
+            //مپ کردن شخص
+            PersonDetailDTO mappedPerson = new PersonDetailDTO
             {
-                throw new System.Exception("کاربر با این مشخصات یافت نشد");
-            }
+                Id = person.Fld_Person_Id,
+                FirstName = person.Fld_Person_Fname,
+                LastName = person.Fld_Person_Lname,
+                NationCode = person.Fld_Person_NationCode,
+                SimCards = mappedPersonSimcards
+            };
+
+            return mappedPerson;
+
         }
 
-        public void AddPerson(PersonDTO person)
+        public void AddPerson(PersonDTO personDto)
         {
-            //check duplicate NationCode
-            var pe = _context.Tbl_Person.Where(a => a.Fld_Person_NationCode == person.NationCode);
-            if(pe.Any())
+            //چک کردن تکراری نبودن کد ملی و خطا در صورت تکراری بودن
+            var person = _context.Tbl_Person.Where(a => a.Fld_Person_NationCode == personDto.NationCode);
+            if (person.Any())
             {
                 throw new DuplicateNationCodeException();
             }
 
-            Tbl_Person p = new Tbl_Person
+            //مپ کردن به مدل
+            Tbl_Person mappedPerson = new Tbl_Person
             {
-                Fld_Person_Fname = person.FirstName,
-                Fld_Person_Lname = person.LastName,
-                Fld_Person_NationCode = person.NationCode
+                Fld_Person_Fname = personDto.FirstName,
+                Fld_Person_Lname = personDto.LastName,
+                Fld_Person_NationCode = personDto.NationCode
             };
-            try
-            {
-                _context.Tbl_Person.Add(p);
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("امکان اضافه کردن کاربر وجود ندارد");
-            }
+
+            _Add(mappedPerson);
         }
 
-        public PersonDTO UpdatePerson(PersonDTO person) 
+        public PersonDTO GetPersonById(int personId)
         {
-            //check duplicate NationCode
-            var pe = _context.Tbl_Person.Where(a => a.Fld_Person_Id != person.Id && a.Fld_Person_NationCode == person.NationCode);
-            if (pe.Any())
+            var person = _Get(personId);
+
+            //مپ کردن شخص به DTO
+            PersonDTO mappedPerson = new PersonDTO
+            {
+                Id = person.Fld_Person_Id,
+                FirstName = person.Fld_Person_Fname,
+                LastName = person.Fld_Person_Lname,
+                NationCode = person.Fld_Person_NationCode
+            };
+
+            return mappedPerson;
+        }
+
+        public void UpdatePerson(PersonDTO personDto)
+        {
+            //چک کردن تکراری نبودن کد ملی و خطا در صورت تکراری بودن
+            var person = _context.Tbl_Person.Where(a => a.Fld_Person_Id != personDto.Id && a.Fld_Person_NationCode == personDto.NationCode);
+            if (person.Any())
             {
                 throw new DuplicateNationCodeException();
             }
 
-            Tbl_Person p = new Tbl_Person
-            {
-                Fld_Person_Id = person.Id,
-                Fld_Person_Fname = person.FirstName,
-                Fld_Person_Lname = person.LastName,
-                Fld_Person_NationCode = person.NationCode
-            };
+            //آپدیت مشخصات شخص
+            var personForUpdate = _Get(personDto.Id);
+            personForUpdate.Fld_Person_Fname = personDto.FirstName;
+            personForUpdate.Fld_Person_Lname = personDto.LastName;
+            personForUpdate.Fld_Person_NationCode = personDto.NationCode;
 
-            try
-            {
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("امکان بروزرسانی اطلاعات کاربر وجود ندارد");
-            }
-
-            return person;
+            _Update(personForUpdate);
         }
 
         public void DeletePersonById(int personId)
         {
-            try
-            {
-                Tbl_Person p = _context.Tbl_Person.Find(personId);
-                p.Fld_Person_IsDeleted = true;
+            var person = _Get(personId);
 
-                foreach (var item in p.Tbl_Sim)
-                {
-                    item.Fld_Sim_IsDeleted = true;
-                }
+            //تغییر وضعیت کاربر به حذف شده
+            person.Fld_Person_IsDeleted = true;
 
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
+            //تغییر وضعیت سیمکارت های کاربر به حذف شده
+            foreach (var item in person.Tbl_Sim)
             {
-                throw new System.Exception("امکان حذف کاربر وجود ندارد");
+                item.Fld_Sim_IsDeleted = true;
             }
+
+            _Update(person);
+        }
+
+        public List<PersonDTO> GetDeletedPeople()
+        {
+            //گرفتن لیست اشخاص حذف شده
+            var people = _context.Tbl_Person.Where(a => a.Fld_Person_IsDeleted);
+
+            //مپ کردن لیست اشخاص
+            List<PersonDTO> mappedPeople = new List<PersonDTO>();
+            foreach (var p in people)
+            {
+                mappedPeople.Add(new PersonDTO { Id = p.Fld_Person_Id, FirstName = p.Fld_Person_Fname, LastName = p.Fld_Person_Lname, NationCode = p.Fld_Person_NationCode });
+            }
+
+            return mappedPeople;
         }
 
         public void UnDeletePersonById(int personId)
         {
-            try
-            {
-                Tbl_Person p = _context.Tbl_Person.Find(personId);
-                p.Fld_Person_IsDeleted = false;
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("امکان بازگرداندن کاربر وجود ندارد");
-            }
+            var person = _Get(personId);
+
+            //تغییر وضعیت حذف کاربر
+            person.Fld_Person_IsDeleted = false;
+
+            _Update(person);
         }
+
+        public List<PersonDropdownDTO> GetPeopleForDropdown()
+        {
+            var people = _Get();
+
+            //مپ کردن لیست اشخاص
+            List<PersonDropdownDTO> mappedPeople = new List<PersonDropdownDTO>();
+            foreach (var p in people)
+            {
+                mappedPeople.Add(new PersonDropdownDTO { Id = p.Fld_Person_Id, NameAndNationCode = $"{p.Fld_Person_Fname} {p.Fld_Person_Lname} ({p.Fld_Person_NationCode})" });
+            }
+
+            return mappedPeople;
+        }
+        #endregion
     }
 }

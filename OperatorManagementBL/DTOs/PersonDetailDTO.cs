@@ -17,6 +17,6 @@ namespace OperatorManagementBL.DTOs
         [Display(Name = "کد ملی")]
         public string NationCode { get; set; }
 
-        public List<SimForPersonDTO> SimCards { get; set; }
+        public List<SimForPersonDetailDTO> SimCards { get; set; }
     }
 }

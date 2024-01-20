@@ -49,7 +49,7 @@ namespace OperatorManagementBL.Services
         /// </summary>
         /// <param name="sim">سیمکارت</param>
         /// <returns>SimDTO</returns>
-        SimDTO UpdateSim(SimDTO sim);
+        void UpdateSim(SimDTO sim);
 
         /// <summary>
         /// حذف سیمکارت

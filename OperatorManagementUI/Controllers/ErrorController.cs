@@ -5,11 +5,7 @@ namespace OperatorManagementUI.Controllers
 {
     public class ErrorController : Controller
     {
-        /// <summary>
-        /// صفحه نمایش خطا به کاربر
-        /// </summary>
-        /// <param name="errorDto">مدل صفحه که فقط شامل پیام خطا است</param>
-        /// <returns></returns>
+        // صفحه نمایش خطا به کاربر
         [HandleError]
         public ActionResult Index(ErrorDTO errorDto)
         {

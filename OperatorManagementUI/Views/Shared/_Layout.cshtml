@@ -59,6 +59,8 @@
             </div>
             <div class="col py-3">
                 @RenderBody()
+                @RenderSection("toasts", required: false)
+
             </div>
         </div>
     </div>

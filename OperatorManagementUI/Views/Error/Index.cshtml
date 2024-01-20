@@ -19,7 +19,7 @@
 
 <body>
     <div class="d-flex align-items-center justify-content-center vh-100">
-        @if (!string.IsNullOrEmpty(Model.Msg))
+        @if (Model.StatusCode==500)
         {
             <div class="text-center">
                 <h1 class="display-1 fw-bold">500</h1>

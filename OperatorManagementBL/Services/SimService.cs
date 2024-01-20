@@ -15,308 +15,288 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
+        #region Priv8
+        //------------Priv8 Methods----------//
+
+        private IQueryable<Tbl_Sim> _Get()
+        {
+            return _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
+        }
+
+        private Tbl_Sim _Get(int simcardId)
+        {
+            var simcard = _context.Tbl_Sim.Find(simcardId);
+            if (simcard == null) { throw new SimcardNotFoundException(); }
+            return simcard;
+        }
+
+        private void _Add(Tbl_Sim simcard)
+        {
+            try
+            {
+                _context.Tbl_Sim.Add(simcard);
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("خطای نامشخص در _Add");
+            }
+        }
+
+        private void _Update(Tbl_Sim simcard)
+        {
+            try
+            {
+                _context.Entry(simcard).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("خطای نامشخص در _Update");
+            }
+        }
+
+        //------------Priv8 Methods----------//
+        #endregion
+
+        #region Public
         public List<SimDTO> GetSims()
         {
-            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
-            List<SimDTO> ret = new List<SimDTO>();
-            foreach (var item in p)
+            var simcards = _Get();
+
+            //مپ لیست سیمکارت ها
+            List<SimDTO> mappedSimcards = new List<SimDTO>();
+            foreach (var s in simcards)
             {
-                ret.Add(new SimDTO
+                mappedSimcards.Add(new SimDTO
                 {
-                    Id = item.Fld_Sim_Id,
-                    Number = item.Fld_Sim_Number,
-                    Person_Id = item.Fld_Person_Id,
-                    IsActive = item.Fld_Sim_IsActive,
-                    SimType_Id = item.Fld_SimType_Id
+                    Id = s.Fld_Sim_Id,
+                    Number = s.Fld_Sim_Number,
+                    Person_Id = s.Fld_Person_Id,
+                    IsActive = s.Fld_Sim_IsActive,
+                    SimType_Id = s.Fld_SimType_Id
                 });
             }
 
-            return ret;
+            return mappedSimcards;
         }
 
         public List<SimForListDTO> GetSimsForDropdown(int? exclude)
         {
-            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted && a.Fld_Sim_Id != exclude.Value);
-            List<SimForListDTO> ret = new List<SimForListDTO>();
-            foreach (var item in p)
+            var simcards = _Get().Where(a => a.Fld_Sim_Id != exclude.Value);
+
+            //مپ لیست سیمکارت ها برای دراپ دان
+            List<SimForListDTO> mappedSimcards = new List<SimForListDTO>();
+            foreach (var s in simcards)
             {
-                ret.Add(new SimForListDTO
+                mappedSimcards.Add(new SimForListDTO
                 {
-                    Id = item.Fld_Sim_Id,
-                    Number = item.Fld_Sim_Number,
+                    Id = s.Fld_Sim_Id,
+                    Number = s.Fld_Sim_Number,
                 });
             }
 
-            return ret;
+            return mappedSimcards;
         }
 
         public List<SimDetailDTO> GetDetailSims()
         {
-            var p = _context.Tbl_Sim.Where(a => !a.Fld_Sim_IsDeleted && !a.Tbl_Person.Fld_Person_IsDeleted);
-            List<SimDetailDTO> ret = new List<SimDetailDTO>();
-            foreach (var item in p)
+            var simcards = _Get();
+
+            //مپ لیست سیمکارت ها با جزئیات
+            List<SimDetailDTO> mappedSimcards = new List<SimDetailDTO>();
+            foreach (var s in simcards)
             {
-                ret.Add(new SimDetailDTO
+                mappedSimcards.Add(new SimDetailDTO
                 {
-                    Id = item.Fld_Sim_Id,
-                    Number = item.Fld_Sim_Number,
-                    Person = item.Tbl_Person.Fld_Person_Fname + " " + item.Tbl_Person.Fld_Person_Lname,
-                    IsActive = item.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
-                    SimType = item.Tbl_SimType.Fld_SimType_Value,
-                    SimTypeId = item.Fld_SimType_Id
+                    Id = s.Fld_Sim_Id,
+                    Number = s.Fld_Sim_Number,
+                    Person = s.Tbl_Person.Fld_Person_Fname + " " + s.Tbl_Person.Fld_Person_Lname,
+                    IsActive = s.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
+                    SimType = s.Tbl_SimType.Fld_SimType_Value,
+                    SimTypeId = s.Fld_SimType_Id
                 });
             }
 
-            return ret;
+            return mappedSimcards;
         }
 
-        public SimDTO GetSimById(int simId)
+        public SimDTO GetSimById(int simcardId)
         {
-            try
+            var simcard = _Get(simcardId);
+
+            //مپ سیمکارت برای نمایش تکی
+            SimDTO mappedSimcard = new SimDTO
             {
-                var p = _context.Tbl_Sim.Find(simId);
-                SimDTO ret = new SimDTO
-                {
-                    Id = p.Fld_Sim_Id,
-                    Number = p.Fld_Sim_Number,
-                    Person_Id = p.Fld_Person_Id,
-                    IsActive = p.Fld_Sim_IsActive,
-                    SimType_Id = p.Fld_SimType_Id
-                };
-                return ret;
-            }
-            catch
-            {
-                throw new System.Exception("سیم‌کارت با این مشخصات یافت نشد");
-            }
+                Id = simcard.Fld_Sim_Id,
+                Number = simcard.Fld_Sim_Number,
+                Person_Id = simcard.Fld_Person_Id,
+                IsActive = simcard.Fld_Sim_IsActive,
+                SimType_Id = simcard.Fld_SimType_Id
+            };
+            return mappedSimcard;
         }
 
-        public SimDetailDTO GetSimDetailById(int simId)
+        public SimDetailDTO GetSimDetailById(int simcardId)
         {
-            try
+            var simcard = _Get(simcardId);
+
+            //مپ سیمکارت نمایش تکی با جزئیات
+            SimDetailDTO mappedSimcard = new SimDetailDTO
             {
-                var p = _context.Tbl_Sim.Find(simId);
-                SimDetailDTO ret = new SimDetailDTO
-                {
-                    Id = p.Fld_Sim_Id,
-                    Number = p.Fld_Sim_Number,
-                    Person = p.Tbl_Person.Fld_Person_Fname + " " + p.Tbl_Person.Fld_Person_Lname,
-                    IsActive = p.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
-                    SimType = p.Tbl_SimType.Fld_SimType_Value,
-                    SimTypeId = p.Fld_SimType_Id,
-                    Balance = p.Tbl_Wallet.Fld_Wallet_Balance
-                };
-                return ret;
-            }
-            catch
-            {
-                throw new System.Exception("سیم‌کارت با این مشخصات یافت نشد");
-            }
+                Id = simcard.Fld_Sim_Id,
+                Number = simcard.Fld_Sim_Number,
+                Person = simcard.Tbl_Person.Fld_Person_Fname + " " + simcard.Tbl_Person.Fld_Person_Lname,
+                IsActive = simcard.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
+                SimType = simcard.Tbl_SimType.Fld_SimType_Value,
+                SimTypeId = simcard.Fld_SimType_Id,
+                Balance = simcard.Tbl_Wallet.Fld_Wallet_Balance
+            };
+            return mappedSimcard;
         }
 
-        public void AddSim(SimDTO sim)
+        public void AddSim(SimDTO simcardDto)
         {
-            var t = _context.Tbl_Sim.Where(a => a.Fld_Sim_Number == sim.Number);
-            if (t.Any())
+            //چک کردن تکراری نبودن شماره و ایجاد خطا در صورت تکراری بودن
+            var sim = _context.Tbl_Sim.Where(a => a.Fld_Sim_Number == simcardDto.Number);
+            if (sim.Any())
             {
                 throw new DuplicateSimNumberException();
             }
 
-            Tbl_Sim p = new Tbl_Sim
+            //مپ کردن سیمکارت برای ایجاد در جدول با اعتبار اولیه صفر
+            Tbl_Sim simcard = new Tbl_Sim
             {
-                Fld_Sim_Number = sim.Number,
-                Fld_Person_Id = sim.Person_Id,
-                Fld_Sim_IsActive = sim.IsActive,
-                Fld_SimType_Id = sim.SimType_Id,
+                Fld_Sim_Number = simcardDto.Number,
+                Fld_Person_Id = simcardDto.Person_Id,
+                Fld_Sim_IsActive = simcardDto.IsActive,
+                Fld_SimType_Id = simcardDto.SimType_Id,
+                Tbl_Wallet = new Tbl_Wallet { Fld_Wallet_Balance = 0 }
             };
 
-            try
-            {
-                _context.Tbl_Sim.Add(p);
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("خطا در اضافه کردن سیم‌کارت");
-            }
-
-            try
-            {
-                _context.Tbl_Wallet.Add(new Tbl_Wallet
-                {
-                    Fld_Wallet_Id = p.Fld_Sim_Id,
-                    Fld_Wallet_Balance = 0
-                });
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("خطا در اضافه کردن کیف پول سیم‌کارت");
-            }
+            _Add(simcard);
         }
 
-        public SimDTO UpdateSim(SimDTO sim)
+        public void UpdateSim(SimDTO simcard)
         {
-            var t = _context.Tbl_Sim.Where(a => a.Fld_Sim_Id != sim.Id && a.Fld_Sim_Number == sim.Number);
-            if (t.Any())
+            //چک کردن تکراری نبودن شماره و ایجاد خطا در صورت تکراری بودن
+            var sim = _context.Tbl_Sim.Where(a => a.Fld_Sim_Id != simcard.Id && a.Fld_Sim_Number == simcard.Number);
+            if (sim.Any())
             {
                 throw new DuplicateSimNumberException();
             }
 
-            Tbl_Sim p = new Tbl_Sim
-            {
-                Fld_Sim_Id = sim.Id,
-                Fld_Sim_Number = sim.Number,
-                Fld_Person_Id = sim.Person_Id,
-                Fld_Sim_IsActive = sim.IsActive,
-                Fld_SimType_Id = sim.SimType_Id
-            };
+            //آپدیت مشخصات سیمکارت
+            var simForUpdate = _Get(simcard.Id);
+            simForUpdate.Fld_Sim_Id = simcard.Id;
+            simForUpdate.Fld_Sim_Number = simcard.Number;
+            simForUpdate.Fld_Person_Id = simcard.Person_Id;
+            simForUpdate.Fld_Sim_IsActive = simcard.IsActive;
+            simForUpdate.Fld_SimType_Id = simcard.SimType_Id;
 
-            try
-            {
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("خطا در بروزرسانی اطلاعات سیم‌کارت");
-            }
-
-            return sim;
+            _Update(simForUpdate);
         }
 
-        public void DeleteSimById(int simId)
+        public void DeleteSimById(int simcardId)
         {
-            try
-            {
-                Tbl_Sim p = _context.Tbl_Sim.Find(simId);
-                p.Fld_Sim_IsDeleted = true;
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("خطا در حذف سیم‌کارت");
-            }
+            Tbl_Sim simcard = _Get(simcardId);
+
+            //تغییر وضعیت سیمکارت به حذف شده
+            simcard.Fld_Sim_IsDeleted = true;
+
+            _Update(simcard);
         }
 
         public List<SimDetailDTO> GetDeletedSims()
         {
-            var p = _context.Tbl_Sim.Where(a => a.Fld_Sim_IsDeleted);
-            List<SimDetailDTO> ret = new List<SimDetailDTO>();
-            foreach (var item in p)
+            //گرفتن لیست سیمکارت های حذف شده از دیتابیس
+            var simcards = _context.Tbl_Sim.Where(a => a.Fld_Sim_IsDeleted);
+
+            //مپ کردن برای نمایش
+            List<SimDetailDTO> mappedSimcards = new List<SimDetailDTO>();
+            foreach (var s in simcards)
             {
-                ret.Add(new SimDetailDTO
+                mappedSimcards.Add(new SimDetailDTO
                 {
-                    Id = item.Fld_Sim_Id,
-                    Number = item.Fld_Sim_Number,
-                    Person = item.Tbl_Person.Fld_Person_Fname + " "+ item.Tbl_Person.Fld_Person_Lname,
-                    SimType = item.Tbl_SimType.Fld_SimType_Value
+                    Id = s.Fld_Sim_Id,
+                    Number = s.Fld_Sim_Number,
+                    Person = s.Tbl_Person.Fld_Person_Fname + " " + s.Tbl_Person.Fld_Person_Lname,
+                    SimType = s.Tbl_SimType.Fld_SimType_Value
                 });
             }
 
-            return ret;
+            return mappedSimcards;
         }
 
-        public void UnDeleteSimById(int simId)
+        public void UnDeleteSimById(int simcardId)
         {
 
-            Tbl_Sim p = _context.Tbl_Sim.Find(simId);
+            Tbl_Sim simcard = _Get(simcardId);
 
-            if (p == null)
-            {
-                throw new System.Exception("سیم‌کارت یافت نشد");
-            }
-
-            if (p.Tbl_Person.Fld_Person_IsDeleted)
+            //ایجاد خطا در صورت حذف بودن مالک سیمکارت
+            if (simcard.Tbl_Person.Fld_Person_IsDeleted)
             {
                 throw new SimcardOwnerIsDeletedException();
             }
 
-            p.Fld_Sim_IsDeleted = false;
+            //تغییر وضعیت سیمکارت
+            simcard.Fld_Sim_IsDeleted = false;
 
-            try
-            {
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                throw new System.Exception("خطا در بازگردانی سیم‌کارت");
-            }
+            _Update(simcard);
         }
 
         public List<SimTypeDTO> GetSimTypes()
         {
-            var p = _context.Tbl_SimType;
-            List<SimTypeDTO> ret = new List<SimTypeDTO>();
-            foreach (var item in p)
+            //گرفتن لیست انواع سیمکارت از دیتابیس
+            var simTypes = _context.Tbl_SimType;
+
+            //مپ کردن برای نمایش
+            List<SimTypeDTO> mappedSimTypes = new List<SimTypeDTO>();
+            foreach (var s in simTypes)
             {
-                ret.Add(new SimTypeDTO { Id = item.Fld_SimType_Id, Type = item.Fld_SimType_Value });
+                mappedSimTypes.Add(new SimTypeDTO { Id = s.Fld_SimType_Id, Type = s.Fld_SimType_Value });
             }
 
-            return ret;
+            return mappedSimTypes;
         }
 
-        public WalletDTO GetWallet(int simId)
+        public WalletDTO GetWallet(int simcardId)
         {
-            var p = _context.Tbl_Sim.Find(simId);
-            if (p == null)
-            {
-                throw new System.Exception("سیم‌کارت یافت نشد");
-            }
+            var simcard = _Get(simcardId);
 
-            var ret = new WalletDTO
+            //مپ سیمکارت و اعتبار
+            var mappedWallet = new WalletDTO
             {
-                Id = simId,
-                Balance = p.Tbl_Wallet.Fld_Wallet_Balance,
-                Number = p.Fld_Sim_Number,
-                Person = p.Tbl_Person.Fld_Person_Fname + " " + p.Tbl_Person.Fld_Person_Lname,
-                SimTypeId = p.Fld_SimType_Id
+                Id = simcard.Fld_Sim_Id,
+                Balance = simcard.Tbl_Wallet.Fld_Wallet_Balance,
+                Number = simcard.Fld_Sim_Number,
+                Person = simcard.Tbl_Person.Fld_Person_Fname + " " + simcard.Tbl_Person.Fld_Person_Lname,
+                SimTypeId = simcard.Fld_SimType_Id
             };
 
-            return ret;
+            return mappedWallet;
         }
 
-        public void ChargeSim(int simId, decimal addBalance)
+        public void ChargeSim(int simcardId, decimal addBalance)
         {
-            try
-            {
-                var p = _context.Tbl_Sim.Find(simId);
-                if (p == null)
-                {
-                    throw new System.Exception("سیم‌کارت یافت نشد");
-                }
+            var simcard = _Get(simcardId);
 
-                p.Tbl_Wallet.Fld_Wallet_Balance += addBalance;
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch
-            {
-                throw new System.Exception("خطا در شارژ سیم‌کارت");
-            }
+            //افزودن به اعتبار سیمکارت
+            simcard.Tbl_Wallet.Fld_Wallet_Balance += addBalance;
 
+            _Update(simcard);
         }
 
         public void PayBillSim(int simId)
         {
-            try
-            {
-                var p = _context.Tbl_Sim.Find(simId);
-                if (p == null)
-                {
-                    throw new System.Exception("سیم‌کارت یافت نشد");
-                }
+            var simcard = _Get(simId);
 
-                p.Tbl_Wallet.Fld_Wallet_Balance = 0.00M;
-                _context.Entry(p).State = EntityState.Modified;
-                _context.SaveChanges();
-            }
-            catch
-            {
-                throw new System.Exception("خطا در پرداخت قبض");
-            }
+            //صفر کردن اعتبار سیمکارت
+            simcard.Tbl_Wallet.Fld_Wallet_Balance = 0.00M;
+
+            _Update(simcard);
         }
+        #endregion
+
     }
 }

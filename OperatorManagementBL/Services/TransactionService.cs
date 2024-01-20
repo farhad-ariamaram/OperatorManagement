@@ -22,57 +22,65 @@ namespace OperatorManagementBL.Services
             IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
             TransactionPageDTO ret = new TransactionPageDTO();
 
+            //فیلتر تاریخ بعد از
             if (fromDate != 0)
             {
                 DateTime fromDateTime = fromDate.ToGeorgianDateTimeFromUnixTimeStamp();
                 q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date >= fromDateTime);
             }
 
+            //فیلتر تاریخ قبل از
             if (toDate != 0)
             {
                 DateTime toDateTime = toDate.ToGeorgianDateTimeFromUnixTimeStamp();
                 q_transactions = q_transactions.Where(a => a.Fld_Transaction_Date <= toDateTime);
             }
 
+            //فیلتر از سیمکارت
             if (fromSimId != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_Sim_FromSimId == fromSimId);
             }
 
+            //فیلتر به سیمکارت
             if (toSimId != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_Sim_ToSimId == toSimId);
             }
 
+            //فیلتر از شخص
             if (fromPersonId != 0)
             {
                 var listPersonSims = _context.Tbl_Sim.Where(a => a.Fld_Person_Id == fromPersonId).Select(a => a.Fld_Sim_Id);
                 q_transactions = q_transactions.Where(a => listPersonSims.Contains(a.Fld_Sim_FromSimId));
             }
 
+            //فیلتر به شخص
             if (toPersonId != 0)
             {
                 var listPersonSims = _context.Tbl_Sim.Where(a => a.Fld_Person_Id == toPersonId).Select(a => a.Fld_Sim_Id);
                 q_transactions = q_transactions.Where(a => listPersonSims.Contains(a.Fld_Sim_ToSimId));
             }
 
+            //فیلتر مدت کمتر از
             if (durationLessThan != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration < new TimeSpan(0, durationLessThan, 0));
             }
 
+            //فیلتر مدت بیش تر از
             if (durationMoreThan != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration > new TimeSpan(0, durationMoreThan, 0));
             }
 
+            //فیلتر نوع
             if (typeId != 0)
             {
                 q_transactions = q_transactions.Where(a => a.Fld_TransactionType_Id == typeId);
             }
 
-            var t = _context.Tbl_Transaction.Where(a => a.Tbl_Sim.Tbl_Person.Fld_Person_Fname.Contains("فرهاد"));
-
+            //جستجو
             if (!string.IsNullOrEmpty(search) && !string.IsNullOrWhiteSpace(search))
             {
                 q_transactions = q_transactions
@@ -82,6 +90,7 @@ namespace OperatorManagementBL.Services
                                 a.Tbl_Sim1.Tbl_Person.Fld_Person_Lname.Contains(search));
             }
 
+            //مرتب سازی
             switch (sortType)
             {
                 case (int)SortTypeEnum.Newest:
@@ -98,9 +107,7 @@ namespace OperatorManagementBL.Services
                     break;
             }
 
-
-
-            //pagination
+            //صفحه بندی
             int take = 10;
             int skip = (pageId - 1) * take;
             ret.ResultCount = q_transactions.Count();
@@ -108,10 +115,10 @@ namespace OperatorManagementBL.Services
             ret.PageCount = ret.ResultCount / take;
             if (ret.PageCount * take < q_transactions.Count())
                 ret.PageCount++;
-
             q_transactions = q_transactions.Skip(skip).Take(take);
 
-            int i = 1;
+            //مپ کردن
+            int i = 1; // شماره ردیف
             List<TransactionDTO> transactionsList = new List<TransactionDTO>();
             foreach (var item in q_transactions)
             {
@@ -156,13 +163,13 @@ namespace OperatorManagementBL.Services
 
                 var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
 
-                //اگر اعتباری باشد و کلا شارژ نداشته باشد
+                //اگر اعتباری باشد و شارژ نداشته باشد
                 if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
                 {
                     return (int)CallFailedEnum.insuffienceBalance;
                 }
 
-                //تعرفه برای تماس هر دقیقه 5 تومان 
+                //محاسبه مبلغ مورد نیاز برای تماس
                 var callCost = _context.Tbl_Cost.Where(a => a.Tbl_TransactionType.Fld_TransactionType_Id == (int)TransactionTypeEnum.call).SingleOrDefault().Fld_Cost_Value;
                 var requiredBalance = duration * callCost;
 
@@ -172,6 +179,7 @@ namespace OperatorManagementBL.Services
                     return (int)CallFailedEnum.insuffienceBalance;
                 }
 
+                //مپ کردن جهت ثبت تراکنش در دیتابیس
                 Tbl_Transaction p = new Tbl_Transaction
                 {
                     Fld_Sim_FromSimId = from,
@@ -183,7 +191,7 @@ namespace OperatorManagementBL.Services
                 _context.Tbl_Transaction.Add(p);
                 _context.SaveChanges();
 
-                //update balance
+                //بروزرسانی اعتبار
                 fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
                 _context.Entry(fromSim).State = EntityState.Modified;
                 _context.SaveChanges();
@@ -192,7 +200,7 @@ namespace OperatorManagementBL.Services
             }
             catch
             {
-                throw new Exception("makingCallProblem");
+                return (int)CallFailedEnum.unknown;
             }
         }
 
@@ -217,13 +225,13 @@ namespace OperatorManagementBL.Services
 
                 var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
 
-                //اگر اعتباری باشد و کلا شارژ نداشته باشد
+                //اگر اعتباری باشد و شارژ نداشته باشد
                 if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
                 {
                     return (int)CallFailedEnum.insuffienceBalance;
                 }
 
-                //تعرفه برای ارسال هر پیامک 5 تومان 
+                //محاسبه اعتبار مورد نیاز ارسال پیام
                 var smsCost = _context.Tbl_Cost.Where(a => a.Tbl_TransactionType.Fld_TransactionType_Id == (int)TransactionTypeEnum.sms).SingleOrDefault().Fld_Cost_Value;
                 var requiredBalance = smsCost;
 
@@ -233,6 +241,7 @@ namespace OperatorManagementBL.Services
                     return (int)CallFailedEnum.insuffienceBalance;
                 }
 
+                //مپ کردن جهت ثبت تراکنش
                 Tbl_Transaction p = new Tbl_Transaction
                 {
                     Fld_Sim_FromSimId = from,
@@ -244,7 +253,7 @@ namespace OperatorManagementBL.Services
                 _context.Tbl_Transaction.Add(p);
                 _context.SaveChanges();
 
-                //update balance
+                //بروزرسانی اعتبار
                 fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
                 _context.Entry(fromSim).State = EntityState.Modified;
                 _context.SaveChanges();
@@ -253,7 +262,7 @@ namespace OperatorManagementBL.Services
             }
             catch
             {
-                throw new Exception("sendSMSProblem");
+                return (int)CallFailedEnum.unknown;
             }
         }
     }

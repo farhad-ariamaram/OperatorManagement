@@ -16,107 +16,83 @@ namespace OperatorManagementUI.Controllers
         }
 
 
-        /// <summary>
-        /// صفحه لیست اشخاص
-        /// </summary>
-        /// <returns></returns>
+        // صفحه لیست اشخاص
         public ActionResult Index()
         {
             return View(_personService.GetPeople());
         }
 
-        /// <summary>
-        /// صفحه جزئیات شخص
-        /// </summary>
-        /// <returns></returns>
+        // صفحه جزئیات شخص
         public ActionResult Details(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
                 }
+
                 PersonDetailDTO person = _personService.GetPersonByIdForDetail(id.Value);
-                if (person == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
-                }
+
                 return View(person);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message,StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        ///  صفحه ایجاد شخص
-        ///  GET
-        /// </summary>
-        /// <returns></returns>
+        //  صفحه ایجاد شخص
         public ActionResult Create()
         {
             return View();
         }
 
-        /// <summary>
-        /// صفحه ایجاد شخص
-        /// POST
-        /// </summary>
-        /// <returns></returns>
+        // صفحه ایجاد شخص
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind] PersonDTO tbl_Person)
+        public ActionResult Create([Bind] PersonDTO person)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _personService.AddPerson(tbl_Person);
+                    _personService.AddPerson(person);
                     return RedirectToAction("Index");
                 }
 
-                return View(tbl_Person);
+                return View(person);
             }
             catch(Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه ویرایش شخص
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه ویرایش شخص
+        // GET
         public ActionResult Edit(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
                 }
+
                 PersonDTO person = _personService.GetPersonById(id.Value);
-                if (person == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
-                }
+
                 return View(person);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه ویرایش شخص
-        /// POST
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns></returns>
+        // صفحه ویرایش شخص
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind] PersonDTO person)
@@ -132,44 +108,36 @@ namespace OperatorManagementUI.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه حذف شخص
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه حذف شخص
+        // GET
         public ActionResult Delete(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
                 }
+
                 PersonDTO person = _personService.GetPersonById(id.Value);
-                if (person == null)
-                {
-                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
-                }
+
                 return View(person);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه حذف شخص
-        /// POST
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost, ActionName("Delete")]
+        // صفحه حذف شخص
+        // POST
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
             try
             {
@@ -178,24 +146,17 @@ namespace OperatorManagementUI.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
 
-        /// <summary>
-        /// صفحه لیست اشخاص حذف شده
-        /// </summary>
-        /// <returns></returns>
-
+        // صفحه لیست اشخاص حذف شده
         public ActionResult DeletedPeople()
         {
             return View(_personService.GetDeletedPeople());
         }
 
-        /// <summary>
-        /// صفحه بازگردانی شخص حذف شده
-        /// </summary>
-        /// <returns></returns>
+        // صفحه بازگردانی شخص حذف شده
         public ActionResult UnDelete(int id)
         {
             try
@@ -205,7 +166,7 @@ namespace OperatorManagementUI.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
     }

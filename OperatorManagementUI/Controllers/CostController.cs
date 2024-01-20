@@ -13,21 +13,15 @@ namespace OperatorManagementUI.Controllers
             _costService = new CostService();
         }
 
-        /// <summary>
-        /// صفحه لیست تعرفه ها
-        /// </summary>
-        /// <returns></returns>
+        // صفحه لیست تعرفه ها
         public ActionResult Index()
         {
             var vm = _costService.GetCosts();
             return View(vm);
         }
 
-        /// <summary>
-        /// صفحه تغییر تعرفه
-        /// GET
-        /// </summary>
-        /// <returns></returns>
+        // صفحه تغییر تعرفه
+        // GET
         public ActionResult Set(int? Id)
         {
             if(Id == null)
@@ -40,11 +34,8 @@ namespace OperatorManagementUI.Controllers
             return View(vm);
         }
 
-        /// <summary>
-        ///صفحه تغییر تعرفه
-        ///POST
-        /// </summary>
-        /// <returns></returns>
+        //صفحه تغییر تعرفه
+        //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Set([Bind(Include = "Id,Value")] CostDTO cost)
@@ -62,7 +53,7 @@ namespace OperatorManagementUI.Controllers
             }
             catch (System.Exception ex)
             {
-                return RedirectToAction("Index", "Error", new { Msg = ex.Message });
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
     }
