@@ -1,5 +1,6 @@
 ﻿namespace OperatorManagementBL.DTOs
 {
+    //DTO اعتبار/قبض سیم‌کارت
     public class WalletDTO
     {
         public int Id { get; set; }

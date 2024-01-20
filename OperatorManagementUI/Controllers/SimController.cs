@@ -22,6 +22,10 @@ namespace OperatorManagementUI.Controllers
             return View(_simService.GetDetailSims());
         }
 
+        /// <summary>
+        /// صفحه جزئیات سیمکارت
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Details(int? id)
         {
             try
@@ -43,6 +47,11 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        /// <summary>
+        /// صفحه ساخت سیمکارت جدید
+        /// GET
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
@@ -50,6 +59,12 @@ namespace OperatorManagementUI.Controllers
             return View();
         }
 
+
+        /// <summary>
+        /// صفحه ساخت سیمکارت جدید
+        /// POST
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind] SimDTO sim)
@@ -72,6 +87,11 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        /// <summary>
+        /// صفحه ویرایش سیمکارت
+        /// GET
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Edit(int? id)
         {
             try
@@ -95,6 +115,12 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// صفحه ویرایش سیمکارت
+        /// POST
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind] SimDTO sim)
@@ -116,6 +142,11 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        /// <summary>
+        /// صفحه حذف سیمکارت
+        /// GET
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Delete(int? id)
         {
             try
@@ -137,6 +168,11 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        /// <summary>
+        /// صفحه حذف سیمکارت
+        /// POST
+        /// </summary>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -152,11 +188,19 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        /// <summary>
+        /// صفحه نمایش سیمکارت های حذف شده
+        /// </summary>
+        /// <returns></returns>
         public ActionResult DeletedSims()
         {
             return View(_simService.GetDeletedSims());
         }
 
+        /// <summary>
+        /// صفحه بازگردانی سیمکارت حذف شده
+        /// </summary>
+        /// <returns></returns>
         public ActionResult UnDelete(int id)
         {
             try
@@ -170,6 +214,12 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// صفحه شارژ/پرداخت قبض سیمکارت
+        /// GET
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Wallet(int? id)
         {
             try
@@ -195,6 +245,11 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        /// <summary>
+        /// صفحه شارژ/پرداخت قبض سیمکارت
+        /// POST
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Wallet([Bind] WalletChargeDTO walletChargeDTO)

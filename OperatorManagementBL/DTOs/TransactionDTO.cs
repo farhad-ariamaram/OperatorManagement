@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OperatorManagementBL.DTOs
 {
+    //DTO تراکنش انجام شده 
     public class TransactionDTO
     {
         public int Id { get; set; }

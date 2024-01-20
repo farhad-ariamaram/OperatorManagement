@@ -2,6 +2,7 @@
 
 namespace OperatorManagementBL.DTOs
 {
+    //DTO تعرفه
     public class CostDTO
     {
         public int Id { get; set; }

@@ -2,6 +2,7 @@
 
 namespace OperatorManagementBL.DTOs
 {
+    //DTO جزئیات سیم‌کارت
     public class SimDetailDTO
     {
         public int Id { get; set; }

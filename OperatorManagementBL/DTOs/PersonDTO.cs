@@ -2,6 +2,7 @@
 
 namespace OperatorManagementBL.DTOs
 {
+    ////DTO شخص
     public class PersonDTO
     {
         public int Id { get; set; }

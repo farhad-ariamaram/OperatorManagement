@@ -2,6 +2,7 @@
 
 namespace OperatorManagementBL.DTOs
 {
+    //DTO استفاده در صفحه لیست تراکنش ها
     public class TransactionPageDTO
     {
         public List<TransactionDTO> TransactionsList { get; set; }

@@ -2,6 +2,7 @@
 
 namespace OperatorManagementBL.DTOs
 {
+    //DTO شارز سیم‌کارت یا پرداخت قبض
     public class WalletChargeDTO
     {
         public int SimId { get; set; }

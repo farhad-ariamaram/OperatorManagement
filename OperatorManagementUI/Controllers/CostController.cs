@@ -13,12 +13,21 @@ namespace OperatorManagementUI.Controllers
             _costService = new CostService();
         }
 
+        /// <summary>
+        /// صفحه لیست تعرفه ها
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var vm = _costService.GetCosts();
             return View(vm);
         }
 
+        /// <summary>
+        /// صفحه تغییر تعرفه
+        /// GET
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Set(int? Id)
         {
             if(Id == null)
@@ -31,6 +40,11 @@ namespace OperatorManagementUI.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        ///صفحه تغییر تعرفه
+        ///POST
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Set([Bind(Include = "Id,Value")] CostDTO cost)

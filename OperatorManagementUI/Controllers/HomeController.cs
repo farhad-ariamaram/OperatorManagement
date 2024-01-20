@@ -17,13 +17,20 @@ namespace OperatorManagementUI.Controllers
             _simService = new SimService();
         }
 
-
+        /// <summary>
+        /// صفحه اصلی سایت شامل دو قسمت برای انجام تماس و فرستادن پیامک
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             ViewBag.Sim_Id = new SelectList(_simService.GetSims(), "Id", "Number");
             return View();
         }
 
+        /// <summary>
+        /// صفحه نمایش تراکنش های انجام شده
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Transactions(int pageId = 1, long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0, string search = "")
         {
             ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
@@ -33,7 +40,12 @@ namespace OperatorManagementUI.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        /// متد های AJAX استفاده شده
+        /// </summary>
         #region AJAX_METHODS
+        
+        //متد برقراری تماس
         [HttpPost]
         public JsonResult MakeCall(int fromSimId, int toSimId, int typeId, int duration)
         {
@@ -41,6 +53,7 @@ namespace OperatorManagementUI.Controllers
             return Json(new { statusCode = res });
         }
 
+        //متد ارسال پیامک
         [HttpPost]
         public JsonResult SendSMS(int fromSimId, int toSimId, int typeId)
         {
@@ -48,6 +61,7 @@ namespace OperatorManagementUI.Controllers
             return Json(new { statusCode = res });
         }
 
+        //متد گرفتن لیست سیمکارت ها برای دراپ دان
         [HttpPost]
         public JsonResult GetSimsForDropdown(int fromSimId)
         {

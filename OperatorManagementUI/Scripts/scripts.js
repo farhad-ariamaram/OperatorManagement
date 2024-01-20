@@ -1,4 +1,5 @@
-﻿function submitFilterForm(sort) {
+﻿//متد مرتب سازی صفحه لیست تراکنش ها
+function submitFilterForm(sort) {
     if (sort != null) {
         $("#sortType").val(sort);
     } else {
@@ -7,11 +8,13 @@
     $("#filterFormId").submit();
 }
 
+//متد تغییر صفحه لیست تراکنش ها
 function submitFilterFormPagination(pageId) {
     $("#pageId").val(pageId);
     $("#filterFormId").submit();
 }
 
+//متد تغییر لیبل فعال/غیرفعال در صفحه ویرایش و اضافه کردن سیمکارت
 function changeIsActiveLabel() {
     var labelEl = $("#isActiveLabel");
     var checkboxEl = $("#IsActive");
@@ -23,6 +26,8 @@ function changeIsActiveLabel() {
 }
 
 /*imported (not mine)*/
+
+//گرفتن مقدار یک پرامتر از QueryString
 function getParameterByName(name, url = window.location.href) {
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
