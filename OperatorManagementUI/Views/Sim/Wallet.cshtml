@@ -1,13 +1,13 @@
 ﻿@model OperatorManagementBL.DTOs.WalletChargeDTO
 @{
-    ViewBag.Title = "Wallet";
     var wallet = (OperatorManagementBL.DTOs.WalletDTO)ViewBag.wallet;
 }
 
 @if (Model.SimTypeId == (int)OperatorManagementBL.Enum.SimTypeEnum.credit)
 {
+    ViewBag.Title = "شارژ سیم‌کارت";
     <h2>شارژ سیم‌کارت</h2>
-
+    <hr />
     <dl class="row mt-4">
         <dt class="col-sm-3">شماره سیم‌کارت</dt>
         <dd class="col-sm-9">@wallet.Number</dd>
@@ -86,8 +86,9 @@
 }
 else
 {
+    ViewBag.Title = "پرداخت قبض";
     <h2>پرداخت قبض</h2>
-
+    <hr />
     <dl class="row mt-4">
         <dt class="col-sm-3">شماره سیم‌کارت</dt>
         <dd class="col-sm-9">@wallet.Number</dd>

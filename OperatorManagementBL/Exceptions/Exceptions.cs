@@ -16,4 +16,11 @@ namespace OperatorManagementBL.Exceptions
     {
         public DuplicateSimNumberException() : base(String.Format("شماره سیم‌کارت تکراری است")) { }
     }
+
+    //Exception حذف بودن مالک سیمکارت در بازگردانی سیمکارت
+    [Serializable]
+    public class SimcardOwnerIsDeletedException : Exception
+    {
+        public SimcardOwnerIsDeletedException() : base(String.Format("مالک سیمکارت در وضعیت حذف شده قرار دارد")) { }
+    }
 }

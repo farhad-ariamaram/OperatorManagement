@@ -1,7 +1,6 @@
 ﻿@model OperatorManagementBL.DTOs.ErrorDTO
 @{
     Layout = null;
-    ViewBag.Title = "NotFound";
 }
 <!DOCTYPE html>
 <html lang="fa">
@@ -11,7 +10,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bootstrap 5 404 Error Page</title>
+    <title>خطاایی رخ داده است!</title>
 
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
@@ -24,7 +23,7 @@
         {
             <div class="text-center">
                 <h1 class="display-1 fw-bold">500</h1>
-                <p class="fs-3"> <span class="text-danger">!</span> خطا</p>
+                <p class="fs-3"> <span>!</span> خطا</p>
                 <p class="lead">
                     @Model.Msg
                 </p>
@@ -35,8 +34,8 @@
         {
             <div class="text-center">
                 <h1 class="display-1 fw-bold">404</h1>
-                <p class="fs-3"> <span class="text-danger">!</span> صفحه پیدا نشد</p>
-                <a href="@Url.Action("Index","Home")" class="btn btn-primary">بازگشت به صفحه اصلی</a>
+                <p class="fs-3"> <span>!</span> صفحه پیدا نشد</p>
+                <a href="@Url.Action("Index","Home")" class="btn btn-primary text-white">بازگشت به صفحه اصلی</a>
             </div>
         }
     </div>

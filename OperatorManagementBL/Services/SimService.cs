@@ -230,7 +230,7 @@ namespace OperatorManagementBL.Services
 
             if (p.Tbl_Person.Fld_Person_IsDeleted)
             {
-                throw new System.Exception("مالک سیم‌کارت در وضعیت حذف شده قرار دارد");
+                throw new SimcardOwnerIsDeletedException();
             }
 
             p.Fld_Sim_IsDeleted = false;

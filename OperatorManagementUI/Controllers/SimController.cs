@@ -32,12 +32,12 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
                 SimDetailDTO sim = _simService.GetSimDetailById(id.Value);
                 if (sim == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
                 return View(sim);
             }
@@ -98,12 +98,12 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
                 SimDTO sim = _simService.GetSimById(id.Value);
                 if (sim == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
                 ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", sim.Person_Id);
                 ViewBag.SimType_Id = new SelectList(_simService.GetSimTypes(), "Id", "Type", sim.SimType_Id);
@@ -153,12 +153,12 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
                 SimDTO sim = _simService.GetSimById(id.Value);
                 if (sim == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
                 return View(sim);
             }
@@ -226,10 +226,16 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
                 }
 
                 var currentsim = _simService.GetWallet(id.Value);
+
+                if (currentsim == null)
+                {
+                    return RedirectToAction("Index", "Error", new { Msg = "سیم‌کارت یافت نشد" });
+                }
+
                 ViewBag.wallet = currentsim;
                 var vm = new WalletChargeDTO
                 {

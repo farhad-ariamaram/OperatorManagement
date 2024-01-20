@@ -1,7 +1,6 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
 using System;
-using System.Net;
 using System.Web.Mvc;
 
 namespace OperatorManagementUI.Controllers
@@ -36,12 +35,12 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
                 PersonDTO person = _personService.GetPersonById(id.Value);
                 if (person == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
                 return View(person);
             }
@@ -97,12 +96,12 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
                 PersonDTO person = _personService.GetPersonById(id.Value);
                 if (person == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
                 return View(person);
             }
@@ -148,12 +147,12 @@ namespace OperatorManagementUI.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
                 PersonDTO person = _personService.GetPersonById(id.Value);
                 if (person == null)
                 {
-                    return HttpNotFound();
+                    return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
                 return View(person);
             }

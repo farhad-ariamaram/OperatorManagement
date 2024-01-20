@@ -10,6 +10,7 @@ namespace OperatorManagementUI.Controllers
         /// </summary>
         /// <param name="errorDto">مدل صفحه که فقط شامل پیام خطا است</param>
         /// <returns></returns>
+        [HandleError]
         public ActionResult Index(ErrorDTO errorDto)
         {
             return View(errorDto);
