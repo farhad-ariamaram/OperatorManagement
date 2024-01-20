@@ -163,7 +163,8 @@ namespace OperatorManagementBL.Services
                 }
 
                 //تعرفه برای تماس هر دقیقه 5 تومان 
-                var requiredBalance = duration * 5;
+                var callCost = _context.Tbl_Cost.Where(a => a.Tbl_TransactionType.Fld_TransactionType_Id == (int)TransactionTypeEnum.call).SingleOrDefault().Fld_Cost_Value;
+                var requiredBalance = duration * callCost;
 
                 //اگر اعتباری بود و شارژ کافی نداشت
                 if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance < requiredBalance)
@@ -223,7 +224,8 @@ namespace OperatorManagementBL.Services
                 }
 
                 //تعرفه برای ارسال هر پیامک 5 تومان 
-                var requiredBalance = 5;
+                var smsCost = _context.Tbl_Cost.Where(a => a.Tbl_TransactionType.Fld_TransactionType_Id == (int)TransactionTypeEnum.sms).SingleOrDefault().Fld_Cost_Value;
+                var requiredBalance = smsCost;
 
                 //اگر اعتباری بود و شارژ کافی نداشت
                 if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance < requiredBalance)

@@ -12,6 +12,16 @@ function submitFilterFormPagination(pageId) {
     $("#filterFormId").submit();
 }
 
+function changeIsActiveLabel() {
+    var labelEl = $("#isActiveLabel");
+    var checkboxEl = $("#IsActive");
+    if (checkboxEl.is(':checked')) {
+        labelEl.html("فعال");
+    } else {
+        labelEl.html("غیرفعال");
+    }
+}
+
 /*imported (not mine)*/
 function getParameterByName(name, url = window.location.href) {
     name = name.replace(/[\[\]]/g, '\\$&');

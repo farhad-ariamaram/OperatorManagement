@@ -26,9 +26,14 @@
     </div>
 
     <div class="my-3">
-        @Html.CheckBoxFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "form-label" })
 
+        <div class="d-flex flex-row gap-2">
+            <span>
+                @Html.CheckBoxFor(model => model.IsActive, new { @class = "form-check", id = "IsActive", onchange = "changeIsActiveLabel()" })
+            </span>
+            <span id="isActiveLabel">غیرفعال</span>
+        </div>
         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "form-text text-danger" })
     </div>
 
