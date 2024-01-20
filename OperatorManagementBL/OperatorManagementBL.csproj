@@ -53,11 +53,13 @@
   <ItemGroup>
     <Compile Include="DTOs\CostDTO.cs" />
     <Compile Include="DTOs\ErrorDTO.cs" />
+    <Compile Include="DTOs\PersonDetailDTO.cs" />
     <Compile Include="DTOs\PersonDropdownDTO.cs" />
     <Compile Include="DTOs\PersonDTO.cs" />
     <Compile Include="DTOs\SimDetailDTO.cs" />
     <Compile Include="DTOs\SimDTO.cs" />
     <Compile Include="DTOs\SimForListDTO.cs" />
+    <Compile Include="DTOs\SimForPersonDTO.cs" />
     <Compile Include="DTOs\SimTypeDTO.cs" />
     <Compile Include="DTOs\TransactionDTO.cs" />
     <Compile Include="DTOs\TransactionPageDTO.cs" />

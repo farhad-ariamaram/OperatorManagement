@@ -77,10 +77,11 @@ namespace OperatorManagementBL.Services
             {
                 var p = _context.Tbl_Person.Find(personId);
 
-                var sims = new List<SimDetailDTO>();
+                var sims = new List<SimForPersonDTO>();
                 foreach (var item in p.Tbl_Sim)
                 {
-                    sims.Add(new SimDetailDTO {
+                    sims.Add(new SimForPersonDTO
+                    {
                         Id = item.Fld_Sim_Id,
                         Number = item.Fld_Sim_Number
                     });
