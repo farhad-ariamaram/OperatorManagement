@@ -103,7 +103,8 @@ namespace OperatorManagementBL.Services
                     Person = p.Tbl_Person.Fld_Person_Fname + " " + p.Tbl_Person.Fld_Person_Lname,
                     IsActive = p.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
                     SimType = p.Tbl_SimType.Fld_SimType_Value,
-                    SimTypeId = p.Fld_SimType_Id
+                    SimTypeId = p.Fld_SimType_Id,
+                    Balance = p.Tbl_Wallet.Fld_Wallet_Balance
                 };
                 return ret;
             }
@@ -199,19 +200,18 @@ namespace OperatorManagementBL.Services
             }
         }
 
-        public List<SimDTO> GetDeletedSims()
+        public List<SimDetailDTO> GetDeletedSims()
         {
             var p = _context.Tbl_Sim.Where(a => a.Fld_Sim_IsDeleted);
-            List<SimDTO> ret = new List<SimDTO>();
+            List<SimDetailDTO> ret = new List<SimDetailDTO>();
             foreach (var item in p)
             {
-                ret.Add(new SimDTO
+                ret.Add(new SimDetailDTO
                 {
                     Id = item.Fld_Sim_Id,
                     Number = item.Fld_Sim_Number,
-                    Person_Id = item.Fld_Person_Id,
-                    IsActive = item.Fld_Sim_IsActive,
-                    SimType_Id = item.Fld_SimType_Id
+                    Person = item.Tbl_Person.Fld_Person_Fname + " "+ item.Tbl_Person.Fld_Person_Lname,
+                    SimType = item.Tbl_SimType.Fld_SimType_Value
                 });
             }
 

@@ -73,7 +73,7 @@ namespace OperatorManagementBL.Services
         /// گرفتن لیست سیمکارت های حذف شده
         /// </summary>
         /// <returns>List<SimDTO></returns>
-        List<SimDTO> GetDeletedSims();
+        List<SimDetailDTO> GetDeletedSims();
 
         /// <summary>
         /// گرفتن مشخصات مالی یک سیمکارت

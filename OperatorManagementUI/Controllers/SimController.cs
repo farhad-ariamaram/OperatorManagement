@@ -1,7 +1,6 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
 using System;
-using System.Net;
 using System.Web.Mvc;
 
 namespace OperatorManagementUI.Controllers

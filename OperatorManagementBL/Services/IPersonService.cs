@@ -31,6 +31,13 @@ namespace OperatorManagementBL.Services
         PersonDTO GetPersonById(int personId);
 
         /// <summary>
+        /// گرفتن شخص با آِ دی برای صفحه جززئیات
+        /// </summary>
+        /// <param name="personId">آی دی شخص</param>
+        /// <returns></returns>
+        PersonDetailDTO GetPersonByIdForDetail(int personId);
+
+        /// <summary>
         /// افزودن شخص جدید
         /// </summary>
         /// <param name="person">شخص</param>

@@ -71,6 +71,37 @@ namespace OperatorManagementBL.Services
             }
         }
 
+        public PersonDetailDTO GetPersonByIdForDetail(int personId)
+        {
+            try
+            {
+                var p = _context.Tbl_Person.Find(personId);
+
+                var sims = new List<SimDetailDTO>();
+                foreach (var item in p.Tbl_Sim)
+                {
+                    sims.Add(new SimDetailDTO {
+                        Id = item.Fld_Sim_Id,
+                        Number = item.Fld_Sim_Number
+                    });
+                }
+
+                PersonDetailDTO ret = new PersonDetailDTO
+                {
+                    Id = p.Fld_Person_Id,
+                    FirstName = p.Fld_Person_Fname,
+                    LastName = p.Fld_Person_Lname,
+                    NationCode = p.Fld_Person_NationCode,
+                    SimCards = sims
+                };
+                return ret;
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("کاربر با این مشخصات یافت نشد");
+            }
+        }
+
         public void AddPerson(PersonDTO person)
         {
             //check duplicate NationCode

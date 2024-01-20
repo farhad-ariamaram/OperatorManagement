@@ -37,7 +37,7 @@ namespace OperatorManagementUI.Controllers
                 {
                     return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });
                 }
-                PersonDTO person = _personService.GetPersonById(id.Value);
+                PersonDetailDTO person = _personService.GetPersonByIdForDetail(id.Value);
                 if (person == null)
                 {
                     return RedirectToAction("Index", "Error", new { Msg = "‌شخصی یافت نشد" });

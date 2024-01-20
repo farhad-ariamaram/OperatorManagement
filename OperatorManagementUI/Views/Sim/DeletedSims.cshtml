@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OperatorManagementBL.DTOs.SimDTO>
+﻿@model IEnumerable<OperatorManagementBL.DTOs.SimDetailDTO>
 
 @{
     ViewBag.Title = "مدیریت سیم‌کارت های حذف شده";
@@ -16,6 +16,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Number)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SimType)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -25,15 +31,21 @@
         }
         @foreach (var item in Model)
         {
-            <tr>
-                <td>@i</td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Number)
-                </td>
-                <td>
-                    @Html.ActionLink("لغو حذف", "UnDelete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })
-                </td>
-            </tr>
+        <tr>
+            <td>@i</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Person)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SimType)
+            </td>
+            <td>
+                @Html.ActionLink("لغو حذف", "UnDelete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })
+            </td>
+        </tr>
             i++;
         }
     </tbody>

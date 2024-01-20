@@ -19,5 +19,7 @@ namespace OperatorManagementBL.DTOs
 
         [Display(Name = "وضعیت سیم‌کارت")]
         public string IsActive { get; set; }
+
+        public decimal Balance { get; set; }
     }
 }

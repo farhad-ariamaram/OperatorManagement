@@ -19,6 +19,18 @@
     <dt class="col-sm-3">مالک</dt>
     <dd class="col-sm-9">@Html.DisplayFor(model => model.Person)</dd>
 
+    <dt class="col-sm-3">
+        @if (Model.SimTypeId == (int)OperatorManagementBL.Enum.SimTypeEnum.credit)
+        {
+            <span>شارژ سیمکارت</span>
+        }
+        else
+        {
+            <span>صورت‌حساب سیمکارت</span>
+        }
+    </dt>
+    <dd class="col-sm-9">@Math.Abs(Model.Balance) تومان</dd>
+
     <p class="mt-3">
         @Html.ActionLink("بازگشت", "Index", null, new { @class = "btn btn-info text-white" })
         @Html.ActionLink("ویرایش", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning text-white mx-2" })

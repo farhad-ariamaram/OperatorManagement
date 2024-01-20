@@ -60,11 +60,11 @@
 
                     @if (item.SimTypeId == (int)OperatorManagementBL.Enum.SimTypeEnum.credit)
                     {
-                        @Html.ActionLink("شارژ سیم‌کارت", "Wallet", new { id = item.Id }, new { @class = "btn btn-info text-white" })
+                        @Html.ActionLink("شارژ سیم‌کارت", "Wallet", new { id = item.Id }, new { @class = "btn btn-success text-white" })
                     }
                     else
                     {
-                        @Html.ActionLink("پرداخت قبض", "Wallet", new { id = item.Id }, new { @class = "btn btn-info text-white" })
+                        @Html.ActionLink("پرداخت قبض", "Wallet", new { id = item.Id }, new { @class = "btn btn-success text-white" })
                     }
 
                     @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })

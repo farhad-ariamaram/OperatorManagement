@@ -58,12 +58,12 @@ namespace OperatorManagementBL.Services
 
             if (durationLessThan != 0)
             {
-                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration <= new TimeSpan(0, durationLessThan, 0));
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration < new TimeSpan(0, durationLessThan, 0));
             }
 
             if (durationMoreThan != 0)
             {
-                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration >= new TimeSpan(0, durationMoreThan, 0));
+                q_transactions = q_transactions.Where(a => a.Fld_Transaction_Duration > new TimeSpan(0, durationMoreThan, 0));
             }
 
             if (typeId != 0)
