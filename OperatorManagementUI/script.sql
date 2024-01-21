@@ -3,10 +3,6 @@ GO
 /****** Object:  Database [OperatorManagementDB]    Script Date: 1/21/2024 11:43:24 AM ******/
 CREATE DATABASE [OperatorManagementDB]
  CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'OperatorManagementDB', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\OperatorManagementDB.mdf' , SIZE = 5120KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
- LOG ON 
-( NAME = N'OperatorManagementDB_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\OperatorManagementDB_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
 GO
 ALTER DATABASE [OperatorManagementDB] SET COMPATIBILITY_LEVEL = 120
 GO
