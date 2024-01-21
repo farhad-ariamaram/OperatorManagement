@@ -1,5 +1,6 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Enum;
+using OperatorManagementBL.Exceptions;
 using OperatorManagementBL.Extensions;
 using OperatorManagementDL;
 using System;
@@ -17,10 +18,11 @@ namespace OperatorManagementBL.Services
             _context = new OperatorManagementDBEntities();
         }
 
+        #region Public
         public TransactionPageDTO GetTransactions(int pageId = 1, long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0, string search = "")
         {
             IQueryable<Tbl_Transaction> q_transactions = _context.Tbl_Transaction;
-            TransactionPageDTO ret = new TransactionPageDTO();
+            TransactionPageDTO finalDto = new TransactionPageDTO();
 
             //فیلتر تاریخ بعد از
             if (fromDate != 0)
@@ -110,11 +112,11 @@ namespace OperatorManagementBL.Services
             //صفحه بندی
             int take = 10;
             int skip = (pageId - 1) * take;
-            ret.ResultCount = q_transactions.Count();
-            ret.CurrentPage = pageId;
-            ret.PageCount = ret.ResultCount / take;
-            if (ret.PageCount * take < q_transactions.Count())
-                ret.PageCount++;
+            finalDto.ResultCount = q_transactions.Count();
+            finalDto.CurrentPage = pageId;
+            finalDto.PageCount = finalDto.ResultCount / take;
+            if (finalDto.PageCount * take < q_transactions.Count())
+                finalDto.PageCount++;
             q_transactions = q_transactions.Skip(skip).Take(take);
 
             //مپ کردن
@@ -125,7 +127,7 @@ namespace OperatorManagementBL.Services
                 transactionsList.Add(new TransactionDTO
                 {
                     Id = item.Fld_Transaction_Id,
-                    RowNumber = i + ((ret.CurrentPage - 1) * take),
+                    RowNumber = i + ((finalDto.CurrentPage - 1) * take),
                     Date = item.Fld_Transaction_Date,
                     FromSimNumber = item.Tbl_Sim.Fld_Sim_Number,
                     ToSimNumber = item.Tbl_Sim1.Fld_Sim_Number,
@@ -137,17 +139,17 @@ namespace OperatorManagementBL.Services
                 i++;
             }
 
-            ret.TransactionsList = transactionsList;
+            finalDto.TransactionsList = transactionsList;
 
-            return ret;
+            return finalDto;
         }
 
         public int MakeCall(int from, int to, int type, int duration)
         {
             try
             {
-                var fromSim = _context.Tbl_Sim.Find(from);
-                var toSim = _context.Tbl_Sim.Find(to);
+                var fromSim = _GetSimcard(from);
+                var toSim = _GetSimcard(to);
 
                 //اگر سیمکارت مبدا غیرفعال بود
                 if (!fromSim.Fld_Sim_IsActive)
@@ -180,7 +182,7 @@ namespace OperatorManagementBL.Services
                 }
 
                 //مپ کردن جهت ثبت تراکنش در دیتابیس
-                Tbl_Transaction p = new Tbl_Transaction
+                Tbl_Transaction transaction = new Tbl_Transaction
                 {
                     Fld_Sim_FromSimId = from,
                     Fld_Sim_ToSimId = to,
@@ -188,15 +190,13 @@ namespace OperatorManagementBL.Services
                     Fld_Transaction_Duration = new TimeSpan(0, duration, 0),
                     Fld_TransactionType_Id = type
                 };
-                _context.Tbl_Transaction.Add(p);
-                _context.SaveChanges();
+                _Add(transaction);
 
                 //بروزرسانی اعتبار
                 fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
-                _context.Entry(fromSim).State = EntityState.Modified;
-                _context.SaveChanges();
+                _UpdateSimBalance(fromSim);
 
-                return 0;
+                return (int)CallFailedEnum.ok;
             }
             catch
             {
@@ -208,8 +208,8 @@ namespace OperatorManagementBL.Services
         {
             try
             {
-                var fromSim = _context.Tbl_Sim.Find(from);
-                var toSim = _context.Tbl_Sim.Find(to);
+                var fromSim = _GetSimcard(from);
+                var toSim = _GetSimcard(to);
 
                 //اگر سیمکارت مبدا غیرفعال بود
                 if (!fromSim.Fld_Sim_IsActive)
@@ -242,7 +242,7 @@ namespace OperatorManagementBL.Services
                 }
 
                 //مپ کردن جهت ثبت تراکنش
-                Tbl_Transaction p = new Tbl_Transaction
+                Tbl_Transaction transaction = new Tbl_Transaction
                 {
                     Fld_Sim_FromSimId = from,
                     Fld_Sim_ToSimId = to,
@@ -250,20 +250,63 @@ namespace OperatorManagementBL.Services
                     Fld_Transaction_Duration = null,
                     Fld_TransactionType_Id = type
                 };
-                _context.Tbl_Transaction.Add(p);
-                _context.SaveChanges();
+                _Add(transaction);
 
                 //بروزرسانی اعتبار
                 fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
-                _context.Entry(fromSim).State = EntityState.Modified;
-                _context.SaveChanges();
+                _UpdateSimBalance(fromSim);
 
-                return 0;
+                return (int)CallFailedEnum.ok;
             }
             catch
             {
                 return (int)CallFailedEnum.unknown;
             }
         }
+        #endregion
+
+        #region Priv8
+        //------------Priv8 Methods----------//
+        private void _UpdateSimBalance(Tbl_Sim simcard)
+        {
+            try
+            {
+                _context.Entry(simcard).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        private void _Add(Tbl_Transaction transaction)
+        {
+            try
+            {
+                _context.Tbl_Transaction.Add(transaction);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        private Tbl_Sim _GetSimcard(int simcardId)
+        {
+            try
+            {
+                var simcard = _context.Tbl_Sim.Find(simcardId);
+                if (simcard == null) { throw new SimcardNotFoundException(); }
+                return simcard;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+        //------------Priv8 Methods----------//
+        #endregion
     }
 }

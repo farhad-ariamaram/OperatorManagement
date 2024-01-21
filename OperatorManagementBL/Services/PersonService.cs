@@ -89,7 +89,7 @@ namespace OperatorManagementBL.Services
 
             //مپ کردن سیمکارت های شخص
             var mappedPersonSimcards = new List<SimForPersonDetailDTO>();
-            if (mappedPersonSimcards.Any())
+            if (person.Tbl_Sim.Any())
             {
                 foreach (var item in person.Tbl_Sim)
                 {

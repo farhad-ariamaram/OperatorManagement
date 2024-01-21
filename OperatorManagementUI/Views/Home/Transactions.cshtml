@@ -42,50 +42,50 @@
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">بعد از</label>
                             <input type="text" class="pd-fromDate form-control" value="@(fromDate.HasValue?fromDate.Value.ToJalaliDateTime():"")" />
-                            <span onclick="$('#fromDate').val('');$('.pd-fromDate').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#fromDate').val('');$('.pd-fromDate').val('')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">قبل از</label>
                             <input type="text" class="pd-toDate form-control" value="@(toDate.HasValue?toDate.Value.ToJalaliDateTime():"")" />
-                            <span onclick="$('#toDate').val('');$('.pd-toDate').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#toDate').val('');$('.pd-toDate').val('')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">از شماره</label>
                             @Html.DropDownList("fromSimId", (SelectList)ViewBag.Sim_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "fromSimId", id = "fromSimId" })
-                            <span onclick="$('#fromSimId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#fromSimId').val('')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">به شماره</label>
                             @Html.DropDownList("toSimId", (SelectList)ViewBag.Sim_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "toSimId", id = "toSimId" })
-                            <span onclick="$('#toSimId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#toSimId').val('')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
 
                             <label class="text-nowrap">از شخص</label>
                             @Html.DropDownList("fromPersonId", (SelectList)ViewBag.Person_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "fromPersonId" })
-                            <span onclick="$('#fromPersonId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#fromPersonId').val('')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">به شخص</label>
                             @Html.DropDownList("toPersonId", (SelectList)ViewBag.Person_Id, "انتخاب کنید", htmlAttributes: new { @class = "form-select", name = "toPersonId" })
-                            <span onclick="$('#toPersonId').val(0)"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#toPersonId').val(0)"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">کمتر از (دقیقه)</label>
                             <input type="number" id="durationLessThan" name="durationLessThan" class="form-control text-start" value="0" min="0" />
-                            <span onclick="$('#durationLessThan').val('0')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#durationLessThan').val('0')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
                             <label class="text-nowrap">بیشتر از (دقیقه)</label>
                             <input type="number" id="durationMoreThan" name="durationMoreThan" class="form-control text-start" value="0" min="0" />
-                            <span onclick="$('#durationMoreThan').val('0')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#durationMoreThan').val('0')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <div class="d-flex flex-row justify-content-between align-items-center gap-3 w-100">
@@ -95,7 +95,7 @@
                                 <option value="@((int)OperatorManagementBL.Enum.TransactionTypeEnum.call)">تماس</option>
                                 <option value="@((int)OperatorManagementBL.Enum.TransactionTypeEnum.sms)">پیامک</option>
                             </select>
-                            <span onclick="$('#typeId').val('')"><i class="fa fa-times" style="cursor:pointer"></i></span>
+                            <span onclick="$('#typeId').val('')"><i class="fa fa-trash text-primary" style="cursor:pointer"></i></span>
                         </div>
 
                         <input type="submit" value="جستجو" class="btn btn-primary" />

@@ -1,12 +1,14 @@
 ﻿USE [master]
 GO
-/****** Object:  Database [OperatorManagementDB]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Database [OperatorManagementDB]    Script Date: 1/21/2024 8:15:08 AM ******/
 CREATE DATABASE [OperatorManagementDB]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'OperatorManagementDB', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\OperatorManagementDB.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'OperatorManagementDB', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\OperatorManagementDB.mdf' , SIZE = 5120KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
  LOG ON 
-( NAME = N'OperatorManagementDB_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\OperatorManagementDB_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'OperatorManagementDB_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\OperatorManagementDB_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+GO
+ALTER DATABASE [OperatorManagementDB] SET COMPATIBILITY_LEVEL = 120
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
@@ -75,7 +77,7 @@ EXEC sys.sp_db_vardecimal_storage_format N'OperatorManagementDB', N'ON'
 GO
 USE [OperatorManagementDB]
 GO
-/****** Object:  Table [dbo].[Tbl_Cost]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_Cost]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -90,7 +92,7 @@ CREATE TABLE [dbo].[Tbl_Cost](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tbl_Person]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_Person]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -104,10 +106,14 @@ CREATE TABLE [dbo].[Tbl_Person](
  CONSTRAINT [PK_Tbl_Person] PRIMARY KEY CLUSTERED 
 (
 	[Fld_Person_Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ_Tbl_Person_NationCode] UNIQUE NONCLUSTERED 
+(
+	[Fld_Person_NationCode] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tbl_Sim]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_Sim]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -122,16 +128,20 @@ CREATE TABLE [dbo].[Tbl_Sim](
  CONSTRAINT [PK_Tbl_Sim] PRIMARY KEY CLUSTERED 
 (
 	[Fld_Sim_Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ_Tbl_Sim_Fld_Sim_Number] UNIQUE NONCLUSTERED 
+(
+	[Fld_Sim_Number] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tbl_SimType]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_SimType]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Tbl_SimType](
-	[Fld_SimType_Id] [int] IDENTITY(1,1) NOT NULL,
+	[Fld_SimType_Id] [int] NOT NULL,
 	[Fld_SimType_Value] [nvarchar](max) NOT NULL,
  CONSTRAINT [PK_Tbl_SimType] PRIMARY KEY CLUSTERED 
 (
@@ -139,7 +149,7 @@ CREATE TABLE [dbo].[Tbl_SimType](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tbl_Transaction]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_Transaction]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -157,13 +167,13 @@ CREATE TABLE [dbo].[Tbl_Transaction](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tbl_TransactionType]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_TransactionType]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Tbl_TransactionType](
-	[Fld_TransactionType_Id] [int] IDENTITY(1,1) NOT NULL,
+	[Fld_TransactionType_Id] [int] NOT NULL,
 	[Fld_TransactionType_Type] [nvarchar](10) NOT NULL,
  CONSTRAINT [PK_Tbl_TransactionType] PRIMARY KEY CLUSTERED 
 (
@@ -171,7 +181,7 @@ CREATE TABLE [dbo].[Tbl_TransactionType](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tbl_Wallet]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Table [dbo].[Tbl_Wallet]    Script Date: 1/21/2024 8:15:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -185,31 +195,31 @@ CREATE TABLE [dbo].[Tbl_Wallet](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_FK_Tbl_Sim_Tbl_Person]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Index [IX_FK_Tbl_Sim_Tbl_Person]    Script Date: 1/21/2024 8:15:09 AM ******/
 CREATE NONCLUSTERED INDEX [IX_FK_Tbl_Sim_Tbl_Person] ON [dbo].[Tbl_Sim]
 (
 	[Fld_Person_Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_FK_Tbl_SimTbl_SimType]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Index [IX_FK_Tbl_SimTbl_SimType]    Script Date: 1/21/2024 8:15:09 AM ******/
 CREATE NONCLUSTERED INDEX [IX_FK_Tbl_SimTbl_SimType] ON [dbo].[Tbl_Sim]
 (
 	[Fld_SimType_Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_FK_Tbl_Transaction_Tbl_Sim]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Index [IX_FK_Tbl_Transaction_Tbl_Sim]    Script Date: 1/21/2024 8:15:09 AM ******/
 CREATE NONCLUSTERED INDEX [IX_FK_Tbl_Transaction_Tbl_Sim] ON [dbo].[Tbl_Transaction]
 (
 	[Fld_Sim_FromSimId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_FK_Tbl_Transaction_Tbl_Sim1]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Index [IX_FK_Tbl_Transaction_Tbl_Sim1]    Script Date: 1/21/2024 8:15:09 AM ******/
 CREATE NONCLUSTERED INDEX [IX_FK_Tbl_Transaction_Tbl_Sim1] ON [dbo].[Tbl_Transaction]
 (
 	[Fld_Sim_ToSimId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_FK_Tbl_Transaction_Tbl_TransactionType]    Script Date: 1/19/2024 3:04:29 PM ******/
+/****** Object:  Index [IX_FK_Tbl_Transaction_Tbl_TransactionType]    Script Date: 1/21/2024 8:15:09 AM ******/
 CREATE NONCLUSTERED INDEX [IX_FK_Tbl_Transaction_Tbl_TransactionType] ON [dbo].[Tbl_Transaction]
 (
 	[Fld_TransactionType_Id] ASC

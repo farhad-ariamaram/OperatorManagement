@@ -1,6 +1,8 @@
 ﻿namespace OperatorManagementBL.Enum
 {
     //Enum انواع تراکنش
+    //جدول TransactionType
+    //جدول Cost
     public enum TransactionTypeEnum
     {
         sms = 1,
@@ -8,6 +10,7 @@
     }
 
     //Enum نوع سیم‌کارت
+    //جدول SimType
     public enum SimTypeEnum
     {
         permanent = 1,
