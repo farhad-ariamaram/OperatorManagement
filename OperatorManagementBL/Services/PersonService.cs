@@ -3,6 +3,7 @@ using OperatorManagementBL.Exceptions;
 using OperatorManagementDL;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace OperatorManagementBL.Services
@@ -18,22 +19,29 @@ namespace OperatorManagementBL.Services
         #region Priv8
         //----------------Priv8 Methods----------------//
 
-        //لیست اشخاص حذف نشده از دیتابیس
-        private IQueryable<Tbl_Person> _Get()
+        //SP -> گرفتن همه اشخاص
+        private List<Tbl_Person> _Get()
         {
-            return _context.Tbl_Person.Where(a => !a.Fld_Person_IsDeleted);
+            return _context.Database.SqlQuery<Tbl_Person>("ss_selectPeople").ToList();
         }
 
-        //شخص از دیتابیس با آی دی
+        //SP -> گرفتن شخص با آی دی
         private Tbl_Person _Get(int personId)
         {
-            //گرفتن شخص از دیتابیس با آی دی
-            var person = _context.Tbl_Person.Find(personId);
+            var parameter = new SqlParameter("@personId", personId);
+            var person = _context.Database.SqlQuery<Tbl_Person>("ss_selectPerson @personId", parameter).SingleOrDefault();
 
             //خطای شخص یافت نشد در صورت پیدا نکردن شخص
             if (person == null) { throw new PersonNotFoundException(); }
 
             return person;
+        }
+
+        //SP -> گرفتن سیمکارت های شخص با آی دی شخص
+        private List<Tbl_Sim> _GetPersonSimcards(int personId)
+        {
+            var parameter = new SqlParameter("@personId", personId);
+            return _context.Database.SqlQuery<Tbl_Sim>("ss_selectPersonSimcards @personId", parameter).ToList();
         }
 
         //آپدیت شخص
@@ -86,12 +94,13 @@ namespace OperatorManagementBL.Services
         {
 
             var person = _Get(personId);
+            var personSimcards = _GetPersonSimcards(personId);
 
             //مپ کردن سیمکارت های شخص
             var mappedPersonSimcards = new List<SimForPersonDetailDTO>();
-            if (person.Tbl_Sim.Any())
+            if (personSimcards.Any())
             {
-                foreach (var item in person.Tbl_Sim)
+                foreach (var item in personSimcards)
                 {
                     mappedPersonSimcards.Add(new SimForPersonDetailDTO
                     {

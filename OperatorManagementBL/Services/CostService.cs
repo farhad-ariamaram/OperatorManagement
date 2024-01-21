@@ -1,5 +1,4 @@
 ﻿using OperatorManagementBL.DTOs;
-using OperatorManagementBL.Exceptions;
 using OperatorManagementDL;
 using System;
 using System.Collections.Generic;
