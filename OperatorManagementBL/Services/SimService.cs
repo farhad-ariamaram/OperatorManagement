@@ -1,6 +1,7 @@
 ﻿using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Exceptions;
 using OperatorManagementDL;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -54,6 +55,21 @@ namespace OperatorManagementBL.Services
             {
                 throw new System.Exception("خطای نامشخص در _Update");
             }
+        }
+
+        private void SubmitChargeLog(int simId, decimal value)
+        {
+            //لاگ پرداخت قبض
+            var chargeLog = new Tbl_ChargeLog
+            {
+                Fld_ChargeLog_Date = DateTime.Now,
+                Fld_ChargeLog_Value = value,
+                Fld_Sim_SimId = simId
+            };
+
+            //ذخیره
+            _context.Tbl_ChargeLog.Add(chargeLog);
+            _context.SaveChanges();
         }
 
         //------------Priv8 Methods----------//
@@ -281,6 +297,8 @@ namespace OperatorManagementBL.Services
         {
             var simcard = _Get(simcardId);
 
+            SubmitChargeLog(simcard.Fld_Sim_Id, addBalance);
+
             //افزودن به اعتبار سیمکارت
             simcard.Tbl_Wallet.Fld_Wallet_Balance += addBalance;
 
@@ -290,13 +308,41 @@ namespace OperatorManagementBL.Services
         public void PayBillSim(int simId)
         {
             var simcard = _Get(simId);
+            var balance = simcard.Tbl_Wallet.Fld_Wallet_Balance;
+            if (balance == 0)
+            {
+                return;
+            }
+
+            SubmitChargeLog(simcard.Fld_Sim_Id, balance);
 
             //صفر کردن اعتبار سیمکارت
             simcard.Tbl_Wallet.Fld_Wallet_Balance = 0.00M;
 
             _Update(simcard);
+
         }
+
+        public List<ChargeLogDTO> GetChargeLogs(int simId)
+        {
+            var simcardChargeLogs = _context.Tbl_ChargeLog.Where(a => a.Fld_Sim_SimId == simId).ToList();
+
+            var mappedChargelogList = new List<ChargeLogDTO>();
+            foreach (var item in simcardChargeLogs)
+            {
+                mappedChargelogList.Add(new ChargeLogDTO
+                {
+                    Value = item.Fld_ChargeLog_Value,
+                    Date = item.Fld_ChargeLog_Date
+                });
+            }
+
+            return mappedChargelogList;
+        }
+
         #endregion
 
     }
+
+
 }

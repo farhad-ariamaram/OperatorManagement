@@ -1984,6 +1984,7 @@
     <Content Include="Views\Cost\Index.cshtml" />
     <Content Include="Views\Cost\Set.cshtml" />
     <Content Include="Views\Shared\_HomeIndexToasts.cshtml" />
+    <Content Include="Views\Sim\ChargeLog.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -25,6 +25,7 @@ namespace OperatorManagementDL
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Tbl_ChargeLog> Tbl_ChargeLog { get; set; }
         public virtual DbSet<Tbl_Cost> Tbl_Cost { get; set; }
         public virtual DbSet<Tbl_Person> Tbl_Person { get; set; }
         public virtual DbSet<Tbl_Sim> Tbl_Sim { get; set; }

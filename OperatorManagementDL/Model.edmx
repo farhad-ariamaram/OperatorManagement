@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="OperatorManagementDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Tbl_ChargeLog">
+          <Key>
+            <PropertyRef Name="Fld_ChargeLog_Id" />
+          </Key>
+          <Property Name="Fld_ChargeLog_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fld_Sim_SimId" Type="int" Nullable="false" />
+          <Property Name="Fld_ChargeLog_Date" Type="datetime" Nullable="false" />
+          <Property Name="Fld_ChargeLog_Value" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
         <EntityType Name="Tbl_Cost">
           <Key>
             <PropertyRef Name="Fld_Cost_Id" />
@@ -38,7 +47,7 @@
           <Key>
             <PropertyRef Name="Fld_SimType_Id" />
           </Key>
-          <Property Name="Fld_SimType_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fld_SimType_Id" Type="int" Nullable="false" />
           <Property Name="Fld_SimType_Value" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="Tbl_Transaction">
@@ -56,7 +65,7 @@
           <Key>
             <PropertyRef Name="Fld_TransactionType_Id" />
           </Key>
-          <Property Name="Fld_TransactionType_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fld_TransactionType_Id" Type="int" Nullable="false" />
           <Property Name="Fld_TransactionType_Type" Type="nvarchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <EntityType Name="Tbl_Wallet">
@@ -66,6 +75,18 @@
           <Property Name="Fld_Wallet_Id" Type="int" Nullable="false" />
           <Property Name="Fld_Wallet_Balance" Type="decimal" Precision="10" Scale="2" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Tbl_ChargeLog_Tbl_Sim">
+          <End Role="Tbl_Sim" Type="Self.Tbl_Sim" Multiplicity="1" />
+          <End Role="Tbl_ChargeLog" Type="Self.Tbl_ChargeLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Sim">
+              <PropertyRef Name="Fld_Sim_Id" />
+            </Principal>
+            <Dependent Role="Tbl_ChargeLog">
+              <PropertyRef Name="Fld_Sim_SimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Tbl_Cost_Tbl_TransactionType">
           <End Role="Tbl_TransactionType" Type="Self.Tbl_TransactionType" Multiplicity="1" />
           <End Role="Tbl_Cost" Type="Self.Tbl_Cost" Multiplicity="0..1" />
@@ -151,6 +172,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="OperatorManagementDBModelStoreContainer">
+          <EntitySet Name="Tbl_ChargeLog" EntityType="Self.Tbl_ChargeLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Cost" EntityType="Self.Tbl_Cost" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Person" EntityType="Self.Tbl_Person" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Sim" EntityType="Self.Tbl_Sim" Schema="dbo" store:Type="Tables" />
@@ -158,6 +180,10 @@
           <EntitySet Name="Tbl_Transaction" EntityType="Self.Tbl_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_TransactionType" EntityType="Self.Tbl_TransactionType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Wallet" EntityType="Self.Tbl_Wallet" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Tbl_ChargeLog_Tbl_Sim" Association="Self.FK_Tbl_ChargeLog_Tbl_Sim">
+            <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
+            <End Role="Tbl_ChargeLog" EntitySet="Tbl_ChargeLog" />
+          </AssociationSet>
           <AssociationSet Name="FK_Tbl_Cost_Tbl_TransactionType" Association="Self.FK_Tbl_Cost_Tbl_TransactionType">
             <End Role="Tbl_TransactionType" EntitySet="Tbl_TransactionType" />
             <End Role="Tbl_Cost" EntitySet="Tbl_Cost" />
@@ -192,6 +218,16 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="OperatorManagementDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Tbl_ChargeLog">
+          <Key>
+            <PropertyRef Name="Fld_ChargeLog_Id" />
+          </Key>
+          <Property Name="Fld_ChargeLog_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fld_Sim_SimId" Type="Int32" Nullable="false" />
+          <Property Name="Fld_ChargeLog_Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Fld_ChargeLog_Value" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_ChargeLog_Tbl_Sim" FromRole="Tbl_ChargeLog" ToRole="Tbl_Sim" />
+        </EntityType>
         <EntityType Name="Tbl_Cost">
           <Key>
             <PropertyRef Name="Fld_Cost_Id" />
@@ -222,6 +258,7 @@
           <Property Name="Fld_Sim_IsActive" Type="Boolean" Nullable="false" />
           <Property Name="Fld_SimType_Id" Type="Int32" Nullable="false" />
           <Property Name="Fld_Sim_IsDeleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Tbl_ChargeLog" Relationship="Self.FK_Tbl_ChargeLog_Tbl_Sim" FromRole="Tbl_Sim" ToRole="Tbl_ChargeLog" />
           <NavigationProperty Name="Tbl_Person" Relationship="Self.FK_Tbl_Sim_Tbl_Person" FromRole="Tbl_Sim" ToRole="Tbl_Person" />
           <NavigationProperty Name="Tbl_SimType" Relationship="Self.FK_Tbl_SimTbl_SimType" FromRole="Tbl_Sim" ToRole="Tbl_SimType" />
           <NavigationProperty Name="Tbl_Transaction" Relationship="Self.FK_Tbl_Transaction_Tbl_Sim" FromRole="Tbl_Sim" ToRole="Tbl_Transaction" />
@@ -232,7 +269,7 @@
           <Key>
             <PropertyRef Name="Fld_SimType_Id" />
           </Key>
-          <Property Name="Fld_SimType_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fld_SimType_Id" Type="Int32" Nullable="false" />
           <Property Name="Fld_SimType_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_SimTbl_SimType" FromRole="Tbl_SimType" ToRole="Tbl_Sim" />
         </EntityType>
@@ -254,7 +291,7 @@
           <Key>
             <PropertyRef Name="Fld_TransactionType_Id" />
           </Key>
-          <Property Name="Fld_TransactionType_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fld_TransactionType_Id" Type="Int32" Nullable="false" />
           <Property Name="Fld_TransactionType_Type" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Tbl_Cost" Relationship="Self.FK_Tbl_Cost_Tbl_TransactionType" FromRole="Tbl_TransactionType" ToRole="Tbl_Cost" />
           <NavigationProperty Name="Tbl_Transaction" Relationship="Self.FK_Tbl_Transaction_Tbl_TransactionType" FromRole="Tbl_TransactionType" ToRole="Tbl_Transaction" />
@@ -267,6 +304,18 @@
           <Property Name="Fld_Wallet_Balance" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
           <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_Wallet_Tbl_Sim" FromRole="Tbl_Wallet" ToRole="Tbl_Sim" />
         </EntityType>
+        <Association Name="FK_Tbl_ChargeLog_Tbl_Sim">
+          <End Role="Tbl_Sim" Type="Self.Tbl_Sim" Multiplicity="1" />
+          <End Role="Tbl_ChargeLog" Type="Self.Tbl_ChargeLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Sim">
+              <PropertyRef Name="Fld_Sim_Id" />
+            </Principal>
+            <Dependent Role="Tbl_ChargeLog">
+              <PropertyRef Name="Fld_Sim_SimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Tbl_Cost_Tbl_TransactionType">
           <End Role="Tbl_TransactionType" Type="Self.Tbl_TransactionType" Multiplicity="1" />
           <End Role="Tbl_Cost" Type="Self.Tbl_Cost" Multiplicity="0..1" />
@@ -352,6 +401,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="OperatorManagementDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Tbl_ChargeLog" EntityType="Self.Tbl_ChargeLog" />
           <EntitySet Name="Tbl_Cost" EntityType="Self.Tbl_Cost" />
           <EntitySet Name="Tbl_Person" EntityType="Self.Tbl_Person" />
           <EntitySet Name="Tbl_Sim" EntityType="Self.Tbl_Sim" />
@@ -359,6 +409,10 @@
           <EntitySet Name="Tbl_Transaction" EntityType="Self.Tbl_Transaction" />
           <EntitySet Name="Tbl_TransactionType" EntityType="Self.Tbl_TransactionType" />
           <EntitySet Name="Tbl_Wallet" EntityType="Self.Tbl_Wallet" />
+          <AssociationSet Name="FK_Tbl_ChargeLog_Tbl_Sim" Association="Self.FK_Tbl_ChargeLog_Tbl_Sim">
+            <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
+            <End Role="Tbl_ChargeLog" EntitySet="Tbl_ChargeLog" />
+          </AssociationSet>
           <AssociationSet Name="FK_Tbl_Cost_Tbl_TransactionType" Association="Self.FK_Tbl_Cost_Tbl_TransactionType">
             <End Role="Tbl_TransactionType" EntitySet="Tbl_TransactionType" />
             <End Role="Tbl_Cost" EntitySet="Tbl_Cost" />
@@ -394,6 +448,16 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="OperatorManagementDBModelStoreContainer" CdmEntityContainer="OperatorManagementDBEntities">
+          <EntitySetMapping Name="Tbl_ChargeLog">
+            <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_ChargeLog">
+              <MappingFragment StoreEntitySet="Tbl_ChargeLog">
+                <ScalarProperty Name="Fld_ChargeLog_Id" ColumnName="Fld_ChargeLog_Id" />
+                <ScalarProperty Name="Fld_Sim_SimId" ColumnName="Fld_Sim_SimId" />
+                <ScalarProperty Name="Fld_ChargeLog_Date" ColumnName="Fld_ChargeLog_Date" />
+                <ScalarProperty Name="Fld_ChargeLog_Value" ColumnName="Fld_ChargeLog_Value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Tbl_Cost">
             <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_Cost">
               <MappingFragment StoreEntitySet="Tbl_Cost">

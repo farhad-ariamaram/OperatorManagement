@@ -1,0 +1,77 @@
+﻿@model IEnumerable<OperatorManagementBL.DTOs.ChargeLogDTO>
+@using OperatorManagementBL.Extensions
+
+@{
+    ViewBag.Title = "سوابق مالی سیمکارت";
+}
+
+<h2>سوابق مالی سیم‌کارت</h2>
+<hr />
+<p>
+    <a href="@Url.Action("Index")" class="btn btn-info text-white">بازگشت به لیست</a>
+</p>
+
+@if (Model.Any())
+{
+    <table class="table" id="mtable">
+        <thead>
+            <tr>
+                <th>
+                    ردیف
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Value)
+                </th>
+                <th>
+                    نوع
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        @item.Date.ToJalaliDateTime()
+                    </td>
+                    <td>
+                        @Math.Abs(item.Value)
+                    </td>
+                    <td>
+                        @if (item.Value <= 0)
+                        {
+                            <span>پرداخت قبض</span>
+                        }
+                        else
+                        {
+                            <span>شارژ</span>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div>سابقه ای برای این سیمکارت وجود ندارد</div>
+}
+
+@section scripts{
+    <script>
+        $("#mtable").DataTable({
+            "language": { "emptyTable": "موردی یافت نشد", "search": "جستجو:", "paginate": { "first": "اول", "last": "آخر", "next": "بعدی", "previous": "قبلی" }, "info": "نمایش _START_ از _END_ از _TOTAL_ نتیجه", "lengthMenu": "نمایش _MENU_ نتیجه" },
+            "width": "100%"
+        });
+    </script>
+}

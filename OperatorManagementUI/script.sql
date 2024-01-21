@@ -307,3 +307,25 @@ USE [master]
 GO
 ALTER DATABASE [OperatorManagementDB] SET  READ_WRITE 
 GO
+
+
+/*/////////////////////////// NEW ///////////////////////////////
+
+CREATE TABLE [dbo].[Tbl_ChargeLog](
+	[Fld_ChargeLog_Id] [int] IDENTITY(1,1) NOT NULL,
+	[Fld_Sim_SimId] [int] NOT NULL,
+	[Fld_ChargeLog_Date] [datetime] NOT NULL,
+	[Fld_ChargeLog_Value] [decimal](10, 2) NOT NULL,
+ CONSTRAINT [PK_Tbl_ChargeLog] PRIMARY KEY CLUSTERED 
+(
+	[Fld_ChargeLog_Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Tbl_ChargeLog]  WITH CHECK ADD  CONSTRAINT [FK_Tbl_ChargeLog_Tbl_Sim] FOREIGN KEY([Fld_Sim_SimId])
+REFERENCES [dbo].[Tbl_Sim] ([Fld_Sim_Id])
+GO
+
+ALTER TABLE [dbo].[Tbl_ChargeLog] CHECK CONSTRAINT [FK_Tbl_ChargeLog_Tbl_Sim]
+GO

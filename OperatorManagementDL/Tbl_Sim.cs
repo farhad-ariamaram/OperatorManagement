@@ -17,6 +17,7 @@ namespace OperatorManagementDL
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tbl_Sim()
         {
+            this.Tbl_ChargeLog = new HashSet<Tbl_ChargeLog>();
             this.Tbl_Transaction = new HashSet<Tbl_Transaction>();
             this.Tbl_Transaction1 = new HashSet<Tbl_Transaction>();
         }
@@ -28,6 +29,8 @@ namespace OperatorManagementDL
         public int Fld_SimType_Id { get; set; }
         public bool Fld_Sim_IsDeleted { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tbl_ChargeLog> Tbl_ChargeLog { get; set; }
         public virtual Tbl_Person Tbl_Person { get; set; }
         public virtual Tbl_SimType Tbl_SimType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

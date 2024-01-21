@@ -264,5 +264,22 @@ namespace OperatorManagementUI.Controllers
                 return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
         }
+
+        public ActionResult ChargeLog(int? id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return RedirectToAction("Index", "Error", new ErrorDTO { StatusCode = 404 });
+                }
+
+                return View(_simService.GetChargeLogs(id.Value));
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
+            }
+        }
     }
 }

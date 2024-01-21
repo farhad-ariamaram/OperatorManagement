@@ -4,14 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="24729dd4717b422a8c2b1c1cb9b3d921" Name="Diagram1">
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Cost" Width="1.5" PointX="5.25" PointY="9.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Person" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Sim" Width="1.5" PointX="3" PointY="3" IsExpanded="true" />
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_SimType" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Transaction" Width="1.5" PointX="5.25" PointY="3.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_TransactionType" Width="1.5" PointX="3" PointY="8.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Wallet" Width="1.5" PointX="0.75" PointY="7.375" IsExpanded="true" />
+      <Diagram DiagramId="a44df1eec6e04d40b02581979ef9b719" Name="Diagram1">
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_ChargeLog" Width="1.5" PointX="5.25" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Cost" Width="1.5" PointX="8.25" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Person" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Sim" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_SimType" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Transaction" Width="1.5" PointX="8.25" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_TransactionType" Width="1.5" PointX="6" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="OperatorManagementDBModel.Tbl_Wallet" Width="1.5" PointX="5.25" PointY="9.25" IsExpanded="true" />
+        <AssociationConnector Association="OperatorManagementDBModel.FK_Tbl_ChargeLog_Tbl_Sim" ManuallyRouted="false" />
         <AssociationConnector Association="OperatorManagementDBModel.FK_Tbl_Cost_Tbl_TransactionType" ManuallyRouted="false" />
         <AssociationConnector Association="OperatorManagementDBModel.FK_Tbl_Sim_Tbl_Person" ManuallyRouted="false" />
         <AssociationConnector Association="OperatorManagementDBModel.FK_Tbl_SimTbl_SimType" ManuallyRouted="false" />

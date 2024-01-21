@@ -95,5 +95,12 @@ namespace OperatorManagementBL.Services
         /// <param name="simId">آی دی سیمکارت</param>
         void PayBillSim(int simId);
 
+        /// <summary>
+        /// گرفتن لیست شارژ/پرداخت قبض
+        /// </summary>
+        /// <param name="simId">آی دی سیمکارت</param>
+        /// <returns>List<ChargeLogDTO></returns>
+        List<ChargeLogDTO> GetChargeLogs(int simId);
+
     }
 }

@@ -67,6 +67,8 @@
                         @Html.ActionLink("پرداخت قبض", "Wallet", new { id = item.Id }, new { @class = "btn btn-success text-white" })
                     }
 
+                    @Html.ActionLink("سوابق مالی", "ChargeLog", new { id = item.Id }, new { @class = "btn btn-primary text-white" })
+
                     @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger text-white" })
                 </td>
             </tr>
