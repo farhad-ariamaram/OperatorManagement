@@ -25,12 +25,10 @@ namespace OperatorManagementDL
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Tbl_Cost> Tbl_Cost { get; set; }
         public virtual DbSet<Tbl_Person> Tbl_Person { get; set; }
         public virtual DbSet<Tbl_Sim> Tbl_Sim { get; set; }
         public virtual DbSet<Tbl_SimType> Tbl_SimType { get; set; }
         public virtual DbSet<Tbl_Transaction> Tbl_Transaction { get; set; }
         public virtual DbSet<Tbl_TransactionType> Tbl_TransactionType { get; set; }
-        public virtual DbSet<Tbl_Wallet> Tbl_Wallet { get; set; }
     }
 }

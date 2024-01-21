@@ -22,8 +22,9 @@ namespace OperatorManagementDL
     
         public int Fld_TransactionType_Id { get; set; }
         public string Fld_TransactionType_Type { get; set; }
+        public decimal Fld_TransactionType_Cost { get; set; }
+        public string Fld_TransactionType_Description { get; set; }
     
-        public virtual Tbl_Cost Tbl_Cost { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Transaction> Tbl_Transaction { get; set; }
     }

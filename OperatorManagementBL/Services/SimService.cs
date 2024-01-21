@@ -150,7 +150,7 @@ namespace OperatorManagementBL.Services
                 IsActive = simcard.Fld_Sim_IsActive ? "فعال" : "غیرفعال",
                 SimType = simcard.Tbl_SimType.Fld_SimType_Value,
                 SimTypeId = simcard.Fld_SimType_Id,
-                Balance = simcard.Tbl_Wallet.Fld_Wallet_Balance
+                Balance = simcard.Fld_Sim_Balance
             };
             return mappedSimcard;
         }
@@ -171,7 +171,7 @@ namespace OperatorManagementBL.Services
                 Fld_Person_Id = simcardDto.Person_Id,
                 Fld_Sim_IsActive = simcardDto.IsActive,
                 Fld_SimType_Id = simcardDto.SimType_Id,
-                Tbl_Wallet = new Tbl_Wallet { Fld_Wallet_Balance = 0 }
+                Fld_Sim_Balance = 0m
             };
 
             _Add(simcard);
@@ -268,7 +268,7 @@ namespace OperatorManagementBL.Services
             var mappedWallet = new WalletDTO
             {
                 Id = simcard.Fld_Sim_Id,
-                Balance = simcard.Tbl_Wallet.Fld_Wallet_Balance,
+                Balance = simcard.Fld_Sim_Balance,
                 Number = simcard.Fld_Sim_Number,
                 Person = simcard.Tbl_Person.Fld_Person_Fname + " " + simcard.Tbl_Person.Fld_Person_Lname,
                 SimTypeId = simcard.Fld_SimType_Id
@@ -282,7 +282,7 @@ namespace OperatorManagementBL.Services
             var simcard = _Get(simcardId);
 
             //افزودن به اعتبار سیمکارت
-            simcard.Tbl_Wallet.Fld_Wallet_Balance += addBalance;
+            simcard.Fld_Sim_Balance += addBalance;
 
             _Update(simcard);
         }
@@ -292,7 +292,7 @@ namespace OperatorManagementBL.Services
             var simcard = _Get(simId);
 
             //صفر کردن اعتبار سیمکارت
-            simcard.Tbl_Wallet.Fld_Wallet_Balance = 0.00M;
+            simcard.Fld_Sim_Balance = 0.00M;
 
             _Update(simcard);
         }

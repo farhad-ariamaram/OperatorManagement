@@ -27,6 +27,7 @@ namespace OperatorManagementDL
         public bool Fld_Sim_IsActive { get; set; }
         public int Fld_SimType_Id { get; set; }
         public bool Fld_Sim_IsDeleted { get; set; }
+        public decimal Fld_Sim_Balance { get; set; }
     
         public virtual Tbl_Person Tbl_Person { get; set; }
         public virtual Tbl_SimType Tbl_SimType { get; set; }
@@ -34,6 +35,5 @@ namespace OperatorManagementDL
         public virtual ICollection<Tbl_Transaction> Tbl_Transaction { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Transaction> Tbl_Transaction1 { get; set; }
-        public virtual Tbl_Wallet Tbl_Wallet { get; set; }
     }
 }

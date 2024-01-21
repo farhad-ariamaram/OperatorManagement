@@ -14,17 +14,17 @@ namespace OperatorManagementBL.Services
         }
 
         #region Priv8
-        private IEnumerable<Tbl_Cost> _Get()
+        private IEnumerable<Tbl_TransactionType> _Get()
         {
-            return _context.Tbl_Cost;
+            return _context.Tbl_TransactionType;
         }
-        private Tbl_Cost _Get(int costId)
+        private Tbl_TransactionType _Get(int costId)
         {
-            var cost = _context.Tbl_Cost.Find(costId);
+            var cost = _context.Tbl_TransactionType.Find(costId);
             if (cost == null) { throw new Exception("تعرفه پیدا نشد"); }
             return cost;
         }
-        private void _Update(Tbl_Cost cost)
+        private void _Update(Tbl_TransactionType cost)
         {
             try
             {
@@ -46,10 +46,10 @@ namespace OperatorManagementBL.Services
             //مپ کردن تعرفه برای نمایش
             return new CostDTO
             {
-                Id = cost.Fld_Cost_Id,
-                Description = cost.Fld_Cost_Description,
-                TransactionType = cost.Tbl_TransactionType.Fld_TransactionType_Type,
-                Value = cost.Fld_Cost_Value
+                Id = cost.Fld_TransactionType_Id,
+                Description = cost.Fld_TransactionType_Description,
+                TransactionType = cost.Fld_TransactionType_Type,
+                Value = cost.Fld_TransactionType_Cost
             };
         }
 
@@ -63,10 +63,10 @@ namespace OperatorManagementBL.Services
             {
                 mappedCosts.Add(new CostDTO
                 {
-                    Id = c.Fld_Cost_Id,
-                    TransactionType = c.Tbl_TransactionType.Fld_TransactionType_Type,
-                    Value = c.Fld_Cost_Value,
-                    Description = c.Fld_Cost_Description
+                    Id = c.Fld_TransactionType_Id,
+                    TransactionType = c.Fld_TransactionType_Type,
+                    Value = c.Fld_TransactionType_Cost,
+                    Description = c.Fld_TransactionType_Description
                 });
             }
 
@@ -77,7 +77,7 @@ namespace OperatorManagementBL.Services
         {
             //آپدیت تعرفه
             var cost = _Get(costDto.Id);
-            cost.Fld_Cost_Value = costDto.Value;
+            cost.Fld_TransactionType_Cost = costDto.Value;
 
             _Update(cost);
         }

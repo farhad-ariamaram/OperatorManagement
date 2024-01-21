@@ -163,7 +163,7 @@ namespace OperatorManagementBL.Services
                     return (int)CallFailedEnum.inactiveToSimcard;
                 }
 
-                var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
+                var walletBallance = fromSim.Fld_Sim_Balance;
 
                 //اگر اعتباری باشد و شارژ نداشته باشد
                 if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
@@ -172,7 +172,7 @@ namespace OperatorManagementBL.Services
                 }
 
                 //محاسبه مبلغ مورد نیاز برای تماس
-                var callCost = _context.Tbl_Cost.Where(a => a.Tbl_TransactionType.Fld_TransactionType_Id == (int)TransactionTypeEnum.call).SingleOrDefault().Fld_Cost_Value;
+                var callCost = _context.Tbl_TransactionType.Where(a => a.Fld_TransactionType_Id == (int)TransactionTypeEnum.call).SingleOrDefault().Fld_TransactionType_Cost;
                 var requiredBalance = duration * callCost;
 
                 //اگر اعتباری بود و شارژ کافی نداشت
@@ -193,7 +193,7 @@ namespace OperatorManagementBL.Services
                 _Add(transaction);
 
                 //بروزرسانی اعتبار
-                fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
+                fromSim.Fld_Sim_Balance -= requiredBalance;
                 _UpdateSimBalance(fromSim);
 
                 return (int)CallFailedEnum.ok;
@@ -223,7 +223,7 @@ namespace OperatorManagementBL.Services
                     return (int)CallFailedEnum.inactiveToSimcard;
                 }
 
-                var walletBallance = fromSim.Tbl_Wallet.Fld_Wallet_Balance;
+                var walletBallance = fromSim.Fld_Sim_Balance;
 
                 //اگر اعتباری باشد و شارژ نداشته باشد
                 if (fromSim.Fld_SimType_Id == (int)SimTypeEnum.credit && walletBallance <= 0)
@@ -232,7 +232,7 @@ namespace OperatorManagementBL.Services
                 }
 
                 //محاسبه اعتبار مورد نیاز ارسال پیام
-                var smsCost = _context.Tbl_Cost.Where(a => a.Tbl_TransactionType.Fld_TransactionType_Id == (int)TransactionTypeEnum.sms).SingleOrDefault().Fld_Cost_Value;
+                var smsCost = _context.Tbl_TransactionType.Where(a => a.Fld_TransactionType_Id == (int)TransactionTypeEnum.sms).SingleOrDefault().Fld_TransactionType_Cost;
                 var requiredBalance = smsCost;
 
                 //اگر اعتباری بود و شارژ کافی نداشت
@@ -253,7 +253,7 @@ namespace OperatorManagementBL.Services
                 _Add(transaction);
 
                 //بروزرسانی اعتبار
-                fromSim.Tbl_Wallet.Fld_Wallet_Balance -= requiredBalance;
+                fromSim.Fld_Sim_Balance -= requiredBalance;
                 _UpdateSimBalance(fromSim);
 
                 return (int)CallFailedEnum.ok;
