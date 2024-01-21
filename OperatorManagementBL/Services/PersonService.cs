@@ -186,9 +186,11 @@ namespace OperatorManagementBL.Services
             person.Fld_Person_IsDeleted = true;
 
             //تغییر وضعیت سیمکارت های کاربر به حذف شده
-            foreach (var item in person.Tbl_Sim)
+            var personSims = _GetPersonSimcards(personId);
+            foreach (var item in personSims)
             {
                 item.Fld_Sim_IsDeleted = true;
+                _context.Entry(item).State = EntityState.Modified;
             }
 
             _Update(person);
