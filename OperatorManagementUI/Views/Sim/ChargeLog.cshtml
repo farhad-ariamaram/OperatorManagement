@@ -23,7 +23,7 @@
                     @Html.DisplayNameFor(model => model.Date)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Value)
+                    @Html.DisplayNameFor(model => model.Value) 
                 </th>
                 <th>
                     نوع
@@ -44,7 +44,7 @@
                         @item.Date.ToJalaliDateTime()
                     </td>
                     <td>
-                        @Math.Abs(item.Value)
+                        @Math.Abs(item.Value) تومان
                     </td>
                     <td>
                         @if (item.Value <= 0)

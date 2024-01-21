@@ -54,7 +54,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Person)
                 </td>
-                <td>
+                <td class="d-flex gap-1 flex-wrap">
                     @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning text-white" })
                     @Html.ActionLink("مشاهده", "Details", new { id = item.Id }, new { @class = "btn btn-info text-white" })
 
