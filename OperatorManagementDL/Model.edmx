@@ -32,6 +32,13 @@
           <Property Name="Fld_Person_NationCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Fld_Person_IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="Tbl_Role">
+          <Key>
+            <PropertyRef Name="Fld_Role_Id" />
+          </Key>
+          <Property Name="Fld_Role_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fld_Role_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="Tbl_Sim">
           <Key>
             <PropertyRef Name="Fld_Sim_Id" />
@@ -67,6 +74,33 @@
           </Key>
           <Property Name="Fld_TransactionType_Id" Type="int" Nullable="false" />
           <Property Name="Fld_TransactionType_Type" Type="nvarchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tbl_User">
+          <Key>
+            <PropertyRef Name="Fld_User_Id" />
+          </Key>
+          <Property Name="Fld_User_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fld_User_Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Fld_User_Password" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Fld_User_Email" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Fld_User_IsLocked" Type="bit" Nullable="false" />
+          <Property Name="Fld_Person_PersonId" Type="int" />
+        </EntityType>
+        <EntityType Name="Tbl_UserRole">
+          <Key>
+            <PropertyRef Name="Fld_User_UserId" />
+            <PropertyRef Name="Fld_Role_RoleId" />
+          </Key>
+          <Property Name="Fld_User_UserId" Type="int" Nullable="false" />
+          <Property Name="Fld_Role_RoleId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tbl_UserSession">
+          <Key>
+            <PropertyRef Name="Fld_UserSession_SessionId" />
+          </Key>
+          <Property Name="Fld_UserSession_SessionId" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Fld_User_UserId" Type="int" Nullable="false" />
+          <Property Name="Fld_UserSession_DateTime" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Tbl_Wallet">
           <Key>
@@ -159,6 +193,54 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Tbl_User_Tbl_Person">
+          <End Role="Tbl_Person" Type="Self.Tbl_Person" Multiplicity="0..1" />
+          <End Role="Tbl_User" Type="Self.Tbl_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Person">
+              <PropertyRef Name="Fld_Person_Id" />
+            </Principal>
+            <Dependent Role="Tbl_User">
+              <PropertyRef Name="Fld_Person_PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tbl_UserRole_Tbl_Role">
+          <End Role="Tbl_Role" Type="Self.Tbl_Role" Multiplicity="1" />
+          <End Role="Tbl_UserRole" Type="Self.Tbl_UserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Role">
+              <PropertyRef Name="Fld_Role_Id" />
+            </Principal>
+            <Dependent Role="Tbl_UserRole">
+              <PropertyRef Name="Fld_Role_RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tbl_UserRole_Tbl_User">
+          <End Role="Tbl_User" Type="Self.Tbl_User" Multiplicity="1" />
+          <End Role="Tbl_UserRole" Type="Self.Tbl_UserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_User">
+              <PropertyRef Name="Fld_User_Id" />
+            </Principal>
+            <Dependent Role="Tbl_UserRole">
+              <PropertyRef Name="Fld_User_UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tbl_UserSession_Tbl_User">
+          <End Role="Tbl_User" Type="Self.Tbl_User" Multiplicity="1" />
+          <End Role="Tbl_UserSession" Type="Self.Tbl_UserSession" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_User">
+              <PropertyRef Name="Fld_User_Id" />
+            </Principal>
+            <Dependent Role="Tbl_UserSession">
+              <PropertyRef Name="Fld_User_UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Tbl_Wallet_Tbl_Sim">
           <End Role="Tbl_Sim" Type="Self.Tbl_Sim" Multiplicity="1" />
           <End Role="Tbl_Wallet" Type="Self.Tbl_Wallet" Multiplicity="0..1" />
@@ -175,10 +257,14 @@
           <EntitySet Name="Tbl_ChargeLog" EntityType="Self.Tbl_ChargeLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Cost" EntityType="Self.Tbl_Cost" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Person" EntityType="Self.Tbl_Person" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_Role" EntityType="Self.Tbl_Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Sim" EntityType="Self.Tbl_Sim" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_SimType" EntityType="Self.Tbl_SimType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Transaction" EntityType="Self.Tbl_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_TransactionType" EntityType="Self.Tbl_TransactionType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_User" EntityType="Self.Tbl_User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_UserRole" EntityType="Self.Tbl_UserRole" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_UserSession" EntityType="Self.Tbl_UserSession" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Wallet" EntityType="Self.Tbl_Wallet" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Tbl_ChargeLog_Tbl_Sim" Association="Self.FK_Tbl_ChargeLog_Tbl_Sim">
             <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
@@ -207,6 +293,22 @@
           <AssociationSet Name="FK_Tbl_Transaction_Tbl_TransactionType" Association="Self.FK_Tbl_Transaction_Tbl_TransactionType">
             <End Role="Tbl_TransactionType" EntitySet="Tbl_TransactionType" />
             <End Role="Tbl_Transaction" EntitySet="Tbl_Transaction" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_User_Tbl_Person" Association="Self.FK_Tbl_User_Tbl_Person">
+            <End Role="Tbl_Person" EntitySet="Tbl_Person" />
+            <End Role="Tbl_User" EntitySet="Tbl_User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_UserRole_Tbl_Role" Association="Self.FK_Tbl_UserRole_Tbl_Role">
+            <End Role="Tbl_Role" EntitySet="Tbl_Role" />
+            <End Role="Tbl_UserRole" EntitySet="Tbl_UserRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_UserRole_Tbl_User" Association="Self.FK_Tbl_UserRole_Tbl_User">
+            <End Role="Tbl_User" EntitySet="Tbl_User" />
+            <End Role="Tbl_UserRole" EntitySet="Tbl_UserRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_UserSession_Tbl_User" Association="Self.FK_Tbl_UserSession_Tbl_User">
+            <End Role="Tbl_User" EntitySet="Tbl_User" />
+            <End Role="Tbl_UserSession" EntitySet="Tbl_UserSession" />
           </AssociationSet>
           <AssociationSet Name="FK_Tbl_Wallet_Tbl_Sim" Association="Self.FK_Tbl_Wallet_Tbl_Sim">
             <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
@@ -247,6 +349,15 @@
           <Property Name="Fld_Person_NationCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Fld_Person_IsDeleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Tbl_Sim" Relationship="Self.FK_Tbl_Sim_Tbl_Person" FromRole="Tbl_Person" ToRole="Tbl_Sim" />
+          <NavigationProperty Name="Tbl_User" Relationship="Self.FK_Tbl_User_Tbl_Person" FromRole="Tbl_Person" ToRole="Tbl_User" />
+        </EntityType>
+        <EntityType Name="Tbl_Role">
+          <Key>
+            <PropertyRef Name="Fld_Role_Id" />
+          </Key>
+          <Property Name="Fld_Role_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fld_Role_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Tbl_User" Relationship="Self.Tbl_UserRole" FromRole="Tbl_Role" ToRole="Tbl_User" />
         </EntityType>
         <EntityType Name="Tbl_Sim">
           <Key>
@@ -296,6 +407,29 @@
           <NavigationProperty Name="Tbl_Cost" Relationship="Self.FK_Tbl_Cost_Tbl_TransactionType" FromRole="Tbl_TransactionType" ToRole="Tbl_Cost" />
           <NavigationProperty Name="Tbl_Transaction" Relationship="Self.FK_Tbl_Transaction_Tbl_TransactionType" FromRole="Tbl_TransactionType" ToRole="Tbl_Transaction" />
         </EntityType>
+        <EntityType Name="Tbl_User">
+          <Key>
+            <PropertyRef Name="Fld_User_Id" />
+          </Key>
+          <Property Name="Fld_User_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fld_User_Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_User_Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_User_Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_User_IsLocked" Type="Boolean" Nullable="false" />
+          <Property Name="Fld_Person_PersonId" Type="Int32" />
+          <NavigationProperty Name="Tbl_Person" Relationship="Self.FK_Tbl_User_Tbl_Person" FromRole="Tbl_User" ToRole="Tbl_Person" />
+          <NavigationProperty Name="Tbl_UserSession" Relationship="Self.FK_Tbl_UserSession_Tbl_User" FromRole="Tbl_User" ToRole="Tbl_UserSession" />
+          <NavigationProperty Name="Tbl_Role" Relationship="Self.Tbl_UserRole" FromRole="Tbl_User" ToRole="Tbl_Role" />
+        </EntityType>
+        <EntityType Name="Tbl_UserSession">
+          <Key>
+            <PropertyRef Name="Fld_UserSession_SessionId" />
+          </Key>
+          <Property Name="Fld_UserSession_SessionId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_User_UserId" Type="Int32" Nullable="false" />
+          <Property Name="Fld_UserSession_DateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Tbl_User" Relationship="Self.FK_Tbl_UserSession_Tbl_User" FromRole="Tbl_UserSession" ToRole="Tbl_User" />
+        </EntityType>
         <EntityType Name="Tbl_Wallet">
           <Key>
             <PropertyRef Name="Fld_Wallet_Id" />
@@ -337,6 +471,18 @@
             </Principal>
             <Dependent Role="Tbl_Sim">
               <PropertyRef Name="Fld_Person_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tbl_User_Tbl_Person">
+          <End Role="Tbl_Person" Type="Self.Tbl_Person" Multiplicity="0..1" />
+          <End Role="Tbl_User" Type="Self.Tbl_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Person">
+              <PropertyRef Name="Fld_Person_Id" />
+            </Principal>
+            <Dependent Role="Tbl_User">
+              <PropertyRef Name="Fld_Person_PersonId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -400,14 +546,33 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Tbl_UserSession_Tbl_User">
+          <End Role="Tbl_User" Type="Self.Tbl_User" Multiplicity="1" />
+          <End Role="Tbl_UserSession" Type="Self.Tbl_UserSession" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_User">
+              <PropertyRef Name="Fld_User_Id" />
+            </Principal>
+            <Dependent Role="Tbl_UserSession">
+              <PropertyRef Name="Fld_User_UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Tbl_UserRole">
+          <End Role="Tbl_Role" Type="Self.Tbl_Role" Multiplicity="*" />
+          <End Role="Tbl_User" Type="Self.Tbl_User" Multiplicity="*" />
+        </Association>
         <EntityContainer Name="OperatorManagementDBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Tbl_ChargeLog" EntityType="Self.Tbl_ChargeLog" />
           <EntitySet Name="Tbl_Cost" EntityType="Self.Tbl_Cost" />
           <EntitySet Name="Tbl_Person" EntityType="Self.Tbl_Person" />
+          <EntitySet Name="Tbl_Role" EntityType="Self.Tbl_Role" />
           <EntitySet Name="Tbl_Sim" EntityType="Self.Tbl_Sim" />
           <EntitySet Name="Tbl_SimType" EntityType="Self.Tbl_SimType" />
           <EntitySet Name="Tbl_Transaction" EntityType="Self.Tbl_Transaction" />
           <EntitySet Name="Tbl_TransactionType" EntityType="Self.Tbl_TransactionType" />
+          <EntitySet Name="Tbl_User" EntityType="Self.Tbl_User" />
+          <EntitySet Name="Tbl_UserSession" EntityType="Self.Tbl_UserSession" />
           <EntitySet Name="Tbl_Wallet" EntityType="Self.Tbl_Wallet" />
           <AssociationSet Name="FK_Tbl_ChargeLog_Tbl_Sim" Association="Self.FK_Tbl_ChargeLog_Tbl_Sim">
             <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
@@ -420,6 +585,10 @@
           <AssociationSet Name="FK_Tbl_Sim_Tbl_Person" Association="Self.FK_Tbl_Sim_Tbl_Person">
             <End Role="Tbl_Person" EntitySet="Tbl_Person" />
             <End Role="Tbl_Sim" EntitySet="Tbl_Sim" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_User_Tbl_Person" Association="Self.FK_Tbl_User_Tbl_Person">
+            <End Role="Tbl_Person" EntitySet="Tbl_Person" />
+            <End Role="Tbl_User" EntitySet="Tbl_User" />
           </AssociationSet>
           <AssociationSet Name="FK_Tbl_SimTbl_SimType" Association="Self.FK_Tbl_SimTbl_SimType">
             <End Role="Tbl_SimType" EntitySet="Tbl_SimType" />
@@ -440,6 +609,14 @@
           <AssociationSet Name="FK_Tbl_Transaction_Tbl_TransactionType" Association="Self.FK_Tbl_Transaction_Tbl_TransactionType">
             <End Role="Tbl_TransactionType" EntitySet="Tbl_TransactionType" />
             <End Role="Tbl_Transaction" EntitySet="Tbl_Transaction" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tbl_UserSession_Tbl_User" Association="Self.FK_Tbl_UserSession_Tbl_User">
+            <End Role="Tbl_User" EntitySet="Tbl_User" />
+            <End Role="Tbl_UserSession" EntitySet="Tbl_UserSession" />
+          </AssociationSet>
+          <AssociationSet Name="Tbl_UserRole" Association="Self.Tbl_UserRole">
+            <End Role="Tbl_Role" EntitySet="Tbl_Role" />
+            <End Role="Tbl_User" EntitySet="Tbl_User" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -475,6 +652,14 @@
                 <ScalarProperty Name="Fld_Person_Lname" ColumnName="Fld_Person_Lname" />
                 <ScalarProperty Name="Fld_Person_NationCode" ColumnName="Fld_Person_NationCode" />
                 <ScalarProperty Name="Fld_Person_IsDeleted" ColumnName="Fld_Person_IsDeleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tbl_Role">
+            <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_Role">
+              <MappingFragment StoreEntitySet="Tbl_Role">
+                <ScalarProperty Name="Fld_Role_Id" ColumnName="Fld_Role_Id" />
+                <ScalarProperty Name="Fld_Role_Name" ColumnName="Fld_Role_Name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -518,6 +703,27 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Tbl_User">
+            <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_User">
+              <MappingFragment StoreEntitySet="Tbl_User">
+                <ScalarProperty Name="Fld_User_Id" ColumnName="Fld_User_Id" />
+                <ScalarProperty Name="Fld_User_Username" ColumnName="Fld_User_Username" />
+                <ScalarProperty Name="Fld_User_Password" ColumnName="Fld_User_Password" />
+                <ScalarProperty Name="Fld_User_Email" ColumnName="Fld_User_Email" />
+                <ScalarProperty Name="Fld_User_IsLocked" ColumnName="Fld_User_IsLocked" />
+                <ScalarProperty Name="Fld_Person_PersonId" ColumnName="Fld_Person_PersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tbl_UserSession">
+            <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_UserSession">
+              <MappingFragment StoreEntitySet="Tbl_UserSession">
+                <ScalarProperty Name="Fld_UserSession_SessionId" ColumnName="Fld_UserSession_SessionId" />
+                <ScalarProperty Name="Fld_User_UserId" ColumnName="Fld_User_UserId" />
+                <ScalarProperty Name="Fld_UserSession_DateTime" ColumnName="Fld_UserSession_DateTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Tbl_Wallet">
             <EntityTypeMapping TypeName="OperatorManagementDBModel.Tbl_Wallet">
               <MappingFragment StoreEntitySet="Tbl_Wallet">
@@ -526,6 +732,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="Tbl_UserRole" TypeName="OperatorManagementDBModel.Tbl_UserRole" StoreEntitySet="Tbl_UserRole">
+            <EndProperty Name="Tbl_Role">
+              <ScalarProperty Name="Fld_Role_Id" ColumnName="Fld_Role_RoleId" />
+            </EndProperty>
+            <EndProperty Name="Tbl_User">
+              <ScalarProperty Name="Fld_User_Id" ColumnName="Fld_User_UserId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

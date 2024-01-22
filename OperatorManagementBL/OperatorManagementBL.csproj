@@ -64,6 +64,7 @@
     <Compile Include="DTOs\SimTypeDTO.cs" />
     <Compile Include="DTOs\TransactionDTO.cs" />
     <Compile Include="DTOs\TransactionPageDTO.cs" />
+    <Compile Include="DTOs\UserDTO.cs" />
     <Compile Include="DTOs\WalletChargeDTO.cs" />
     <Compile Include="DTOs\WalletDTO.cs" />
     <Compile Include="Enum\Enums.cs" />
@@ -75,9 +76,11 @@
     <Compile Include="Services\IPersonService.cs" />
     <Compile Include="Services\ISimService.cs" />
     <Compile Include="Services\ITransactionService.cs" />
+    <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\PersonService.cs" />
     <Compile Include="Services\SimService.cs" />
     <Compile Include="Services\TransactionService.cs" />
+    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OperatorManagementDL\OperatorManagementDL.csproj">

@@ -131,6 +131,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\SimController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -1985,6 +1986,9 @@
     <Content Include="Views\Cost\Set.cshtml" />
     <Content Include="Views\Shared\_HomeIndexToasts.cshtml" />
     <Content Include="Views\Sim\ChargeLog.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\Details.cshtml" />
+    <Content Include="Views\User\CreateEdit.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

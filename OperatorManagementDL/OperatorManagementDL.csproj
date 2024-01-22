@@ -78,6 +78,9 @@
     <Compile Include="Tbl_Person.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Tbl_Role.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="Tbl_Sim.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
@@ -88,6 +91,12 @@
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Tbl_TransactionType.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Tbl_User.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Tbl_UserSession.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Tbl_Wallet.cs">

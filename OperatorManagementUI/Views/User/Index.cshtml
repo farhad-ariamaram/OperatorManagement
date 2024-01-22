@@ -1,0 +1,89 @@
+﻿@model IEnumerable<OperatorManagementBL.DTOs.UserDTO>
+
+@{
+    ViewBag.Title = "مدیریت کاربرها";
+    var people = (List<OperatorManagementBL.DTOs.PersonDropdownDTO>)ViewBag.PersonId;
+}
+
+<h2>مدیریت کاربرها</h2>
+<hr />
+<p>
+    <a href="@Url.Action("CreateEdit")" class="btn btn-success text-white"><i class="fa fa-plus mx-1"></i>افزودن</a>
+</p>
+<table class="table" id="mtable">
+    <thead>
+        <tr>
+            <th>
+                ردیف
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersonId)
+            </th>
+            <th>
+                وضعیت کاربر
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @i
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @if (item.PersonId.HasValue)
+                    {
+                    <span>@item.Person</span>
+                    }
+                    else
+                    {
+                        <span>هیچکس</span>
+                    }
+                </td>
+                <td>
+                    @(item.IsLocked?"غیرفعال":"فعال")
+                </td>
+
+                <td class="d-flex gap-1 flex-wrap">
+                    @Html.ActionLink("جزئیات", "Details", new { id = item.UserId }, new { @class = "btn btn-info text-white" })
+                    @Html.ActionLink("ویرایش", "CreateEdit", new { id = item.UserId }, new { @class = "btn btn-warning text-white" })
+                    @if (item.IsLocked)
+                    {
+                        @Html.ActionLink("فعال کردن", "UnLock", new { id = item.UserId }, new { @class = "btn btn-success text-white" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("غیرفعال کردن", "Lock", new { id = item.UserId }, new { @class = "btn btn-danger text-white" })
+                    }
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $("#mtable").DataTable({
+            "language": { "emptyTable": "موردی یافت نشد", "search": "جستجو:", "paginate": { "first": "اول", "last": "آخر", "next": "بعدی", "previous": "قبلی" }, "info": "نمایش _START_ از _END_ از _TOTAL_ نتیجه", "lengthMenu": "نمایش _MENU_ نتیجه" },
+            "width": "100%"
+        });
+    </script>
+}

@@ -12,24 +12,26 @@ namespace OperatorManagementDL
     using System;
     using System.Collections.Generic;
     
-    public partial class Tbl_Person
+    public partial class Tbl_User
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Tbl_Person()
+        public Tbl_User()
         {
-            this.Tbl_Sim = new HashSet<Tbl_Sim>();
-            this.Tbl_User = new HashSet<Tbl_User>();
+            this.Tbl_UserSession = new HashSet<Tbl_UserSession>();
+            this.Tbl_Role = new HashSet<Tbl_Role>();
         }
     
-        public int Fld_Person_Id { get; set; }
-        public string Fld_Person_Fname { get; set; }
-        public string Fld_Person_Lname { get; set; }
-        public string Fld_Person_NationCode { get; set; }
-        public bool Fld_Person_IsDeleted { get; set; }
+        public int Fld_User_Id { get; set; }
+        public string Fld_User_Username { get; set; }
+        public string Fld_User_Password { get; set; }
+        public string Fld_User_Email { get; set; }
+        public bool Fld_User_IsLocked { get; set; }
+        public Nullable<int> Fld_Person_PersonId { get; set; }
     
+        public virtual Tbl_Person Tbl_Person { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_Sim> Tbl_Sim { get; set; }
+        public virtual ICollection<Tbl_UserSession> Tbl_UserSession { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_User> Tbl_User { get; set; }
+        public virtual ICollection<Tbl_Role> Tbl_Role { get; set; }
     }
 }
