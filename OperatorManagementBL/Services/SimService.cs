@@ -31,6 +31,13 @@ namespace OperatorManagementBL.Services
             return simcard;
         }
 
+        private Tbl_Wallet _GetWallet(int simcardId)
+        {
+            var simcard = _context.Tbl_Wallet.Find(simcardId);
+            if (simcard == null) { throw new SimcardNotFoundException(); }
+            return simcard;
+        }
+
         private void _Add(Tbl_Sim simcard)
         {
             try
@@ -54,6 +61,19 @@ namespace OperatorManagementBL.Services
             catch (System.Exception)
             {
                 throw new System.Exception("خطای نامشخص در _Update");
+            }
+        }
+
+        private void _UpdateWallet(Tbl_Wallet wallet)
+        {
+            try
+            {
+                _context.Entry(wallet).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch
+            {
+                throw new System.Exception("خطای نامشخص در _UpdateWallet");
             }
         }
 
@@ -202,8 +222,23 @@ namespace OperatorManagementBL.Services
                 throw new DuplicateSimNumberException();
             }
 
-            //آپدیت مشخصات سیمکارت
+            //چک کردن تبدیل دائمی به اعتباری و ایجاد خطا در صورت داشتن بدهی
             var simForUpdate = _Get(simcard.Id);
+            if (simForUpdate.Fld_SimType_Id == (int)Enum.SimTypeEnum.permanent &&
+                simcard.SimType_Id == (int)Enum.SimTypeEnum.credit &&
+                simForUpdate.Tbl_Wallet.Fld_Wallet_Balance < 0)
+            {
+                throw new BillNotPaiedException();
+            }
+
+            //صفر کردن اعتبار در صورت تبدیل اعتباری به دائمی
+            if (simForUpdate.Fld_SimType_Id == (int)Enum.SimTypeEnum.credit &&
+                simcard.SimType_Id == (int)Enum.SimTypeEnum.permanent)
+            {
+                simForUpdate.Tbl_Wallet.Fld_Wallet_Balance = 0;
+            }
+
+            //آپدیت مشخصات سیمکارت
             simForUpdate.Fld_Sim_Id = simcard.Id;
             simForUpdate.Fld_Sim_Number = simcard.Number;
             simForUpdate.Fld_Person_Id = simcard.Person_Id;
@@ -295,31 +330,31 @@ namespace OperatorManagementBL.Services
 
         public void ChargeSim(int simcardId, decimal addBalance)
         {
-            var simcard = _Get(simcardId);
+            var simcardWallet = _GetWallet(simcardId);
 
-            SubmitChargeLog(simcard.Fld_Sim_Id, addBalance);
+            SubmitChargeLog(simcardId, addBalance);
 
             //افزودن به اعتبار سیمکارت
-            simcard.Tbl_Wallet.Fld_Wallet_Balance += addBalance;
+            simcardWallet.Fld_Wallet_Balance += addBalance;
 
-            _Update(simcard);
+            _UpdateWallet(simcardWallet);
         }
 
-        public void PayBillSim(int simId)
+        public void PayBillSim(int simcardId)
         {
-            var simcard = _Get(simId);
-            var balance = simcard.Tbl_Wallet.Fld_Wallet_Balance;
+            var simcardWallet = _GetWallet(simcardId);
+            var balance = simcardWallet.Fld_Wallet_Balance;
             if (balance == 0)
             {
                 return;
             }
 
-            SubmitChargeLog(simcard.Fld_Sim_Id, balance);
+            SubmitChargeLog(simcardId, balance);
 
             //صفر کردن اعتبار سیمکارت
-            simcard.Tbl_Wallet.Fld_Wallet_Balance = 0.00M;
+            simcardWallet.Fld_Wallet_Balance = 0.00M;
 
-            _Update(simcard);
+            _UpdateWallet(simcardWallet);
 
         }
 

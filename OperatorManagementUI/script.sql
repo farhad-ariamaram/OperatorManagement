@@ -309,7 +309,7 @@ ALTER DATABASE [OperatorManagementDB] SET  READ_WRITE
 GO
 
 
-/*/////////////////////////// NEW ///////////////////////////////
+/*/////////////////////////// NEW ///////////////////////////////*/
 
 CREATE TABLE [dbo].[Tbl_ChargeLog](
 	[Fld_ChargeLog_Id] [int] IDENTITY(1,1) NOT NULL,

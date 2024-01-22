@@ -38,4 +38,11 @@ namespace OperatorManagementBL.Exceptions
     {
         public SimcardOwnerIsDeletedException() : base(String.Format("مالک سیمکارت در وضعیت حذف شده قرار دارد")) { }
     }
+
+    //Exception داشتن بدهی در تبدیل دائمی به اعتباری
+    [Serializable]
+    public class BillNotPaiedException : Exception
+    {
+        public BillNotPaiedException() : base(String.Format("سیمکارت موردنظر بدهی دارد، برای تبدیل به اعتباری ابتدا صورت‌حساب را پرداخت کنید")) { }
+    }
 }
