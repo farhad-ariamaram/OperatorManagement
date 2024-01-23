@@ -1,4 +1,5 @@
 ﻿using OperatorManagementBL.DTOs;
+using OperatorManagementBL.Extensions;
 using OperatorManagementDL;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -54,14 +55,23 @@ namespace OperatorManagementBL.Services
 
         public async Task<int> CreateOrUpdateUserAsync(UserDTO user)
         {
+            //چک کردن نام کاربری تکراری
+            var cuser = _context.Tbl_User.Where(a => a.Fld_User_Username == user.Username || a.Fld_User_Email == user.Email);
+
+            var hashPassword = user.Password.ToSha256Hash();
             if (user.UserId == 0)
             {
+                if (cuser.Any())
+                {
+                    throw new System.Exception("نام کاربری یا ایمیل تکراری است");
+                }
+
                 var newUser = new Tbl_User
                 {
                     Fld_User_Username = user.Username,
                     Fld_User_Email = user.Email,
                     Fld_User_IsLocked = user.IsLocked,
-                    Fld_User_Password = user.Password,
+                    Fld_User_Password = hashPassword,
                     Fld_Person_PersonId = user.PersonId
                 };
 
@@ -69,13 +79,18 @@ namespace OperatorManagementBL.Services
             }
             else
             {
+                if (cuser.Where(a => a.Fld_User_Id != user.UserId).Any())
+                {
+                    throw new System.Exception("نام کاربری یا ایمیل تکراری است");
+                }
+
                 var existingUser = await _context.Tbl_User.FindAsync(user.UserId);
                 if (existingUser != null)
                 {
                     existingUser.Fld_User_Username = user.Username;
                     existingUser.Fld_User_Email = user.Email;
                     existingUser.Fld_User_IsLocked = user.IsLocked;
-                    existingUser.Fld_User_Password = user.Password;
+                    existingUser.Fld_User_Password = hashPassword;
                     existingUser.Fld_Person_PersonId = user.PersonId;
                 }
             }
@@ -102,16 +117,7 @@ namespace OperatorManagementBL.Services
                 await _context.SaveChangesAsync();
             }
         }
-        
-        public async Task<bool> AuthenticateAsync(string username, string password)
-        {
-            throw new System.Exception();
-        }
 
-        public async Task<bool> AuthorizeAsync(string username, string role)
-        {
-            throw new System.Exception();
-        }
     }
 
 }

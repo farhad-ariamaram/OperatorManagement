@@ -11,7 +11,5 @@ namespace OperatorManagementBL.Services
         Task<int> CreateOrUpdateUserAsync(UserDTO user);
         Task LockUserAsync(int userId);
         Task UnLockUserAsync(int userId);
-        Task<bool> AuthenticateAsync(string username, string password);
-        Task<bool> AuthorizeAsync(string username, string role);
     }
 }

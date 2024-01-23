@@ -3,6 +3,20 @@
 namespace OperatorManagementBL.Exceptions
 {
 
+    //Exception نام کاربری یا رمز عبور اشتباه
+    [Serializable]
+    public class UserNotFoundException : Exception
+    {
+        public UserNotFoundException() : base(String.Format("نام کاربری یا رمز عبور اشتباه است")) { }
+    }
+
+    //Exception کاربر غیرفعال
+    [Serializable]
+    public class UserLockedException : Exception
+    {
+        public UserLockedException() : base(String.Format("کاربر غیرفعال است")) { }
+    }
+
     //Exception کاربر یافت نشد
     [Serializable]
     public class PersonNotFoundException : Exception

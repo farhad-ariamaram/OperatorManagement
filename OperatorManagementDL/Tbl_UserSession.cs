@@ -14,7 +14,7 @@ namespace OperatorManagementDL
     
     public partial class Tbl_UserSession
     {
-        public string Fld_UserSession_SessionId { get; set; }
+        public int Fld_UserSession_SessionId { get; set; }
         public int Fld_User_UserId { get; set; }
         public System.DateTime Fld_UserSession_DateTime { get; set; }
     

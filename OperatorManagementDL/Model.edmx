@@ -98,7 +98,7 @@
           <Key>
             <PropertyRef Name="Fld_UserSession_SessionId" />
           </Key>
-          <Property Name="Fld_UserSession_SessionId" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Fld_UserSession_SessionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Fld_User_UserId" Type="int" Nullable="false" />
           <Property Name="Fld_UserSession_DateTime" Type="datetime" Nullable="false" />
         </EntityType>
@@ -425,7 +425,7 @@
           <Key>
             <PropertyRef Name="Fld_UserSession_SessionId" />
           </Key>
-          <Property Name="Fld_UserSession_SessionId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_UserSession_SessionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Fld_User_UserId" Type="Int32" Nullable="false" />
           <Property Name="Fld_UserSession_DateTime" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Tbl_User" Relationship="Self.FK_Tbl_UserSession_Tbl_User" FromRole="Tbl_UserSession" ToRole="Tbl_User" />

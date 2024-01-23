@@ -9,11 +9,13 @@ namespace OperatorManagementUI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IPersonService _personService;
+        private readonly IAuthenticationService _authenticationService;
 
         public UserController()
         {
             _userService = new UserService();
             _personService = new PersonService();
+            _authenticationService = new AuthenticationService();
         }
 
         public async Task<ActionResult> Index()
@@ -34,7 +36,7 @@ namespace OperatorManagementUI.Controllers
 
             if (id.HasValue)
             {
-                // Edit existing user
+                // ویرایش کاربر
                 var user = await _userService.GetUserByIdAsync(id.Value);
                 if (user == null)
                 {
@@ -45,7 +47,7 @@ namespace OperatorManagementUI.Controllers
                 return View(user);
             }
 
-            // Create new user
+            // ساخت کاربر جدید
             ViewBag.PersonId = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
             return View(new UserDTO());
         }
@@ -54,14 +56,21 @@ namespace OperatorManagementUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateEdit(UserDTO user)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await _userService.CreateOrUpdateUserAsync(user);
-                return RedirectToAction("Index");
-            }
+                if (ModelState.IsValid)
+                {
+                    await _userService.CreateOrUpdateUserAsync(user);
+                    return RedirectToAction("Index");
+                }
 
-            ViewBag.PersonId = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", user.PersonId);
-            return View(user);
+                ViewBag.PersonId = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", user.PersonId);
+                return View(user);
+            }
+            catch (System.Exception ex)
+            {
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
+            }
         }
 
         public async Task<ActionResult> Lock(int id)
@@ -74,6 +83,40 @@ namespace OperatorManagementUI.Controllers
         {
             await _userService.UnLockUserAsync(id);
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Login()
+        {
+            if (Session["UserId"] != null)
+            {
+                return Redirect("Index");
+            }
+
+            var viewModel = new UserLoginDTO();
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Login([Bind] UserLoginDTO loginDTO)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var userId = await _authenticationService.AuthenticateUserAsync(loginDTO);
+
+                    Session["UserId"] = userId;
+
+                    return Redirect("Index");
+                }
+
+                return View(loginDTO);
+            }
+            catch (System.Exception ex)
+            {
+                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
+            }
         }
     }
 
