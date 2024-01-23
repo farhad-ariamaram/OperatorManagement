@@ -1,4 +1,5 @@
-﻿using OperatorManagementBL.DTOs;
+﻿using OperatorManagementBL.Attributes;
+using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
 using System.Web.Mvc;
 
@@ -14,6 +15,7 @@ namespace OperatorManagementUI.Controllers
         }
 
         // صفحه لیست تعرفه ها
+        [MyAuthorize(Roles = "Admin,ViewCost")]
         public ActionResult Index()
         {
             var vm = _costService.GetCosts();
@@ -22,6 +24,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه تغییر تعرفه
         // GET
+        [MyAuthorize(Roles = "Admin,SetCost")]
         public ActionResult Set(int? Id)
         {
             if(Id == null)
@@ -38,6 +41,7 @@ namespace OperatorManagementUI.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [MyAuthorize(Roles = "Admin,SetCost")]
         public ActionResult Set([Bind(Include = "Id,Value")] CostDTO cost)
         {
             try

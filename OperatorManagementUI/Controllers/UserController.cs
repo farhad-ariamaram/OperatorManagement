@@ -21,25 +21,21 @@ namespace OperatorManagementUI.Controllers
             _authorizeService = new AuthorizeService();
         }
 
-        [MyAuthorize(Roles = "Admin")]
+        [MyAuthenticate]
         public async Task<ActionResult> Index()
         {
-            //if (!await _authorizeService.IsAuthorize(new string[] {"Admin"},(int?)Session["UserId"] ?? 0))
-            //{
-            //    return RedirectToAction("Index", "Error", new ErrorDTO { Msg = "به این صفحه دسترسی ندارید", StatusCode = 500 });
-            //}
-
             var users = await _userService.GetAllUsersAsync();
             return View(users);
         }
 
+        [MyAuthenticate]
         public async Task<ActionResult> Details(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
             return View(user);
         }
 
-
+        [MyAuthorize(Roles = "Admin,AddEditUser")]
         public async Task<ActionResult> CreateEdit(int? id)
         {
 
@@ -63,6 +59,7 @@ namespace OperatorManagementUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [MyAuthorize(Roles = "Admin,AddEditUser")]
         public async Task<ActionResult> CreateEdit(UserDTO user)
         {
             try
@@ -82,12 +79,14 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        [MyAuthorize(Roles = "Admin,LockUser")]
         public async Task<ActionResult> Lock(int id)
         {
             await _userService.LockUserAsync(id);
             return RedirectToAction("Index");
         }
 
+        [MyAuthorize(Roles = "Admin,UnLockUser")]
         public async Task<ActionResult> UnLock(int id)
         {
             await _userService.UnLockUserAsync(id);

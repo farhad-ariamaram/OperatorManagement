@@ -11,15 +11,27 @@ namespace OperatorManagementBL.Services
     public class UserService : IUserService
     {
         private readonly OperatorManagementDBEntities _context;
+        private readonly IAuthorizeService _authorizeService;
 
         public UserService()
         {
             _context = new OperatorManagementDBEntities();
+            _authorizeService = new AuthorizeService();
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
-            var users = await _context.Tbl_User
+            var userRoles = _authorizeService.GetUserRoles();
+            var requiredRoles = new List<string> { "Admin", "ViewUsers" };
+
+            IQueryable<Tbl_User> people = _context.Tbl_User;
+            if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+            {
+                var logonUserId = _authorizeService.GetUserId();
+                people = people.Where(a => a.Fld_User_Id == logonUserId);
+            }
+
+            var users = await people
                 .Select(u => new UserDTO
                 {
                     UserId = u.Fld_User_Id,
@@ -37,6 +49,19 @@ namespace OperatorManagementBL.Services
 
         public async Task<UserDTO> GetUserByIdAsync(int userId)
         {
+            var logonUserId = _authorizeService.GetUserId();
+
+            if (logonUserId != userId)
+            {
+                var userRoles = _authorizeService.GetUserRoles();
+                var requiredRoles = new List<string> { "Admin", "ViewUserDetail" };
+                if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+                {
+                    throw new System.Exception("شما اجازه دیدن مشخصات این کاربر را ندارید");
+
+                }
+            }
+
             var user = await _context.Tbl_User
                 .Where(u => u.Fld_User_Id == userId)
                 .Select(u => new UserDTO

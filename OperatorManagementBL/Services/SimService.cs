@@ -101,11 +101,23 @@ namespace OperatorManagementBL.Services
         #region Public
         public List<SimDTO> GetSims()
         {
-            List<SimDTO> mappedSimcards = new List<SimDTO>();
+            var userRoles = _authorizeService.GetUserRoles();
+            var requiredRoles = new List<string> { "Admin", "CallFromAllSimcards" };
 
-            var simcards = _Get();
+            List<PersonDTO> mappedPeople = new List<PersonDTO>();
+
+            IQueryable<Tbl_Sim> simcards = _context.Tbl_Sim;
+            if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+            {
+                var logonUserId = _authorizeService.GetUserId();
+                var logonUser = _context.Tbl_User.Find(logonUserId);
+                var personId = logonUser.Fld_Person_PersonId ?? 0;
+
+                simcards = simcards.Where(a => a.Fld_Person_Id == personId);
+            }
 
             //مپ لیست سیمکارت ها
+            List<SimDTO> mappedSimcards = new List<SimDTO>();
             foreach (var s in simcards)
             {
                 mappedSimcards.Add(new SimDTO
@@ -123,7 +135,7 @@ namespace OperatorManagementBL.Services
 
         public List<SimForListDTO> GetSimsForDropdown(int? exclude)
         {
-            var simcards = _Get().Where(a => a.Fld_Sim_Id != exclude.Value);
+            var simcards = _context.Tbl_Sim.Where(a => a.Fld_Sim_Id != exclude.Value);
 
             //مپ لیست سیمکارت ها برای دراپ دان
             List<SimForListDTO> mappedSimcards = new List<SimForListDTO>();
