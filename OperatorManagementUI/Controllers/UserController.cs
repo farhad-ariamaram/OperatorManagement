@@ -1,4 +1,5 @@
-﻿using OperatorManagementBL.DTOs;
+﻿using OperatorManagementBL.Attributes;
+using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -10,16 +11,24 @@ namespace OperatorManagementUI.Controllers
         private readonly IUserService _userService;
         private readonly IPersonService _personService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthorizeService _authorizeService;
 
         public UserController()
         {
             _userService = new UserService();
             _personService = new PersonService();
             _authenticationService = new AuthenticationService();
+            _authorizeService = new AuthorizeService();
         }
 
+        [MyAuthorize(Roles = "Admin")]
         public async Task<ActionResult> Index()
         {
+            //if (!await _authorizeService.IsAuthorize(new string[] {"Admin"},(int?)Session["UserId"] ?? 0))
+            //{
+            //    return RedirectToAction("Index", "Error", new ErrorDTO { Msg = "به این صفحه دسترسی ندارید", StatusCode = 500 });
+            //}
+
             var users = await _userService.GetAllUsersAsync();
             return View(users);
         }
@@ -43,7 +52,7 @@ namespace OperatorManagementUI.Controllers
                     return HttpNotFound();
                 }
 
-                ViewBag.PersonId = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode",user.PersonId);
+                ViewBag.PersonId = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode", user.PersonId);
                 return View(user);
             }
 
@@ -85,8 +94,10 @@ namespace OperatorManagementUI.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Login()
+        public ActionResult Login(string redirectUrl)
         {
+            ViewBag.Redirected = !string.IsNullOrEmpty(redirectUrl) ? true : false;
+
             if (Session["UserId"] != null)
             {
                 return Redirect("Index");
@@ -111,6 +122,7 @@ namespace OperatorManagementUI.Controllers
                     return Redirect("Index");
                 }
 
+                ViewBag.Redirected = false;
                 return View(loginDTO);
             }
             catch (System.Exception ex)
