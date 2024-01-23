@@ -43,5 +43,40 @@ namespace OperatorManagementBL.Services
             return hasUserRoles;
 
         }
+
+        public int GetUserId()
+        {
+            var userId = System.Web.HttpContext.Current.Session["UserId"];
+            if (userId == null || (int)userId == 0)
+            {
+                return 0;
+            }
+
+            return (int)userId;
+        }
+
+        public List<string> GetUserRoles()
+        {
+            var userId = System.Web.HttpContext.Current.Session["UserId"];
+            if (userId == null || (int)userId == 0)
+            {
+                return null;
+            }
+
+            var user = _context.Tbl_User.Find(userId);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return user.Tbl_Role.Select(a=>a.Fld_Role_Name).ToList();
+        }
+
+        public bool checkUserRole(List<string> userRoles, List<string> requiredRoles)
+        {
+            return requiredRoles
+              .Intersect(userRoles)
+              .Any();
+        }
     }
 }

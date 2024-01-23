@@ -1,4 +1,5 @@
 ﻿
+using OperatorManagementBL.Attributes;
 using OperatorManagementBL.Services;
 using System.Web.Mvc;
 
@@ -18,6 +19,7 @@ namespace OperatorManagementUI.Controllers
         }
 
         // صفحه اصلی سایت شامل دو قسمت برای انجام تماس و فرستادن پیامک
+        [MyAuthenticate]
         public ActionResult Index()
         {
             ViewBag.Sim_Id = new SelectList(_simService.GetSims(), "Id", "Number");
@@ -25,6 +27,7 @@ namespace OperatorManagementUI.Controllers
         }
 
         // صفحه نمایش تراکنش های انجام شده
+        [MyAuthorize(Roles = "Admin,ViewTransactions")]
         public ActionResult Transactions(int pageId = 1, long fromDate = 0, long toDate = 0, int fromSimId = 0, int toSimId = 0, int fromPersonId = 0, int toPersonId = 0, int durationLessThan = 0, int durationMoreThan = 0, int typeId = 0, int sortType = 0, string search = "")
         {
             ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");

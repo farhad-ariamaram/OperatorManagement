@@ -11,9 +11,12 @@ namespace OperatorManagementBL.Services
     public class SimService : ISimService
     {
         private readonly OperatorManagementDBEntities _context;
+        private readonly IAuthorizeService _authorizeService;
+
         public SimService()
         {
             _context = new OperatorManagementDBEntities();
+            _authorizeService = new AuthorizeService();
         }
 
         #region Priv8
@@ -98,10 +101,11 @@ namespace OperatorManagementBL.Services
         #region Public
         public List<SimDTO> GetSims()
         {
+            List<SimDTO> mappedSimcards = new List<SimDTO>();
+
             var simcards = _Get();
 
             //مپ لیست سیمکارت ها
-            List<SimDTO> mappedSimcards = new List<SimDTO>();
             foreach (var s in simcards)
             {
                 mappedSimcards.Add(new SimDTO
@@ -137,7 +141,17 @@ namespace OperatorManagementBL.Services
 
         public List<SimDetailDTO> GetDetailSims()
         {
-            var simcards = _Get();
+            var userRoles = _authorizeService.GetUserRoles();
+            var requiredRoles = new List<string> { "Admin", "ViewSimcards" };
+
+            IQueryable<Tbl_Sim> simcards = _context.Tbl_Sim;
+            if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+            {
+                var logonUserId = _authorizeService.GetUserId();
+                var logonUser = _context.Tbl_User.Find(logonUserId);
+                var personId = logonUser.Fld_Person_PersonId ?? 0;
+                simcards = simcards.Where(a => a.Fld_Person_Id == personId);
+            }
 
             //مپ لیست سیمکارت ها با جزئیات
             List<SimDetailDTO> mappedSimcards = new List<SimDetailDTO>();
@@ -175,7 +189,21 @@ namespace OperatorManagementBL.Services
 
         public SimDetailDTO GetSimDetailById(int simcardId)
         {
+            var logonUserId = _authorizeService.GetUserId();
+            var logonUser = _context.Tbl_User.Find(logonUserId);
+            var personId = logonUser.Fld_Person_PersonId ?? 0;
+
             var simcard = _Get(simcardId);
+            if (simcard.Fld_Person_Id != personId)
+            {
+                var userRoles = _authorizeService.GetUserRoles();
+                var requiredRoles = new List<string> { "Admin", "ViewSimDetail" };
+                if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+                {
+                    throw new System.Exception("شما اجازه دیدن مشخصات این سیم‌کارت را ندارید");
+
+                }
+            }
 
             //مپ سیمکارت نمایش تکی با جزئیات
             SimDetailDTO mappedSimcard = new SimDetailDTO
@@ -313,7 +341,21 @@ namespace OperatorManagementBL.Services
 
         public WalletDTO GetWallet(int simcardId)
         {
+            var logonUserId = _authorizeService.GetUserId();
+            var logonUser = _context.Tbl_User.Find(logonUserId);
+            var personId = logonUser.Fld_Person_PersonId ?? 0;
+
             var simcard = _Get(simcardId);
+            if (simcard.Fld_Person_Id != personId)
+            {
+                var userRoles = _authorizeService.GetUserRoles();
+                var requiredRoles = new List<string> { "Admin", "ViewSimWallet" };
+                if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+                {
+                    throw new System.Exception("شما اجازه دیدن مشخصات این سیم‌کارت را ندارید");
+
+                }
+            }
 
             //مپ سیمکارت و اعتبار
             var mappedWallet = new WalletDTO
@@ -360,9 +402,27 @@ namespace OperatorManagementBL.Services
 
         public List<ChargeLogDTO> GetChargeLogs(int simId)
         {
-            var simcardChargeLogs = _context.Tbl_ChargeLog.Where(a => a.Fld_Sim_SimId == simId).ToList();
+            var logonUserId = _authorizeService.GetUserId();
+            var logonUser = _context.Tbl_User.Find(logonUserId);
+            var personId = logonUser.Fld_Person_PersonId ?? 0;
+
+            var simcard = _Get(simId);
+            if (simcard.Fld_Person_Id != personId)
+            {
+                var userRoles = _authorizeService.GetUserRoles();
+                var requiredRoles = new List<string> { "Admin", "ViewChargeLogs" };
+                if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+                {
+                    throw new System.Exception("شما اجازه دیدن سوابق این سیم‌کارت را ندارید");
+
+                }
+            }
 
             var mappedChargelogList = new List<ChargeLogDTO>();
+
+            var simcardChargeLogs = _context.Tbl_ChargeLog.Where(a => a.Fld_Sim_SimId == simId).ToList();
+
+            
             foreach (var item in simcardChargeLogs)
             {
                 mappedChargelogList.Add(new ChargeLogDTO

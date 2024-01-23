@@ -1,4 +1,5 @@
-﻿using OperatorManagementBL.DTOs;
+﻿using OperatorManagementBL.Attributes;
+using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
 using System;
 using System.Web.Mvc;
@@ -15,14 +16,15 @@ namespace OperatorManagementUI.Controllers
             _personService = new PersonService();
         }
 
-
         // صفحه لیست اشخاص
+        [MyAuthenticate]
         public ActionResult Index()
         {
             return View(_personService.GetPeople());
         }
 
         // صفحه جزئیات شخص
+        [MyAuthenticate]
         public ActionResult Details(int? id)
         {
             try
@@ -43,6 +45,7 @@ namespace OperatorManagementUI.Controllers
         }
 
         //  صفحه ایجاد شخص
+        [MyAuthorize(Roles = "Admin,AddPerson")]
         public ActionResult Create()
         {
             return View();
@@ -50,6 +53,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه ایجاد شخص
         // POST
+        [MyAuthorize(Roles = "Admin,AddPerson")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind] PersonDTO person)
@@ -72,6 +76,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه ویرایش شخص
         // GET
+        [MyAuthorize(Roles = "Admin,EditPerson")]
         public ActionResult Edit(int? id)
         {
             try
@@ -93,6 +98,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه ویرایش شخص
         // POST
+        [MyAuthorize(Roles = "Admin,EditPerson")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind] PersonDTO person)
@@ -114,6 +120,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه حذف شخص
         // GET
+        [MyAuthorize(Roles = "Admin,DeletePerson")]
         public ActionResult Delete(int? id)
         {
             try
@@ -135,6 +142,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه حذف شخص
         // POST
+        [MyAuthorize(Roles = "Admin,DeletePerson")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
@@ -151,12 +159,14 @@ namespace OperatorManagementUI.Controllers
         }
 
         // صفحه لیست اشخاص حذف شده
+        [MyAuthorize(Roles = "Admin,ViewDeletedPeople")]
         public ActionResult DeletedPeople()
         {
             return View(_personService.GetDeletedPeople());
         }
 
         // صفحه بازگردانی شخص حذف شده
+        [MyAuthorize(Roles = "Admin,UnDeletePerson")]
         public ActionResult UnDelete(int id)
         {
             try

@@ -11,9 +11,11 @@ namespace OperatorManagementBL.Services
     public class PersonService : IPersonService
     {
         private readonly OperatorManagementDBEntities _context;
+        private readonly IAuthorizeService _authorizeService;
         public PersonService()
         {
             _context = new OperatorManagementDBEntities();
+            _authorizeService = new AuthorizeService();
         }
 
         #region Priv8
@@ -75,13 +77,27 @@ namespace OperatorManagementBL.Services
         //----------------Priv8 Methods----------------//
         #endregion
 
+
+
         #region Public
         public List<PersonDTO> GetPeople()
         {
-            var people = _Get();
+            var userRoles = _authorizeService.GetUserRoles();
+            var requiredRoles = new List<string> { "Admin", "ViewPeople" };
+
+            List<PersonDTO> mappedPeople = new List<PersonDTO>();
+
+            IQueryable<Tbl_Person> people = _context.Tbl_Person;
+            if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+            {
+                var logonUserId = _authorizeService.GetUserId();
+                var logonUser = _context.Tbl_User.Find(logonUserId);
+                var personId = logonUser.Fld_Person_PersonId ?? 0;
+
+                people = people.Where(a => a.Fld_Person_Id == personId);
+            }
 
             //مپ کردن لیست اشخاص برای نمایش
-            List<PersonDTO> mappedPeople = new List<PersonDTO>();
             foreach (var p in people)
             {
                 mappedPeople.Add(new PersonDTO { Id = p.Fld_Person_Id, FirstName = p.Fld_Person_Fname, LastName = p.Fld_Person_Lname, NationCode = p.Fld_Person_NationCode });
@@ -92,6 +108,20 @@ namespace OperatorManagementBL.Services
 
         public PersonDetailDTO GetPersonByIdForDetail(int personId)
         {
+            var logonUserId = _authorizeService.GetUserId();
+            var logonUser = _context.Tbl_User.Find(logonUserId);
+            var loginPersonId = logonUser.Fld_Person_PersonId ?? 0;
+
+            if (personId != loginPersonId)
+            {
+                var userRoles = _authorizeService.GetUserRoles();
+                var requiredRoles = new List<string> { "Admin", "ViewPersonDetail" };
+                if (!_authorizeService.checkUserRole(userRoles, requiredRoles))
+                {
+                    throw new System.Exception("شما اجازه دیدن مشخصات این فرد را ندارید");
+
+                }
+            }
 
             var person = _Get(personId);
             var personSimcards = _GetPersonSimcards(personId);
@@ -121,7 +151,6 @@ namespace OperatorManagementBL.Services
             };
 
             return mappedPerson;
-
         }
 
         public void AddPerson(PersonDTO personDto)

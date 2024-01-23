@@ -39,9 +39,10 @@ namespace OperatorManagementBL.Services
             });
 
             await _context.SaveChangesAsync();
- 
-            return user.Fld_User_Id;
 
+            return user.Fld_User_Id;
         }
+
+
     }
 }

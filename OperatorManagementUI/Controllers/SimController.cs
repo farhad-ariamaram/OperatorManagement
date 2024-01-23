@@ -1,4 +1,5 @@
-﻿using OperatorManagementBL.DTOs;
+﻿using OperatorManagementBL.Attributes;
+using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
 using System;
 using System.Web.Mvc;
@@ -16,12 +17,14 @@ namespace OperatorManagementUI.Controllers
             _personService = new PersonService();
         }
 
+        [MyAuthenticate]
         public ActionResult Index()
         {
             return View(_simService.GetDetailSims());
         }
 
         // صفحه جزئیات سیمکارت
+        [MyAuthenticate]
         public ActionResult Details(int? id)
         {
             try
@@ -43,6 +46,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه ساخت سیمکارت جدید
         // GET
+        [MyAuthorize(Roles = "Admin,AddSimcard")]
         public ActionResult Create()
         {
             ViewBag.Person_Id = new SelectList(_personService.GetPeopleForDropdown(), "Id", "NameAndNationCode");
@@ -54,6 +58,7 @@ namespace OperatorManagementUI.Controllers
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [MyAuthorize(Roles = "Admin,AddSimcard")]
         public ActionResult Create([Bind] SimDTO sim)
         {
             try
@@ -76,6 +81,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه ویرایش سیمکارت
         // GET
+        [MyAuthorize(Roles = "Admin,EditSimcard")]
         public ActionResult Edit(int? id)
         {
             try
@@ -102,6 +108,7 @@ namespace OperatorManagementUI.Controllers
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [MyAuthorize(Roles = "Admin,EditSimcard")]
         public ActionResult Edit([Bind] SimDTO sim)
         {
             try
@@ -125,6 +132,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه حذف سیمکارت
         // GET
+        [MyAuthorize(Roles = "Admin,DeleteSimcard")]
         public ActionResult Delete(int? id)
         {
             try
@@ -148,6 +156,7 @@ namespace OperatorManagementUI.Controllers
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [MyAuthorize(Roles = "Admin,DeleteSimcard")]
         public ActionResult Delete(int id)
         {
             try
@@ -162,12 +171,15 @@ namespace OperatorManagementUI.Controllers
         }
 
         // صفحه نمایش سیمکارت های حذف شده
+        [MyAuthorize(Roles = "Admin,ViewDeletedSimcards")]
         public ActionResult DeletedSims()
         {
             return View(_simService.GetDeletedSims());
         }
 
+
         // صفحه بازگردانی سیمکارت حذف شده
+        [MyAuthorize(Roles = "Admin,UnDeleteSimcard")]
         public ActionResult UnDelete(int id)
         {
             try
@@ -183,6 +195,7 @@ namespace OperatorManagementUI.Controllers
 
         // صفحه شارژ/پرداخت قبض سیمکارت
         // GET
+        [MyAuthenticate]
         public ActionResult Wallet(int? id)
         {
             try
@@ -215,6 +228,7 @@ namespace OperatorManagementUI.Controllers
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [MyAuthenticate]
         public ActionResult Wallet([Bind] WalletChargeDTO walletChargeDTO)
         {
             try
@@ -265,6 +279,7 @@ namespace OperatorManagementUI.Controllers
             }
         }
 
+        [MyAuthenticate]
         public ActionResult ChargeLog(int? id)
         {
             try
