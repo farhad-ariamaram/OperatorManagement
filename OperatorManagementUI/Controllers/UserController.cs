@@ -1,6 +1,7 @@
 ﻿using OperatorManagementBL.Attributes;
 using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -125,10 +126,10 @@ namespace OperatorManagementUI.Controllers
                 ViewBag.Redirected = false;
                 return View(loginDTO);
             }
-            catch
+            catch (Exception ex)
             {
                 ViewBag.Redirected = false;
-                ModelState.AddModelError("WrongUserOrPass", "نام کاربری و یا کلمه عبور اشتباه است");
+                ModelState.AddModelError("WrongUserOrPass", ex.Message);
                 return View(loginDTO);
             }
         }
