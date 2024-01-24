@@ -4,42 +4,86 @@
     ViewBag.Title = "ورود";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
 }
+<style>
 
-<div class="card shadow-5-strong mt-5 col-5 mx-auto">
-    <div class="card-body py-2">
 
-        <div class="row d-flex justify-content-center">
-            <div class="col-lg-8">
-                <h2 class="fw-bold mb-5">ورود به پنل</h2>
-                @using (Html.BeginForm())
-                {
-                    @Html.AntiForgeryToken()
+    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        -o-box-sizing: border-box;
+        box-sizing: border-box;
+    }
 
-                    <div class="form-floating mb-3">
-                        @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.LabelFor(model => model.Username)
-                        @Html.ValidationMessageFor(model => model.Username, "", new { @class = "form-text text-danger" })
-                    </div>
+    html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
 
-                    <div class="form-floating">
-                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.LabelFor(model => model.Password)
-                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "form-text text-danger" })
-                    </div>
+    body {
+        width: 100%;
+        height: 100%;
+    }
 
-                    <button type="submit" class="btn btn-primary btn-block mb-4 mt-2">
-                        ورود
-                    </button>
-                }
-            </div>
-        </div>
-    </div>
+    .login {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -150px 0 0 -150px;
+        width: 300px;
+        height: 300px;
+    }
+
+        .login h1 {
+            color: #000;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+        background: rgba(255,255,255,0.3);
+        border: none;
+        outline: none;
+        padding: 10px;
+        font-size: 13px;
+        color: #000;
+        border: 1px solid rgba(0,0,0,0.3);
+        border-radius: 4px;
+        box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+        -webkit-transition: box-shadow .5s ease;
+        -moz-transition: box-shadow .5s ease;
+        -o-transition: box-shadow .5s ease;
+        -ms-transition: box-shadow .5s ease;
+        transition: box-shadow .5s ease;
+    }
+
+        input:focus {
+            box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2);
+        }
+</style>
+<div class="login">
+
+    <h1 class="pb-2">ورود به پنل</h1>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.EditorFor(model => model.Username, new { htmlAttributes = new { placeholder = "نام کاربری" } })
+        @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger d-block mb-3" })
+        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "کلمه عبور" } })
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger d-block mb-3" })
+        <button type="submit" class="btn btn-primary btn-block btn-large">ورود</button>
+    }
 </div>
+
 @if (ViewBag.Redirected)
 {
     <div id="invalidUser" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
-            <strong class="me-auto">تماس ناموفق</strong>
+            <strong class="me-auto">تلاش ناموفق</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body text-start">
@@ -53,6 +97,37 @@
             var toastList = toastElList.map(function (toastEl) {
                 return new bootstrap.Toast(toastEl);
             });
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
+}
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+
+    foreach (var modelState in ViewData.ModelState.Values)
+    {
+        foreach (var error in modelState.Errors)
+        {
+            <div class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">ورود ناموفق</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body text-start">
+                    @error.ErrorMessage
+                </div>
+            </div>
+        }
+    }
+
+    <script>
+        $(function () {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+            var toastList = toastElList.map(function (toastEl) {
+                return new bootstrap.Toast(toastEl)
+            })
             toastList.forEach(toast => toast.show());
         });
     </script>

@@ -125,9 +125,11 @@ namespace OperatorManagementUI.Controllers
                 ViewBag.Redirected = false;
                 return View(loginDTO);
             }
-            catch (System.Exception ex)
+            catch
             {
-                return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
+                ViewBag.Redirected = false;
+                ModelState.AddModelError("WrongUserOrPass", "نام کاربری و یا کلمه عبور اشتباه است");
+                return View(loginDTO);
             }
         }
 
@@ -150,6 +152,12 @@ namespace OperatorManagementUI.Controllers
             }
 
             return View(userRolesDto);
+        }
+
+        public ActionResult Logout()
+        {
+            Session["UserId"] = null;
+            return RedirectToAction("Login");
         }
     }
 
