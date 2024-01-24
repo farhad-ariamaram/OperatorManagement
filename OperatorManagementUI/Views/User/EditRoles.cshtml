@@ -1,0 +1,21 @@
+﻿@model IEnumerable<OperatorManagementBL.DTOs.UserRolesDTO>
+@{
+    ViewBag.Title = "EditRoles";
+}
+
+@using (Html.BeginForm("EditRoles", "User", FormMethod.Post))
+{
+    for (var i = 0; i < Model.Count(); i++)
+    {
+<div class="form-check form-switch">
+    @Html.HiddenFor(model => Model.ElementAt(i).RoleId, new { Name = $"userRolesDto[{i}].RoleId" })
+    @Html.HiddenFor(model => Model.ElementAt(i).RoleName, new { Name = $"userRolesDto[{i}].RoleName" })
+    @Html.CheckBoxFor(model => Model.ElementAt(i).IsActive, new { @class = "form-check-input", Name = $"userRolesDto[{i}].IsActive" })
+
+    <label class="form-check-label">@Model.ElementAt(i).RoleName</label>
+</div>
+    }
+
+    <button class="btn btn-primary" type="submit">بروزرسانی</button>
+    @Html.ActionLink("بازگشت", "Index", null, new { @class = "btn btn-info text-white" })
+}

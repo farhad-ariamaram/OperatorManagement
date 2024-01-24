@@ -143,6 +143,72 @@ namespace OperatorManagementBL.Services
             }
         }
 
+        public async Task<List<UserRolesDTO>> GetUserRoles(int userId)
+        {
+            var user = await _context.Tbl_User.FindAsync(userId);
+            if (user != null)
+            {
+                var mappedUserRoles = new List<UserRolesDTO>();
+                var userRoles = user.Tbl_Role;
+                var roles = _context.Tbl_Role;
+                foreach (var item in roles)
+                {
+                    if (userRoles.Contains(item))
+                    {
+                        mappedUserRoles.Add(new UserRolesDTO
+                        {
+                            RoleId = item.Fld_Role_Id,
+                            RoleName = item.Fld_Role_Name,
+                            IsActive = true
+                        });
+                    }
+                    else
+                    {
+                        mappedUserRoles.Add(new UserRolesDTO
+                        {
+                            RoleId = item.Fld_Role_Id,
+                            RoleName = item.Fld_Role_Name,
+                            IsActive = false
+                        });
+                    }
+                }
+                return mappedUserRoles;
+            }
+            else
+            {
+                throw new System.Exception("کاربر پیدا نشد");
+            }
+        }
+
+        public async Task UpdateUserRoles(int userId, List<UserRolesDTO> userRolesDto)
+        {
+            var user = await _context.Tbl_User.FindAsync(userId);
+            if (user != null)
+            {
+                var userRoles = user.Tbl_Role;
+                foreach (var item in userRolesDto)
+                {
+                    var role = await _context.Tbl_Role.FindAsync(item.RoleId);
+                    if (item.IsActive)
+                    {
+                        if (!userRoles.Contains(role))
+                        {
+                            userRoles.Add(role);
+                        }
+                    }
+                    else
+                    {
+                        if (userRoles.Contains(role))
+                        {
+                            userRoles.Remove(role);
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 
 }

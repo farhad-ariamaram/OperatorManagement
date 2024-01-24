@@ -1,6 +1,7 @@
 ﻿using OperatorManagementBL.Attributes;
 using OperatorManagementBL.DTOs;
 using OperatorManagementBL.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -128,6 +129,25 @@ namespace OperatorManagementUI.Controllers
             {
                 return RedirectToAction("Index", "Error", new ErrorDTO { Msg = ex.Message, StatusCode = 500 });
             }
+        }
+
+
+        public async Task<ActionResult> EditRoles(int id)
+        {
+            var userRoles = await _userService.GetUserRoles(id);
+            return View(userRoles);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditRoles(int id, List<UserRolesDTO> userRolesDto)
+        {
+            if (ModelState.IsValid)
+            {
+                await _userService.UpdateUserRoles(id, userRolesDto);
+                return RedirectToAction("Index");
+            }
+
+            return View(userRolesDto);
         }
     }
 

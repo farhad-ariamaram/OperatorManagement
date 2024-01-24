@@ -1985,6 +1985,7 @@
     <Content Include="Views\User\CreateEdit.cshtml" />
     <Content Include="Views\User\Login.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\User\EditRoles.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
