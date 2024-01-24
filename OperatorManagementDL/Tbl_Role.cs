@@ -22,6 +22,7 @@ namespace OperatorManagementDL
     
         public int Fld_Role_Id { get; set; }
         public string Fld_Role_Name { get; set; }
+        public string Fld_Role_Description { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_User> Tbl_User { get; set; }

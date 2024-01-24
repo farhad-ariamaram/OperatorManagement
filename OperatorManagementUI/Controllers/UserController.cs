@@ -132,6 +132,7 @@ namespace OperatorManagementUI.Controllers
         }
 
 
+        [MyAuthorize(Roles = "Admin,EditRoles")]
         public async Task<ActionResult> EditRoles(int id)
         {
             var userRoles = await _userService.GetUserRoles(id);
@@ -139,6 +140,7 @@ namespace OperatorManagementUI.Controllers
         }
 
         [HttpPost]
+        [MyAuthorize(Roles = "Admin,EditRoles")]
         public async Task<ActionResult> EditRoles(int id, List<UserRolesDTO> userRolesDto)
         {
             if (ModelState.IsValid)

@@ -1,8 +1,6 @@
 ﻿using OperatorManagementDL;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OperatorManagementBL.Services
 {
@@ -22,14 +20,14 @@ namespace OperatorManagementBL.Services
                 return false;
             }
 
-            var user = _context.Tbl_User.Find(UserId);
+            var user = _context.Tbl_User.AsNoTracking().SingleOrDefault(a => a.Fld_User_Id == UserId);
 
             if (user == null)
             {
                 return false;
             }
 
-            List<int> requiredRoles = _context.Tbl_Role
+            List<int> requiredRoles = _context.Tbl_Role.AsNoTracking()
                 .Where(r => Roels.Contains(r.Fld_Role_Name))
                 .Select(u => u.Fld_Role_Id)
                 .ToList();
@@ -63,7 +61,7 @@ namespace OperatorManagementBL.Services
                 return null;
             }
 
-            var user = _context.Tbl_User.Find(userId);
+            var user =  _context.Tbl_User.AsNoTracking().SingleOrDefault(a => a.Fld_User_Id == (int)userId);
             if (user == null)
             {
                 return null;

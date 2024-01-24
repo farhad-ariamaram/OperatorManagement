@@ -38,6 +38,7 @@
           </Key>
           <Property Name="Fld_Role_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Fld_Role_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Fld_Role_Description" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Tbl_Sim">
           <Key>
@@ -357,6 +358,7 @@
           </Key>
           <Property Name="Fld_Role_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Fld_Role_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fld_Role_Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tbl_User" Relationship="Self.Tbl_UserRole" FromRole="Tbl_Role" ToRole="Tbl_User" />
         </EntityType>
         <EntityType Name="Tbl_Sim">
@@ -660,6 +662,7 @@
               <MappingFragment StoreEntitySet="Tbl_Role">
                 <ScalarProperty Name="Fld_Role_Id" ColumnName="Fld_Role_Id" />
                 <ScalarProperty Name="Fld_Role_Name" ColumnName="Fld_Role_Name" />
+                <ScalarProperty Name="Fld_Role_Description" ColumnName="Fld_Role_Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

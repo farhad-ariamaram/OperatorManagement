@@ -7,12 +7,13 @@
 {
     for (var i = 0; i < Model.Count(); i++)
     {
-<div class="form-check form-switch">
+<div class="form-check form-switch my-1">
     @Html.HiddenFor(model => Model.ElementAt(i).RoleId, new { Name = $"userRolesDto[{i}].RoleId" })
     @Html.HiddenFor(model => Model.ElementAt(i).RoleName, new { Name = $"userRolesDto[{i}].RoleName" })
+    @Html.HiddenFor(model => Model.ElementAt(i).RoleDescription, new { Name = $"userRolesDto[{i}].RoleDescription" })
     @Html.CheckBoxFor(model => Model.ElementAt(i).IsActive, new { @class = "form-check-input", Name = $"userRolesDto[{i}].IsActive" })
 
-    <label class="form-check-label">@Model.ElementAt(i).RoleName</label>
+    <label class="form-check-label fs-7 text-muted">@Model.ElementAt(i).RoleName <span class="mx-2 fs-6 fw-bold">(@Model.ElementAt(i).RoleDescription)</span></label>
 </div>
     }
 

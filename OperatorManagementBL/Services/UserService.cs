@@ -159,6 +159,7 @@ namespace OperatorManagementBL.Services
                         {
                             RoleId = item.Fld_Role_Id,
                             RoleName = item.Fld_Role_Name,
+                            RoleDescription = item.Fld_Role_Description,
                             IsActive = true
                         });
                     }
@@ -168,6 +169,7 @@ namespace OperatorManagementBL.Services
                         {
                             RoleId = item.Fld_Role_Id,
                             RoleName = item.Fld_Role_Name,
+                            RoleDescription = item.Fld_Role_Description,
                             IsActive = false
                         });
                     }
